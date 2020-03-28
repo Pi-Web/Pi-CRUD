@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes xmlns="http://symfony.com/schema/routing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+    <route id="pi_crud_show" path="/{type}/{id}">
+        <default key="_controller">PiWeb\PiCRUD\Controller\AdminController::show</default>
+    </route>
+
+    <route id="pi_crud_list" path="/admin/{type}/list">
+        <default key="_controller">PiWeb\PiCRUD\Controller\AdminController::list</default>
+    </route>
+
+    <route id="pi_crud_add" path="/admin/{type}">
+        <default key="_controller">PiWeb\PiCRUD\Controller\AdminController::form</default>
+    </route>
+
+    <route id="pi_crud_edit" path="/admin/{type}/{id}">
+        <default key="_controller">PiWeb\PiCRUD\Controller\AdminController::form</default>
+    </route>
+
+    <route id="pi_crud_delete" path="/admin/{type}/{id}/delete">
+        <default key="_controller">PiWeb\PiCRUD\Controller\AdminController::delete</default>
+    </route>
+</routes>
