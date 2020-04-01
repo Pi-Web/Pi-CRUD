@@ -1,0 +1,42 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('list') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('list') }}
+    {{ encore_entry_script_tags('modal') }}
+{% endblock %}
+
+{% block admin_content %}
+    <h1>{{ 'pi_crud.admin.title'|trans({'entity_label': type}) }}</h1>
+    <a href="{{ path('pi_crud_add', {'type': type}) }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i> {{ 'pi_crud.admin.add'|trans({'entity_label': type}) }}</a>
+    <table class="table table-striped">
+        <thead class="bg-primary text-white">
+            <tr>
+                {% for property in configuration.properties %}
+                    {% if property.admin is defined and property.admin is not empty %}<th class="{{ property.admin.class is defined ? property.admin.class }}">{{ property.label }}</th>{% endif %}
+                {% endfor %}
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entity in entities %}
+                <tr>
+                    {% for name, property in configuration.properties %}
+                        {% if property.admin is defined and property.admin is not empty %}<td class="{{ property.admin.class is defined ? property.admin.class }}">{% include templates['label_' ~ (property.type ?? 'default')] with {'value': attribute(entity, name), 'options': (property.admin.options is defined ? property.admin.options : {})} only %}</td>{% endif %}
+                    {% endfor %}
+                    <td>
+                        {% if configuration.annotation.show is defined and configuration.annotation.show is not null %}<a href="{{ path('pi_crud_show', {'type': type, 'id': entity.id}) }}" class="btn btn-outline-primary view_link mb-2" title="Visualiser"><i class="fa fa-eye" aria-hidden="true"></i></a>{% endif %}
+                        {% include '@PiCRUD/includes/admin_actions.html.twig' %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% include templates.modal_delete with {'type': type} only %}
+{% endblock %}

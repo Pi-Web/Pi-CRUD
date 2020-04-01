@@ -5,22 +5,19 @@ namespace PiWeb\PiCRUD\Event;
 use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-final class AccessEvent extends Event
+final class QueryEvent extends Event
 {
     private UserInterface $user;
 
     private string $type;
 
-    private string $mode;
+    private $queryBuilder;
 
-    private array $configuration;
-
-    public function __construct(UserInterface $user, string $type, string $mode, array $configuration)
+    public function __construct(UserInterface $user, string $type, $queryBuilder)
     {
         $this->user = $user;
         $this->type = $type;
-        $this->mode = $mode;
-        $this->configuration = $configuration;
+        $this->queryBuilder = $queryBuilder;
     }
 
     public function getUser(): ?UserInterface
@@ -33,13 +30,8 @@ final class AccessEvent extends Event
         return $this->type;
     }
 
-    public function getMode(): ?string
+    public function getQueryBuilder()
     {
-        return $this->mode;
-    }
-
-    public function getConfiguration(): ?array
-    {
-        return $this->configuration;
+        return $this->queryBuilder;
     }
 }

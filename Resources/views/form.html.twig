@@ -1,0 +1,24 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('collection') }}
+{% endblock %}
+
+{% block admin_content %}
+    <h1>{{ ('pi_crud.form.' ~ (entity.id ? 'edit' : 'add') ~ '.title')|trans({'entity_label': type}) }} <span class="text-primary">{{ entity }}</span></h1>
+
+    {{ form_start(form) }}
+        <div class="row">
+        {% for field, property in configuration.properties|filter(a => a.form is defined and a.form is not null) %}
+            <div class="col-12 {{ property.form.class ?? 'order-12' }}">
+                {% include templates['field_' ~ property.type] ignore missing with {'field': form[field], 'configuration': property} %}
+            </div>
+        {% endfor %}
+    </div>
+        <div class="d-none">
+            {{ form_rest(form)}}
+        </div>
+        <button type="submit" class="btn btn-primary">{{ ('pi_crud.form.' ~ (entity.id ? 'edit' : 'add') ~ '.save')|trans({'entity_label': type}) }}</button>
+    {{ form_end(form) }}
+{% endblock %}

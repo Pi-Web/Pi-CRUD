@@ -7,7 +7,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use PiWeb\PiCRUD\Event\AccessEvent;
+use PiWeb\PiCRUD\Event\QueryEvent;
+use PiWeb\PiCRUD\Event\PiCrudEvents;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use PiWeb\PiCRUD\Tools\EntityManager;
+use PiWeb\PiCRUD\Form\EntityFormType;
 
 class CRUDController extends AbstractController
 {
@@ -17,18 +21,21 @@ class CRUDController extends AbstractController
 
     private $dispatcher;
 
-    public function __construct(array $configuration, EventDispatcherInterface $dispatcher)
+    private EntityManager $entityManager;
+
+    public function __construct(array $configuration, EventDispatcherInterface $dispatcher, EntityManager $entityManager)
     {
         $this->configuration = $configuration;
         $this->dispatcher = $dispatcher;
+        $this->entityManager = $entityManager;
     }
 
-    public function show(int $id)
+    public function show(string $type, int $id)
     {
-        $this->dispatcher->dispatch(new AccessEvent($this->getUser(), $type, 'list', $this->configuration), 'owp_crud_admin.action.list');
+        $configuration = $this->entityManager->getEntity($type);
 
         $entity = $this->getDoctrine()
-            ->getRepository($this->configuration['entities'][$type]['class'])
+            ->getRepository($configuration['class'])
             ->find($id);
 
         return $this->render($type . '/show.html.twig', [
@@ -36,34 +43,43 @@ class CRUDController extends AbstractController
         ]);
     }
 
-    public function list(string $type)
+    public function list(Request $request, string $type)
     {
-        $this->dispatcher->dispatch(new AccessEvent($this->getUser(), $type, 'list', $this->configuration), 'owp_crud_admin.action.list');
+        $configuration = $this->entityManager->getEntity($type);
 
-        $entities = $this->getDoctrine()
-            ->getRepository($this->configuration['entities'][$type]['class'])
-            ->findAll();
+        $queryBuilder = $this->getDoctrine()
+            ->getRepository($configuration['class'])
+            ->createQueryBuilder('entity');
 
-        return $this->render('@OwpCrudAdmin/list.html.twig', [
+        if ($request->get('_route') === 'pi_crud_list') {
+            $this->dispatcher->dispatch(new QueryEvent($this->getUser(), $type, $queryBuilder), PiCrudEvents::POST_LIST_QUERY_BUILDER);
+            $template = $this->configuration['templates']['list'];
+        } else {
+            $this->dispatcher->dispatch(new QueryEvent($this->getUser(), $type, $queryBuilder), PiCrudEvents::POST_ADMIN_QUERY_BUILDER);
+            $template = $this->configuration['templates']['admin'];
+        }
+
+        return $this->render($template, [
             'type' => $type,
-            'configuration' => $this->configuration['entities'][$type],
-            'entities' => $entities
+            'configuration' => $configuration,
+            'templates' => $this->configuration['templates'],
+            'entities' => $queryBuilder->getQuery()->execute()
         ]);
     }
 
     public function form(Request $request, string $type, ?int $id)
     {
-        $this->dispatcher->dispatch(new AccessEvent($this->getUser(), $type, 'form', $this->configuration), 'owp_crud_admin.access');
+        $configuration = $this->entityManager->getEntity($type);
 
         if (empty($id)) {
-            $entity = new $this->configuration['entities'][$type]['class']();
+            $entity = $this->entityManager->create($type);
         } else {
             $entity = $this->getDoctrine()
-                ->getRepository($this->configuration['entities'][$type]['class'])
+                ->getRepository($configuration['class'])
                 ->find($id);
         }
 
-        $form = $this->createForm($this->configuration['entities'][$type]['formClass'], $entity);
+        $form = $this->createForm(EntityFormType::class, $entity, ['type' => $type]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -74,17 +90,17 @@ class CRUDController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->render($type . '/form.html.twig', [
+        return $this->render('@PiCRUD/form.html.twig', [
             'type' => $type,
+            'configuration' => $configuration,
+            'templates' => $this->configuration['templates'],
             'entity' => $entity,
             'form' => $form->createView(),
         ]);
     }
 
-    public function delete(int $id)
+    public function delete(string $type, int $id)
     {
-        $this->dispatcher->dispatch(new AccessEvent($this->getUser(), $type, 'delete', $this->configuration), 'owp_crud_admin.access');
-
         $entity = $this->getDoctrine()
             ->getRepository($this->configuration['entities'][$type]['class'])
             ->find($id);
