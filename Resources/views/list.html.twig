@@ -14,6 +14,12 @@
                         'item': entity
                     }) }}
                 {% endfor %}
+
+                {% if entities|length == 0 %}
+                    <div class="col-12">
+                        {{ 'pi_crud.list.empty_result'|trans({'entity_label': type}) }}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

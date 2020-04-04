@@ -10,6 +10,7 @@ use PiWeb\PiCRUD\Tools\EntityManager;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class EntityFormType extends AbstractType
 {
@@ -28,6 +29,10 @@ class EntityFormType extends AbstractType
     {
         $properties = $this->entityManager->getEntity($options['type'])['properties'];
         foreach ($properties as $name => $property) {
+            if ($property->form === null) {
+                continue;
+            }
+
             switch ($property->type)
             {
                 case 'file':
@@ -57,6 +62,13 @@ class EntityFormType extends AbstractType
                 case 'ckeditor':
                     $builder->add('content', CKEditorType::class, [
                         'config_name' => 'default'
+                    ]);
+                    break;
+                case 'choices':
+                    $builder->add($name, ChoiceType::class, [
+                        'label' => $property->label,
+                        'multiple' => true,
+                        'choices' => $property->form['choices']
                     ]);
                     break;
                 default:
