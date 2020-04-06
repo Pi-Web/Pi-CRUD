@@ -8,7 +8,6 @@
 {% block javascripts %}
     {{ parent() }}
     {{ encore_entry_script_tags('list') }}
-    {{ encore_entry_script_tags('modal') }}
 {% endblock %}
 
 {% block admin_content %}
@@ -37,6 +36,4 @@
             {% endfor %}
         </tbody>
     </table>
-
-    {% include templates.modal_delete with {'type': type} only %}
 {% endblock %}

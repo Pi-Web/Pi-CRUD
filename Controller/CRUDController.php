@@ -51,15 +51,27 @@ class CRUDController extends AbstractController
             ->getRepository($configuration['class'])
             ->createQueryBuilder('entity');
 
-        if ($request->get('_route') === 'pi_crud_list') {
-            $this->dispatcher->dispatch(new QueryEvent($this->getUser(), $type, $queryBuilder), PiCrudEvents::POST_LIST_QUERY_BUILDER);
-            $template = $this->configuration['templates']['list'];
-        } else {
-            $this->dispatcher->dispatch(new QueryEvent($this->getUser(), $type, $queryBuilder), PiCrudEvents::POST_ADMIN_QUERY_BUILDER);
-            $template = $this->configuration['templates']['admin'];
-        }
+        $this->dispatcher->dispatch(new QueryEvent($this->getUser(), $type, $queryBuilder), PiCrudEvents::POST_LIST_QUERY_BUILDER);
 
-        return $this->render($template, [
+        return $this->render($template = $this->configuration['templates']['list'], [
+            'type' => $type,
+            'configuration' => $configuration,
+            'templates' => $this->configuration['templates'],
+            'entities' => $queryBuilder->getQuery()->execute()
+        ]);
+    }
+
+    public function admin(Request $request, string $type)
+    {
+        $configuration = $this->entityManager->getEntity($type);
+
+        $queryBuilder = $this->getDoctrine()
+            ->getRepository($configuration['class'])
+            ->createQueryBuilder('entity');
+
+        $this->dispatcher->dispatch(new QueryEvent($this->getUser(), $type, $queryBuilder), PiCrudEvents::POST_ADMIN_QUERY_BUILDER);
+
+        return $this->render($this->configuration['templates']['admin'], [
             'type' => $type,
             'configuration' => $configuration,
             'templates' => $this->configuration['templates'],
@@ -101,8 +113,10 @@ class CRUDController extends AbstractController
 
     public function delete(string $type, int $id)
     {
+        $configuration = $this->entityManager->getEntity($type);
+
         $entity = $this->getDoctrine()
-            ->getRepository($this->configuration['entities'][$type]['class'])
+            ->getRepository($configuration['class'])
             ->find($id);
 
         $entityManager = $this->getDoctrine()->getManager();

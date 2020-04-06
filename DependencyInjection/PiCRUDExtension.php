@@ -21,7 +21,6 @@ class PiCRUDExtension extends Extension
         'label_ckeditor' => '@PiCRUD/fields/label_ckeditor.html.twig',
         'label_datetime' => '@PiCRUD/fields/label_datetime.html.twig',
         'label_checkbox' => '@PiCRUD/fields/label_checkbox.html.twig',
-        'modal_delete' => '@PiCRUD/delete.html.twig',
     ];
 
     private $defaultsEntitiesTemplates = [

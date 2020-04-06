@@ -9,20 +9,24 @@
         <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::list</default>
     </route>
 
-    <route id="pi_crud_admin" path="/admin/{type}/list">
+    <route id="pi_crud_admin" path="/{type}/list">
         <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::list</default>
     </route>
 
-    <route id="pi_crud_add" path="/admin/{type}/add">
+    <route id="pi_crud_admin" path="/{type}/admin">
+        <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::admin</default>
+    </route>
+
+    <route id="pi_crud_add" path="/{type}/add">
         <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::form</default>
     </route>
 
-    <route id="pi_crud_edit" path="/admin/{type}/{id}">
+    <route id="pi_crud_edit" path="/{type}/{id}/edit">
         <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::form</default>
         <requirement key="id">\d+</requirement>
     </route>
 
-    <route id="pi_crud_delete" path="/admin/{type}/{id}/delete">
+    <route id="pi_crud_delete" path="/{type}/{id}/delete">
         <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::delete</default>
         <requirement key="id">\d+</requirement>
     </route>
