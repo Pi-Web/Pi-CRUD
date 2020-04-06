@@ -2,5 +2,5 @@
     <a href="{{ path('pi_crud_edit', {'type': 'news', 'id': entity.id}) }}" class="btn btn-outline-info admin-link stretched-link mb-2" title="Editer"><i class="fa fa-edit" aria-hidden="true"></i></a>
 {% endif %}
 {% if is_granted('delete', entity) %}
-    <a href="" data-href="{{ path('pi_crud_delete', {'type': 'news', 'id': entity.id}) }}" data-toggle="modal" data-target="#modal-confirm-delete" class="btn btn-outline-danger admin-link stretched-link mb-2" title="Supprimer"><i class="fa fa-times" aria-hidden="true"></i></a>
+    <a href="" data-href="{{ path('pi_crud_delete', {'type': type, 'id': entity.id}) }}" data-toggle="modal" data-target="#modal-confirm-delete" class="btn btn-outline-danger admin-link stretched-link mb-2" title="Supprimer"><i class="fa fa-times" aria-hidden="true"></i></a>
 {% endif %}

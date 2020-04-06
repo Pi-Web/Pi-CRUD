@@ -12,6 +12,8 @@ use PiWeb\PiCRUD\Event\PiCrudEvents;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use PiWeb\PiCRUD\Tools\EntityManager;
 use PiWeb\PiCRUD\Form\EntityFormType;
+use PiWeb\PiCRUD\Event\FormEvent;
+use PiWeb\PiCRUD\Event\EntityEvent;
 
 class CRUDController extends AbstractController
 {
@@ -85,6 +87,7 @@ class CRUDController extends AbstractController
 
         if (empty($id)) {
             $entity = $this->entityManager->create($type);
+            $this->dispatcher->dispatch(new EntityEvent($type, $entity, $request->query->all()), PiCrudEvents::POST_ENTITY_CREATE);
         } else {
             $entity = $this->getDoctrine()
                 ->getRepository($configuration['class'])
@@ -95,7 +98,7 @@ class CRUDController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatcher->dispatch(new GenericEvent($entity), ($entity->getId() ? 'app.entity.pre_update' : 'app.entity.pre_persist'));
+            $this->dispatcher->dispatch(new GenericEvent($entity), ($entity->getId() ? PiCrudEvents::PRE_ENTITY_UPDATE : PiCrudEvents::PRE_ENTITY_PERSIST));
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($entity);
