@@ -30,4 +30,8 @@
         <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::delete</default>
         <requirement key="id">\d+</requirement>
     </route>
+
+    <route id="pi_crud_json" path="/{type}/json">
+        <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::json</default>
+    </route>
 </routes>

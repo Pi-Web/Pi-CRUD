@@ -2,6 +2,8 @@
 
 {% block content_body %}
     <div class="row py-4">
+        {{ sonata_block_render({ 'type': 'block.breadcrumb' }, {}) }}
+        
         <div class="col-12 col-lg-10 offset-lg-1">
             {% block content_body_title %}
                 <h1>{{ 'pi_crud.list.title'|trans({'entity_label': type}) }}</h1>

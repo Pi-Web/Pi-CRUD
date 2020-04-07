@@ -14,6 +14,8 @@ use PiWeb\PiCRUD\Tools\EntityManager;
 use PiWeb\PiCRUD\Form\EntityFormType;
 use PiWeb\PiCRUD\Event\FormEvent;
 use PiWeb\PiCRUD\Event\EntityEvent;
+use PiWeb\PiBreadcrumb\Model\Breadcrumb;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CRUDController extends AbstractController
 {
@@ -25,20 +27,33 @@ class CRUDController extends AbstractController
 
     private EntityManager $entityManager;
 
-    public function __construct(array $configuration, EventDispatcherInterface $dispatcher, EntityManager $entityManager)
+    private Breadcrumb $breadcrumb;
+
+    private TranslatorInterface $translator;
+
+    public function __construct(array $configuration, EventDispatcherInterface $dispatcher, EntityManager $entityManager, Breadcrumb $breadcrumb, TranslatorInterface $translator)
     {
         $this->configuration = $configuration;
         $this->dispatcher = $dispatcher;
         $this->entityManager = $entityManager;
+        $this->breadcrumb = $breadcrumb;
+        $this->translator = $translator;
     }
 
     public function show(string $type, int $id)
     {
         $configuration = $this->entityManager->getEntity($type);
 
+        $this->breadcrumb->addItem(
+            $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
+            $this->generateUrl('pi_crud_admin', ['type' => $type])
+        );
+
         $entity = $this->getDoctrine()
             ->getRepository($configuration['class'])
             ->find($id);
+
+        $this->breadcrumb->addItem($entity);
 
         return $this->render($type . '/show.html.twig', [
             'entity' => $entity,
@@ -48,6 +63,11 @@ class CRUDController extends AbstractController
     public function list(Request $request, string $type)
     {
         $configuration = $this->entityManager->getEntity($type);
+
+        $this->breadcrumb->addItem(
+            $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
+            $this->generateUrl('pi_crud_admin', ['type' => $type])
+        );
 
         $queryBuilder = $this->getDoctrine()
             ->getRepository($configuration['class'])
@@ -67,6 +87,11 @@ class CRUDController extends AbstractController
     {
         $configuration = $this->entityManager->getEntity($type);
 
+        $this->breadcrumb->addItem(
+            $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
+            $this->generateUrl('pi_crud_admin', ['type' => $type])
+        );
+
         $queryBuilder = $this->getDoctrine()
             ->getRepository($configuration['class'])
             ->createQueryBuilder('entity');
@@ -85,10 +110,25 @@ class CRUDController extends AbstractController
     {
         $configuration = $this->entityManager->getEntity($type);
 
+        $this->breadcrumb->addItem(
+            $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
+            $this->generateUrl('pi_crud_admin', ['type' => $type])
+        );
+
         if (empty($id)) {
+            $this->breadcrumb->addItem(
+                $this->translator->trans('pi_crud.form.add.title', ['entity_label' => $type]),
+                $this->generateUrl('pi_crud_add', ['type' => $type])
+            );
+
             $entity = $this->entityManager->create($type);
             $this->dispatcher->dispatch(new EntityEvent($type, $entity, $request->query->all()), PiCrudEvents::POST_ENTITY_CREATE);
         } else {
+            $this->breadcrumb->addItem(
+                $this->translator->trans('pi_crud.form.edit.title', ['entity_label' => $type]),
+                $this->generateUrl('pi_crud_add', ['type' => $type])
+            );
+
             $entity = $this->getDoctrine()
                 ->getRepository($configuration['class'])
                 ->find($id);
@@ -127,5 +167,16 @@ class CRUDController extends AbstractController
         $entityManager->flush();
 
         return $this->redirect($this->getTargetPath($this->get('session'), 'main'));
+    }
+
+    public function json(string $type)
+    {
+        $configuration = $this->entityManager->getEntity($type);
+
+        $queryBuilder = $this->getDoctrine()
+            ->getRepository($configuration['class'])
+            ->createQueryBuilder('entity');
+
+        return new JsonResponse($queryBuilder->getQuery()->execute());
     }
 }
