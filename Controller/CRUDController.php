@@ -16,6 +16,7 @@ use PiWeb\PiCRUD\Event\FormEvent;
 use PiWeb\PiCRUD\Event\EntityEvent;
 use PiWeb\PiBreadcrumb\Model\Breadcrumb;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CRUDController extends AbstractController
 {
@@ -169,7 +170,7 @@ class CRUDController extends AbstractController
         return $this->redirect($this->getTargetPath($this->get('session'), 'main'));
     }
 
-    public function json(string $type)
+    public function all(string $type)
     {
         $configuration = $this->entityManager->getEntity($type);
 
