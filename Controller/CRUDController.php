@@ -47,7 +47,7 @@ class CRUDController extends AbstractController
 
         $this->breadcrumb->addItem(
             $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
-            $this->generateUrl('pi_crud_admin', ['type' => $type])
+            $this->generateUrl('pi_crud_list', ['type' => $type])
         );
 
         $entity = $this->getDoctrine()
@@ -67,7 +67,7 @@ class CRUDController extends AbstractController
 
         $this->breadcrumb->addItem(
             $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
-            $this->generateUrl('pi_crud_admin', ['type' => $type])
+            $this->generateUrl('pi_crud_list', ['type' => $type])
         );
 
         $queryBuilder = $this->getDoctrine()

@@ -7,13 +7,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 final class QueryEvent extends Event
 {
-    private UserInterface $user;
+    private ?UserInterface $user;
 
     private string $type;
 
     private $queryBuilder;
 
-    public function __construct(UserInterface $user, string $type, $queryBuilder)
+    public function __construct(?UserInterface $user, string $type, $queryBuilder)
     {
         $this->user = $user;
         $this->type = $type;
