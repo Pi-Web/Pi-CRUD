@@ -18,11 +18,11 @@
     </route>
 
     <route id="pi_crud_add" path="/{type}/add">
-        <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::form</default>
+        <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::add</default>
     </route>
 
     <route id="pi_crud_edit" path="/{type}/{id}/edit">
-        <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::form</default>
+        <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::edit</default>
         <requirement key="id">\d+</requirement>
     </route>
 

@@ -54,9 +54,16 @@ class CRUDController extends AbstractController
             ->getRepository($configuration['class'])
             ->find($id);
 
+        $this->denyAccessUnlessGranted('show', $entity);
+
         $this->breadcrumb->addItem($entity);
 
-        return $this->render($type . '/show.html.twig', [
+        $template = '@PiCRUD/show.html.twig';
+        if ($this->get('twig')->getLoader()->exists('entities/show/' . $type . '.html.twig')) {
+            $template = 'entities/show/' . $type . '.html.twig';
+        }
+
+        return $this->render($template, [
             'entity' => $entity,
         ]);
     }
@@ -64,6 +71,8 @@ class CRUDController extends AbstractController
     public function list(Request $request, string $type)
     {
         $configuration = $this->entityManager->getEntity($type);
+
+        $this->denyAccessUnlessGranted('list', $type);
 
         $this->breadcrumb->addItem(
             $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
@@ -76,7 +85,12 @@ class CRUDController extends AbstractController
 
         $this->dispatcher->dispatch(new QueryEvent($this->getUser(), $type, $queryBuilder), PiCrudEvents::POST_LIST_QUERY_BUILDER);
 
-        return $this->render($template = $this->configuration['templates']['list'], [
+        $template = '@PiCRUD/list.html.twig';
+        if ($this->get('twig')->getLoader()->exists('entities/list/' . $type . '.html.twig')) {
+            $template = 'entities/list/' . $type . '.html.twig';
+        }
+
+        return $this->render($template, [
             'type' => $type,
             'configuration' => $configuration,
             'templates' => $this->configuration['templates'],
@@ -87,6 +101,8 @@ class CRUDController extends AbstractController
     public function admin(Request $request, string $type)
     {
         $configuration = $this->entityManager->getEntity($type);
+
+        $this->denyAccessUnlessGranted('admin', $type);
 
         $this->breadcrumb->addItem(
             $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
@@ -99,7 +115,12 @@ class CRUDController extends AbstractController
 
         $this->dispatcher->dispatch(new QueryEvent($this->getUser(), $type, $queryBuilder), PiCrudEvents::POST_ADMIN_QUERY_BUILDER);
 
-        return $this->render($this->configuration['templates']['admin'], [
+        $template = '@PiCRUD/admin.html.twig';
+        if ($this->get('twig')->getLoader()->exists('entities/admin/' . $type . '.html.twig')) {
+            $template = 'entities/admin/' . $type . '.html.twig';
+        }
+
+        return $this->render($template, [
             'type' => $type,
             'configuration' => $configuration,
             'templates' => $this->configuration['templates'],
@@ -107,7 +128,51 @@ class CRUDController extends AbstractController
         ]);
     }
 
-    public function form(Request $request, string $type, ?int $id)
+    public function add(Request $request, string $type)
+    {
+        $configuration = $this->entityManager->getEntity($type);
+
+        $this->denyAccessUnlessGranted('add', $type);
+
+        $this->breadcrumb->addItem(
+            $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
+            $this->generateUrl('pi_crud_admin', ['type' => $type])
+        );
+
+        $this->breadcrumb->addItem(
+            $this->translator->trans('pi_crud.form.add.title', ['entity_label' => $type]),
+            $this->generateUrl('pi_crud_add', ['type' => $type])
+        );
+
+        $entity = $this->entityManager->create($type);
+        $this->dispatcher->dispatch(new EntityEvent($type, $entity, $request->query->all()), PiCrudEvents::POST_ENTITY_CREATE);
+
+        $form = $this->createForm(EntityFormType::class, $entity, ['type' => $type]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->dispatcher->dispatch(new GenericEvent($entity), PiCrudEvents::PRE_ENTITY_PERSIST);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($entity);
+            $entityManager->flush();
+        }
+
+        $template = '@PiCRUD/add.html.twig';
+        if ($this->get('twig')->getLoader()->exists('entities/add/' . $type . '.html.twig')) {
+            $template = 'entities/add/' . $type . '.html.twig';
+        }
+
+        return $this->render($template, [
+            'type' => $type,
+            'configuration' => $configuration,
+            'templates' => $this->configuration['templates'],
+            'entity' => $entity,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    public function edit(Request $request, string $type, ?int $id)
     {
         $configuration = $this->entityManager->getEntity($type);
 
@@ -116,37 +181,34 @@ class CRUDController extends AbstractController
             $this->generateUrl('pi_crud_admin', ['type' => $type])
         );
 
-        if (empty($id)) {
-            $this->breadcrumb->addItem(
-                $this->translator->trans('pi_crud.form.add.title', ['entity_label' => $type]),
-                $this->generateUrl('pi_crud_add', ['type' => $type])
-            );
+        $this->breadcrumb->addItem(
+            $this->translator->trans('pi_crud.form.edit.title', ['entity_label' => $type]),
+            $this->generateUrl('pi_crud_add', ['type' => $type])
+        );
 
-            $entity = $this->entityManager->create($type);
-            $this->dispatcher->dispatch(new EntityEvent($type, $entity, $request->query->all()), PiCrudEvents::POST_ENTITY_CREATE);
-        } else {
-            $this->breadcrumb->addItem(
-                $this->translator->trans('pi_crud.form.edit.title', ['entity_label' => $type]),
-                $this->generateUrl('pi_crud_add', ['type' => $type])
-            );
+        $entity = $this->getDoctrine()
+            ->getRepository($configuration['class'])
+            ->find($id);
 
-            $entity = $this->getDoctrine()
-                ->getRepository($configuration['class'])
-                ->find($id);
-        }
+        $this->denyAccessUnlessGranted('edit', $entity);
 
         $form = $this->createForm(EntityFormType::class, $entity, ['type' => $type]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatcher->dispatch(new GenericEvent($entity), ($entity->getId() ? PiCrudEvents::PRE_ENTITY_UPDATE : PiCrudEvents::PRE_ENTITY_PERSIST));
+            $this->dispatcher->dispatch(new GenericEvent($entity), PiCrudEvents::PRE_ENTITY_UPDATE);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($entity);
             $entityManager->flush();
         }
 
-        return $this->render('@PiCRUD/form.html.twig', [
+        $template = '@PiCRUD/edit.html.twig';
+        if ($this->get('twig')->getLoader()->exists('entities/edit/' . $type . '.html.twig')) {
+            $template = 'entities/edit/' . $type . '.html.twig';
+        }
+
+        return $this->render($template, [
             'type' => $type,
             'configuration' => $configuration,
             'templates' => $this->configuration['templates'],
@@ -162,6 +224,8 @@ class CRUDController extends AbstractController
         $entity = $this->getDoctrine()
             ->getRepository($configuration['class'])
             ->find($id);
+
+        $this->denyAccessUnlessGranted('delete', $entity);
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($entity);

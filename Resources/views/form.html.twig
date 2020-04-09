@@ -1,24 +1,31 @@
-{% extends 'base_admin.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block javascripts %}
     {{ parent() }}
     {{ encore_entry_script_tags('collection') }}
 {% endblock %}
 
-{% block admin_content %}
-    <h1>{{ ('pi_crud.form.' ~ (entity.id ? 'edit' : 'add') ~ '.title')|trans({'entity_label': type}) }} <span class="text-primary">{{ entity }}</span></h1>
+{% block title %}Administration{% endblock %}
 
-    {{ form_start(form) }}
-        <div class="row">
-        {% for field, property in configuration.properties|filter(a => a.form is defined and a.form is not null) %}
-            <div class="col-12 {{ property.form.class ?? 'order-12' }}">
-                {% include templates['field_' ~ field] ?? templates['field_' ~ property.type] ?? templates['field_default'] ignore missing with {'field': form[field], 'configuration': property} %}
+{% block content_body %}
+    <div class="row py-4">
+        {{ sonata_block_render({ 'type': 'block.breadcrumb' }, {}) }}
+        <div class="col-12 col-lg-10 offset-lg-1">
+            <h1>{% block form_title %}{% endblock %} <span class="text-primary">{{ entity }}</span></h1>
+
+            {{ form_start(form) }}
+                <div class="row">
+                {% for field, property in configuration.properties|filter(a => a.form is defined and a.form is not null) %}
+                    <div class="col-12 {{ property.form.class ?? 'order-12' }}">
+                        {% include templates['field_' ~ field] ?? templates['field_' ~ property.type] ?? templates['field_default'] ignore missing with {'field': form[field], 'configuration': property} %}
+                    </div>
+                {% endfor %}
             </div>
-        {% endfor %}
-    </div>
-        <div class="d-none">
-            {{ form_rest(form)}}
+                <div class="d-none">
+                    {{ form_rest(form)}}
+                </div>
+                <button type="submit" class="btn btn-primary">{% block form_action %}{% endblock %}</button>
+            {{ form_end(form) }}
         </div>
-        <button type="submit" class="btn btn-primary">{{ ('pi_crud.form.' ~ (entity.id ? 'edit' : 'add') ~ '.save')|trans({'entity_label': type}) }}</button>
-    {{ form_end(form) }}
+    </div>
 {% endblock %}

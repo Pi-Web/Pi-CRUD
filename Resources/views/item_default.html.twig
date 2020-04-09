@@ -1,4 +1,4 @@
-{% if is_granted('view', entity) %}
+{% if is_granted('show', entity) %}
     <div class="{{ attr.class }} mb-4">
         <div class="card bg-dark border-primary h-100">
             <img src="{{ asset(entity.image.name is not null ? 'images/' ~ entity.image.name : 'images/default.jpg') | imagine_filter('thumbnail') }}" class="card-img-top position-absolute opacity-20 h-100" alt="...">

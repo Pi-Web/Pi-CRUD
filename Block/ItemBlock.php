@@ -26,10 +26,10 @@ final class ItemBlock extends AbstractBlockService
     {
         $settings = $blockContext->getSettings();
 
-        $template = isset($this->configuration['entities'][$settings['type']]) ?
-            $this->configuration['entities'][$settings['type']]['templates']['item_' . $settings['mode']] :
-            '@PiCRUD/items/item_' . $settings['mode'] . '.html.twig'
-        ;
+        $template = '@PiCRUD/item_' . $settings['mode'] . '.html.twig';
+        if ($this->getTwig()->getLoader()->exists('entities/item/' . $settings['type'] . '_' . $settings['mode'] . '.html.twig')) {
+            $template = 'entities/item/' . $settings['type'] . '_' . $settings['mode'] . '.html.twig';
+        }
 
         return $this->renderResponse($template, [
             'type' => $settings['type'],

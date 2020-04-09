@@ -12,7 +12,9 @@
 
 {% block admin_content %}
     <h1>{{ 'pi_crud.admin.title'|trans({'entity_label': type}) }}</h1>
-    <a href="{{ path('pi_crud_add', {'type': type}) }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i> {{ 'pi_crud.admin.add'|trans({'entity_label': type}) }}</a>
+    {% if is_granted('add', type) %}
+        <a href="{{ path('pi_crud_add', {'type': type}) }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i> {{ 'pi_crud.admin.add'|trans({'entity_label': type}) }}</a>
+    {% endif %}
     <table class="table table-striped">
         <thead class="bg-primary text-white">
             <tr>
