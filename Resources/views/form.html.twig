@@ -9,23 +9,27 @@
 
 {% block content_body %}
     <div class="row py-4">
-        {{ sonata_block_render({ 'type': 'block.breadcrumb' }, {}) }}
+        {% block content_breadcrumb %}
+            {{ sonata_block_render({ 'type': 'block.breadcrumb' }, {}) }}
+        {% endblock %}
         <div class="col-12 col-lg-10 offset-lg-1">
-            <h1>{% block form_title %}{% endblock %} <span class="text-primary">{{ entity }}</span></h1>
+            {% block form_title %}{% endblock %}
 
-            {{ form_start(form) }}
-                <div class="row">
-                {% for field, property in configuration.properties|filter(a => a.form is defined and a.form is not null) %}
-                    <div class="col-12 {{ property.form.class ?? 'order-12' }}">
-                        {% include templates['field_' ~ field] ?? templates['field_' ~ property.type] ?? templates['field_default'] ignore missing with {'field': form[field], 'configuration': property} %}
+            {% block form_content %}
+                {{ form_start(form) }}
+                    <div class="row">
+                        {% for field, property in configuration.properties|filter(a => a.form is defined and a.form is not null) %}
+                            <div class="col-12 {{ property.form.class ?? 'order-12' }}">
+                                {% include templates['field_' ~ field] ?? templates['field_' ~ property.type] ?? templates['field_default'] ignore missing with {'field': form[field], 'configuration': property} %}
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
-            </div>
-                <div class="d-none">
-                    {{ form_rest(form)}}
-                </div>
-                <button type="submit" class="btn btn-primary">{% block form_action %}{% endblock %}</button>
-            {{ form_end(form) }}
+                    <div class="d-none">
+                        {{ form_rest(form)}}
+                    </div>
+                    <button type="submit" class="btn btn-primary">{% block form_action %}{% endblock %}</button>
+                {{ form_end(form) }}
+            {% endblock %}
         </div>
     </div>
 {% endblock %}
