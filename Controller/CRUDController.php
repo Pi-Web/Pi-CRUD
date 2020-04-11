@@ -18,6 +18,7 @@ use PiWeb\PiBreadcrumb\Model\Breadcrumb;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class CRUDController extends AbstractController
 {
@@ -35,7 +36,9 @@ class CRUDController extends AbstractController
 
     private SerializerInterface $serializer;
 
-    public function __construct(array $configuration, EventDispatcherInterface $dispatcher, EntityManager $entityManager, Breadcrumb $breadcrumb, TranslatorInterface $translator, SerializerInterface $serializer)
+    private SessionInterface $session;
+
+    public function __construct(array $configuration, EventDispatcherInterface $dispatcher, EntityManager $entityManager, Breadcrumb $breadcrumb, TranslatorInterface $translator, SerializerInterface $serializer, SessionInterface $session)
     {
         $this->configuration = $configuration;
         $this->dispatcher = $dispatcher;
@@ -43,11 +46,14 @@ class CRUDController extends AbstractController
         $this->breadcrumb = $breadcrumb;
         $this->translator = $translator;
         $this->serializer = $serializer;
+        $this->session = $session;
     }
 
-    public function show(string $type, int $id)
+    public function show(Request $request, string $type, int $id)
     {
         $configuration = $this->entityManager->getEntity($type);
+
+        $this->saveTargetPath($this->session, 'main', $request->getUri());
 
         $this->breadcrumb->addItem(
             $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
@@ -69,6 +75,7 @@ class CRUDController extends AbstractController
 
         return $this->render($template, [
             'entity' => $entity,
+            'type' => $type
         ]);
     }
 
@@ -77,6 +84,8 @@ class CRUDController extends AbstractController
         $configuration = $this->entityManager->getEntity($type);
 
         $this->denyAccessUnlessGranted('list', $type);
+
+        $this->saveTargetPath($this->session, 'main', $request->getUri());
 
         $this->breadcrumb->addItem(
             $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
@@ -107,6 +116,8 @@ class CRUDController extends AbstractController
         $configuration = $this->entityManager->getEntity($type);
 
         $this->denyAccessUnlessGranted('admin', $type);
+
+        $this->saveTargetPath($this->session, 'main', $request->getUri());
 
         $this->breadcrumb->addItem(
             $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
@@ -160,6 +171,10 @@ class CRUDController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($entity);
             $entityManager->flush();
+
+            $this->dispatcher->dispatch(new GenericEvent($entity), PiCrudEvents::POST_ENTITY_PERSIST);
+
+            return $this->redirect($this->getTargetPath($this->get('session'), 'main'));
         }
 
         $template = '@PiCRUD/add.html.twig';
@@ -205,6 +220,10 @@ class CRUDController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($entity);
             $entityManager->flush();
+
+            $this->dispatcher->dispatch(new GenericEvent($entity), PiCrudEvents::POST_ENTITY_UPDATE);
+
+            return $this->redirect($this->getTargetPath($this->get('session'), 'main'));
         }
 
         $template = '@PiCRUD/edit.html.twig';

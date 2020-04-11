@@ -15,4 +15,6 @@ final class PiCrudEvents
     public const POST_ENTITY_CREATE         = 'pi_crud.post_entity_create';
     public const PRE_ENTITY_PERSIST         = 'app.entity.pre_persist';
     public const PRE_ENTITY_UPDATE          = 'app.entity.pre_update';
+    public const POST_ENTITY_PERSIST        = 'app.entity.post_persist';
+    public const POST_ENTITY_UPDATE         = 'app.entity.post_update';
 }

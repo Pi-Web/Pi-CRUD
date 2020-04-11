@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="admin-quick-edit">
-            {% block content_header_admin_actions %}{% endblock %}
+            {% block content_header_admin_actions %}{% include '@PiCRUD/includes/admin_actions.html.twig' %}{% endblock %}
         </div>
     </div>
 {% endblock %}
