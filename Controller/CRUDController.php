@@ -17,6 +17,7 @@ use PiWeb\PiCRUD\Event\EntityEvent;
 use PiWeb\PiBreadcrumb\Model\Breadcrumb;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class CRUDController extends AbstractController
 {
@@ -32,13 +33,16 @@ class CRUDController extends AbstractController
 
     private TranslatorInterface $translator;
 
-    public function __construct(array $configuration, EventDispatcherInterface $dispatcher, EntityManager $entityManager, Breadcrumb $breadcrumb, TranslatorInterface $translator)
+    private SerializerInterface $serializer;
+
+    public function __construct(array $configuration, EventDispatcherInterface $dispatcher, EntityManager $entityManager, Breadcrumb $breadcrumb, TranslatorInterface $translator, SerializerInterface $serializer)
     {
         $this->configuration = $configuration;
         $this->dispatcher = $dispatcher;
         $this->entityManager = $entityManager;
         $this->breadcrumb = $breadcrumb;
         $this->translator = $translator;
+        $this->serializer = $serializer;
     }
 
     public function show(string $type, int $id)
@@ -242,6 +246,10 @@ class CRUDController extends AbstractController
             ->getRepository($configuration['class'])
             ->createQueryBuilder('entity');
 
-        return new JsonResponse($queryBuilder->getQuery()->execute());
+        $events = $this->serializer->serialize($queryBuilder->getQuery()->execute(), 'json', [
+            'groups' => 'default'
+        ]);
+
+        return new JsonResponse($events);
     }
 }

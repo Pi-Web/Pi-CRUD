@@ -32,6 +32,6 @@
     </route>
 
     <route id="pi_crud_json" path="/{type}/json">
-        <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::json</default>
+        <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::all</default>
     </route>
 </routes>
