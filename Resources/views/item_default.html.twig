@@ -5,8 +5,8 @@
             <div class="card-body text-white z-index-10">
                 {% block item_title %}<h3 class="card-title">{{ entity.title }}</h3>{% endblock item_title %}
                 {% block item_content %}<div class="mb-2">Modifié le {{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}</div>{% endblock item_content %}
-                {% block item_link %}<a href="{{ path('pi_crud_show', {'type': type, 'id': entity.id}) }}" class="btn btn-primary stretched-link mb-2">Plus d'informations</a>{% endblock item_link %}
-                {% block item_admin %}{% include '@PiCRUD/includes/admin_actions.html.twig' ignore missing %}{% endblock item_admin %}
+                {% block item_link %}<a href="{{ path('pi_crud_show', {'type': type, 'id': entity.id}) }}" class="btn btn-primary stretched-link">Plus d'informations</a>{% endblock item_link %}
+                {% block item_admin %}{% include '@PiCRUD/includes/admin_actions.html.twig' ignore missing with {'label_attr': 'd-none'} %}{% endblock item_admin %}
             </div>
         </div>
     </div>

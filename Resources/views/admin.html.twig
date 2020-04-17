@@ -12,38 +12,35 @@
 
 {% block title %}Administration{% endblock %}
 
-{% block content_body %}
-
-    <div class="row py-4">
+{% block content %}
+    <div class="container py-4">
         {{ sonata_block_render({ 'type': 'block.breadcrumb' }, {}) }}
-        <div class="col-12 col-lg-10 offset-lg-1">
-            <h1>{{ 'pi_crud.admin.title'|trans({'entity_label': type}) }}</h1>
-            {% if is_granted('add', type) %}
-                <a href="{{ path('pi_crud_add', {'type': type}) }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i> {{ 'pi_crud.admin.add'|trans({'entity_label': type}) }}</a>
-            {% endif %}
-            <table class="table table-striped">
-                <thead class="bg-primary text-white">
-                    <tr>
-                        {% for property in configuration.properties %}
-                            {% if property.admin is defined and property.admin is not empty %}<th class="{{ property.admin.class is defined ? property.admin.class }}">{{ property.label }}</th>{% endif %}
-                        {% endfor %}
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for entity in entities %}
-                        <tr>
-                            {% for name, property in configuration.properties %}
-                                {% if property.admin is defined and property.admin is not empty %}<td class="{{ property.admin.class is defined ? property.admin.class }}">{% include templates['label_' ~ (property.type ?? 'default')] with {'value': attribute(entity, name), 'options': (property.admin.options is defined ? property.admin.options : {})} only %}</td>{% endif %}
-                            {% endfor %}
-                            <td>
-                                {% if configuration.annotation.show is defined and configuration.annotation.show is not null %}<a href="{{ path('pi_crud_show', {'type': type, 'id': entity.id}) }}" class="btn btn-outline-primary view_link mb-2" title="Visualiser"><i class="fa fa-eye" aria-hidden="true"></i></a>{% endif %}
-                                {% include '@PiCRUD/includes/admin_actions.html.twig' %}
-                            </td>
-                        </tr>
+        <h1>{{ 'pi_crud.admin.title'|trans({'entity_label': type}) }}</h1>
+        {% if is_granted('add', type) %}
+            <a href="{{ path('pi_crud_add', {'type': type}) }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i> {{ 'pi_crud.admin.add'|trans({'entity_label': type}) }}</a>
+        {% endif %}
+        <table class="table table-striped">
+            <thead class="bg-primary text-white">
+                <tr>
+                    {% for property in configuration.properties %}
+                        {% if property.admin is defined and property.admin is not empty %}<th class="{{ property.admin.class is defined ? property.admin.class }}">{{ property.label }}</th>{% endif %}
                     {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entity in entities %}
+                    <tr>
+                        {% for name, property in configuration.properties %}
+                            {% if property.admin is defined and property.admin is not empty %}<td class="{{ property.admin.class is defined ? property.admin.class }}">{% include templates['label_' ~ (property.type ?? 'default')] with {'value': attribute(entity, name), 'options': (property.admin.options is defined ? property.admin.options : {})} only %}</td>{% endif %}
+                        {% endfor %}
+                        <td>
+                            {% if configuration.annotation.show is defined and configuration.annotation.show is not null %}<a href="{{ path('pi_crud_show', {'type': type, 'id': entity.id}) }}" class="btn btn-outline-primary view_link mb-2" title="Visualiser"><i class="fa fa-eye" aria-hidden="true"></i></a>{% endif %}
+                            {% include '@PiCRUD/includes/admin_actions.html.twig' with {'label_attr': 'd-none'} %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}
