@@ -106,7 +106,6 @@ class CRUDController extends AbstractController
         return $this->render($template, [
             'type' => $type,
             'configuration' => $configuration,
-            'templates' => $this->configuration['templates'],
             'entities' => $queryBuilder->getQuery()->execute()
         ]);
     }
@@ -222,7 +221,7 @@ class CRUDController extends AbstractController
             $entityManager->flush();
 
             $this->dispatcher->dispatch(new GenericEvent($entity), PiCrudEvents::POST_ENTITY_UPDATE);
-
+            
             return $this->redirect($this->getTargetPath($this->get('session'), 'main'));
         }
 

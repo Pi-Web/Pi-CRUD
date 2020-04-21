@@ -5,8 +5,7 @@
         <div class="carousel-caption text-left">
             <h1 class="text-primary">{{ entity.title }}</h1>
             <p class="text-white font-italic">
-                Publié le {{ entity.createAt|format_datetime('full', 'medium', locale='fr') }}
-                Modifié le {{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}
+                Publié le {{ entity.createAt|format_datetime('full', 'medium', locale='fr') }}, modifié le {{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}
             </p>
             <p class="text-justify d-lg-none">{{ entity.content|striptags|u.truncate(255)|raw ~ '...' }}</p>
             <p class="text-justify d-none d-lg-block">{{ entity.content|striptags|u.truncate(500)|raw ~ '...' }}</p>

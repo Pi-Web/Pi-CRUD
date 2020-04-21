@@ -1,8 +1,1 @@
-<div class="form-group">
-    <label for="{{ field.vars.id }}" class="required">{% if configuration.icon is defined %}<i class="fa fa-{{ configuration.icon }}"></i> {% endif %} {{ configuration.label ?? configuration.id|capitalize }}</label>
-    {{ form_widget(field, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control', 'autofocus': 'autofocus'}}) }}
-
-    <div class="invalid-feedback">
-        {{ form_errors(field) }}
-    </div>
-</div>
+{{ form_row(field)}}
