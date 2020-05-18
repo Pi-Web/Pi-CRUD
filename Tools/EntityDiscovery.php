@@ -5,6 +5,8 @@ namespace PiWeb\PiCRUD\Tools;
 use PiWeb\PiCRUD\Annotation\Entity;
 use PiWeb\PiCRUD\Annotation\Property;
 use Doctrine\Common\Annotations\Reader;
+use ReflectionClass;
+use ReflectionException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -23,27 +25,23 @@ class EntityDiscovery
     /**
      * @var Reader
      */
-    private $annotationReader;
+    private Reader $annotationReader;
 
     /**
      * The Kernel root directory
      * @var string
      */
-    private $rootDir;
+    private string $rootDir;
 
     /**
      * @var array
      */
-    private $entities = [];
+    private array $entities = [];
 
 
     /**
      * EntityDiscovery constructor.
      *
-     * @param $namespace
-     *   The namespace of the entities
-     * @param $directory
-     *   The directory of the entities
      * @param $rootDir
      * @param Reader $annotationReader
      */
@@ -56,7 +54,8 @@ class EntityDiscovery
     }
 
     /**
-     * Returns all the exports
+     * @return array
+     * @throws ReflectionException
      */
     public function getEntities() {
         if (!$this->entities) {
@@ -67,7 +66,7 @@ class EntityDiscovery
     }
 
     /**
-     * Discovers exports
+     * @throws ReflectionException
      */
     private function discoverEntities() {
         $path = $this->rootDir . '/src/' . $this->directory;
@@ -77,7 +76,7 @@ class EntityDiscovery
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
             $class = $this->namespace . '\\' . $file->getBasename('.php');
-            $reflectionClass = new \ReflectionClass($class);
+            $reflectionClass = new ReflectionClass($class);
 
             $annotation = $this->annotationReader->getClassAnnotation($reflectionClass, Entity::class);
             if (!$annotation) {

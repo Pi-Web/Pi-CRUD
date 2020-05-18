@@ -16,5 +16,13 @@
         "psr-4": {
             "PiWeb\\PiCRUD\\": ""
         }
+    },
+    "require": {
+        "doctrine/annotations": "^1.10",
+        "sonata-project/block-bundle": "^4.2",
+        "symfony/serializer": "^5.0",
+        "pi-web/pi-breadcrumb": "1.*",
+        "symfony/security-bundle": "^5.0",
+        "doctrine/orm": "^2.7"
     }
 }

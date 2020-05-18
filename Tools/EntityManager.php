@@ -2,16 +2,15 @@
 
 namespace PiWeb\PiCRUD\Tools;
 
-use PiWeb\PiCRUD\Service\Model\ModelManager;
+use Exception;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Search\QueryBuilder as EasyadminQueryBuilder;
 
 class EntityManager
 {
     /**
      * @var EntityDiscovery
      */
-    private $discovery;
+    private EntityDiscovery $discovery;
 
     /**
      * @var EntityManagerInterface
@@ -28,6 +27,7 @@ class EntityManager
      * Returns a list of available entity.
      *
      * @return array
+     * @throws \ReflectionException
      */
     public function getEntities() {
         return $this->discovery->getEntities();
@@ -39,7 +39,7 @@ class EntityManager
      * @param $name
      * @return array
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function getEntity($name) {
         $entities = $this->discovery->getEntities();
@@ -47,27 +47,27 @@ class EntityManager
             return $entities[$name];
         }
 
-        throw new \Exception('Entity not found.');
+        throw new Exception('Entity not found.');
     }
 
     /**
      * Creates a entity
      *
      * @param $name
-     * @return EntityInterface
      *
-     * @throws \Exception
+     * @return mixed
+     * @throws Exception
      */
     public function create($name) {
         $entities = $this->discovery->getEntities();
         if (array_key_exists($name, $entities)) {
             $class = $entities[$name]['class'];
             if (!class_exists($class)) {
-                throw new \Exception('Entity class does not exist.');
+                throw new Exception('Entity class does not exist.');
             }
             return new $class($this->em);
         }
 
-        throw new \Exception('Entity does not exist.');
+        throw new Exception('Entity does not exist.');
     }
 }

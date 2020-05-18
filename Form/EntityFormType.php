@@ -4,25 +4,20 @@ namespace PiWeb\PiCRUD\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use PiWeb\PiCRUD\Tools\EntityManager;
-use Vich\UploaderBundle\Form\Type\VichImageType;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use PiWeb\PiCRUD\Event\FormEvent;
 use PiWeb\PiCRUD\Event\PiCrudEvents;
 
 class EntityFormType extends AbstractType
 {
 
-    private $configuration;
+    private array $configuration;
 
-    private $entityManager;
+    private EntityManager $entityManager;
 
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
     public function __construct(array $configuration, EntityManager $entityManager, EventDispatcherInterface $dispatcher)
     {

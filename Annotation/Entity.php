@@ -17,7 +17,7 @@ class Entity
      *
      * @var string
      */
-    public $name;
+    public string $name;
 
     public $show;
 

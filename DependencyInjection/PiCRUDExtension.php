@@ -9,7 +9,7 @@ use Symfony\Component\Config\FileLocator;
 
 class PiCRUDExtension extends Extension
 {
-    private $defaultsTemplates = [
+    private array $defaultsTemplates = [
         'admin' => '@PiCRUD/admin.html.twig',
         'list' => '@PiCRUD/list.html.twig',
         'field_default' => '@PiCRUD/fields/field_default.html.twig',
@@ -23,7 +23,7 @@ class PiCRUDExtension extends Extension
         'label_checkbox' => '@PiCRUD/fields/label_checkbox.html.twig',
     ];
 
-    private $defaultsEntitiesTemplates = [
+    private array $defaultsEntitiesTemplates = [
         'item_default' => '@PiCRUD/items/item_default.html.twig',
         'item_row' => '@PiCRUD/items/item_row.html.twig',
     ];

@@ -6,13 +6,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use PiWeb\PiCRUD\Event\AccessEvent;
 use PiWeb\PiCRUD\Event\QueryEvent;
 use PiWeb\PiCRUD\Event\PiCrudEvents;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use PiWeb\PiCRUD\Tools\EntityManager;
 use PiWeb\PiCRUD\Form\EntityFormType;
-use PiWeb\PiCRUD\Event\FormEvent;
 use PiWeb\PiCRUD\Event\EntityEvent;
 use PiWeb\PiBreadcrumb\Model\Breadcrumb;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -24,9 +22,9 @@ class CRUDController extends AbstractController
 {
     use TargetPathTrait;
 
-    private $configuration;
+    private array $configuration;
 
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
     private EntityManager $entityManager;
 
@@ -173,7 +171,7 @@ class CRUDController extends AbstractController
 
             $this->dispatcher->dispatch(new GenericEvent($entity), PiCrudEvents::POST_ENTITY_PERSIST);
 
-            return $this->redirect($this->getTargetPath($this->get('session'), 'main'));
+            return $this->redirect($this->getTargetPath($this->session, 'main'));
         }
 
         $template = '@PiCRUD/add.html.twig';
@@ -222,7 +220,7 @@ class CRUDController extends AbstractController
 
             $this->dispatcher->dispatch(new GenericEvent($entity), PiCrudEvents::POST_ENTITY_UPDATE);
             
-            return $this->redirect($this->getTargetPath($this->get('session'), 'main'));
+            return $this->redirect($this->getTargetPath($this->session, 'main'));
         }
 
         $template = '@PiCRUD/edit.html.twig';
@@ -253,7 +251,7 @@ class CRUDController extends AbstractController
         $entityManager->remove($entity);
         $entityManager->flush();
 
-        return $this->redirect($this->getTargetPath($this->get('session'), 'main'));
+        return $this->redirect($this->getTargetPath($this->session, 'main'));
     }
 
     public function all(string $type)

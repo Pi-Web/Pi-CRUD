@@ -3,7 +3,6 @@
 namespace PiWeb\PiCRUD\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
-use Symfony\Component\Form\FormBuilderInterface;
 
 final class EntityEvent extends Event
 {

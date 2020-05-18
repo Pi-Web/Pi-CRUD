@@ -5,15 +5,12 @@ namespace PiWeb\PiCRUD\Block;
 use Symfony\Component\HttpFoundation\Response;
 use Sonata\BlockBundle\Block\BlockContextInterface;
 use Sonata\BlockBundle\Block\Service\AbstractBlockService;
-use App\Repository\MenuRepository;
 use Twig\Environment;
 use PiWeb\PiCRUD\Tools\EntityManager;
 
 final class AdminMenuBlock extends AbstractBlockService
 {
-    private $menuRepository;
-
-    private $configuration;
+    private array $configuration;
 
     private EntityManager $entityManager;
 

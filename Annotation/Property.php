@@ -17,9 +17,9 @@ class Property
      *
      * @var string
      */
-    public $label;
+    public string $label;
 
-    public $type = 'default';
+    public string $type = 'default';
 
     public $options;
 
