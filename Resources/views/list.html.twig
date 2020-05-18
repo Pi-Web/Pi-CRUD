@@ -10,11 +10,13 @@
 
         <div class="row pt-4">
             {% for entity in entities %}
-                {{ sonata_block_render({ 'type': 'block.item' }, {
-                    'type': type,
-                    'mode': 'default',
-                    'item': entity
-                }) }}
+                {% if is_granted('show', entity) %}
+                    {{ sonata_block_render({ 'type': 'block.item' }, {
+                        'type': type,
+                        'mode': 'default',
+                        'item': entity
+                    }) }}
+                {% endif %}
             {% endfor %}
 
             {% if entities|length == 0 %}

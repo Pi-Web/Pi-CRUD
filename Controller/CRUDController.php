@@ -94,7 +94,8 @@ class CRUDController extends AbstractController
             ->getRepository($configuration['class'])
             ->createQueryBuilder('entity');
 
-        $this->dispatcher->dispatch(new QueryEvent($this->getUser(), $type, $queryBuilder), PiCrudEvents::POST_LIST_QUERY_BUILDER);
+        $event = new QueryEvent($this->getUser(), $type, $queryBuilder);
+        $this->dispatcher->dispatch($event, PiCrudEvents::POST_LIST_QUERY_BUILDER);
 
         $template = '@PiCRUD/list.html.twig';
         if ($this->get('twig')->getLoader()->exists('entities/list/' . $type . '.html.twig')) {
@@ -104,7 +105,7 @@ class CRUDController extends AbstractController
         return $this->render($template, [
             'type' => $type,
             'configuration' => $configuration,
-            'entities' => $queryBuilder->getQuery()->execute()
+            'entities' => $event->getQueryBuilder()->getQuery()->execute()
         ]);
     }
 
@@ -125,7 +126,8 @@ class CRUDController extends AbstractController
             ->getRepository($configuration['class'])
             ->createQueryBuilder('entity');
 
-        $this->dispatcher->dispatch(new QueryEvent($this->getUser(), $type, $queryBuilder), PiCrudEvents::POST_ADMIN_QUERY_BUILDER);
+        $event = new QueryEvent($this->getUser(), $type, $queryBuilder);
+        $this->dispatcher->dispatch($event, PiCrudEvents::POST_ADMIN_QUERY_BUILDER);
 
         $template = '@PiCRUD/admin.html.twig';
         if ($this->get('twig')->getLoader()->exists('entities/admin/' . $type . '.html.twig')) {
@@ -136,7 +138,7 @@ class CRUDController extends AbstractController
             'type' => $type,
             'configuration' => $configuration,
             'templates' => $this->configuration['templates'],
-            'entities' => $queryBuilder->getQuery()->execute()
+            'entities' => $event->getQueryBuilder()->getQuery()->execute()
         ]);
     }
 

@@ -13,7 +13,7 @@ final class QueryEvent extends Event
 
     private $queryBuilder;
 
-    public function __construct(?UserInterface $user, string $type, &$queryBuilder)
+    public function __construct(?UserInterface $user, string $type, $queryBuilder)
     {
         $this->user = $user;
         $this->type = $type;
@@ -33,5 +33,10 @@ final class QueryEvent extends Event
     public function getQueryBuilder()
     {
         return $this->queryBuilder;
+    }
+
+    public function setQueryBuilder($queryBuilder)
+    {
+        $this->queryBuilder = $queryBuilder;
     }
 }
