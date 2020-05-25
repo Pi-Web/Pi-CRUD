@@ -4,7 +4,12 @@ namespace PiWeb\PiCRUD\Tools;
 
 use Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use ReflectionException;
 
+/**
+ * Class EntityManager
+ * @package PiWeb\PiCRUD\Tools
+ */
 class EntityManager
 {
     /**
@@ -27,7 +32,7 @@ class EntityManager
      * Returns a list of available entity.
      *
      * @return array
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function getEntities() {
         return $this->discovery->getEntities();

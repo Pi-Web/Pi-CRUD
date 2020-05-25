@@ -1,5 +1,5 @@
 {% if is_granted('edit', entity) %}
-    <a href="{{ path('pi_crud_edit', {'type': type, 'id': entity.id}) }}" class="btn btn-outline-info admin-link stretched-link" title="Editer">
+    <a href="{{ path('pi_crud_edit', {'type': type, 'id': entity.id}) }}" class="btn btn-outline-info admin-link stretched-link" title="Éditer">
         <i class="fa fa-edit" aria-hidden="true"></i>
         <span class="{% if label_attr is defined %}{{ label_attr }}{% endif %}"> Modifier</span>
     </a>

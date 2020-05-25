@@ -2,6 +2,10 @@
 
 namespace PiWeb\PiCRUD\Event;
 
+/**
+ * Class PiCrudEvents
+ * @package PiWeb\PiCRUD\Event
+ */
 final class PiCrudEvents
 {
     public const POST_LIST_QUERY_BUILDER    = 'pi_crud.post_list_query_builder';

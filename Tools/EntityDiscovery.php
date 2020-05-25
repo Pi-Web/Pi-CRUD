@@ -10,6 +10,10 @@ use ReflectionException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
+/**
+ * Class EntityDiscovery
+ * @package PiWeb\PiCRUD\Tools
+ */
 class EntityDiscovery
 {
     /**

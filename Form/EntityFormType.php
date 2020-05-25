@@ -2,6 +2,7 @@
 
 namespace PiWeb\PiCRUD\Form;
 
+use Exception;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -10,22 +11,38 @@ use PiWeb\PiCRUD\Tools\EntityManager;
 use PiWeb\PiCRUD\Event\FormEvent;
 use PiWeb\PiCRUD\Event\PiCrudEvents;
 
+/**
+ * Class EntityFormType
+ * @package PiWeb\PiCRUD\Form
+ */
 class EntityFormType extends AbstractType
 {
-
-    private array $configuration;
-
+    /**
+     * @var EntityManager
+     */
     private EntityManager $entityManager;
 
+    /**
+     * @var EventDispatcherInterface
+     */
     private EventDispatcherInterface $dispatcher;
 
-    public function __construct(array $configuration, EntityManager $entityManager, EventDispatcherInterface $dispatcher)
+    /**
+     * EntityFormType constructor.
+     * @param EntityManager $entityManager
+     * @param EventDispatcherInterface $dispatcher
+     */
+    public function __construct(EntityManager $entityManager, EventDispatcherInterface $dispatcher)
     {
         $this->entityManager = $entityManager;
-        $this->configuration = $configuration;
         $this->dispatcher = $dispatcher;
     }
 
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     * @throws Exception
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $properties = $this->entityManager->getEntity($options['type'])['properties'];
@@ -40,6 +57,9 @@ class EntityFormType extends AbstractType
         }
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

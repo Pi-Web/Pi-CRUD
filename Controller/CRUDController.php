@@ -2,8 +2,11 @@
 
 namespace PiWeb\PiCRUD\Controller;
 
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use PiWeb\PiCRUD\Event\QueryEvent;
@@ -18,24 +21,59 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
+/**
+ * Class CRUDController
+ * @package PiWeb\PiCRUD\Controller
+ */
 class CRUDController extends AbstractController
 {
     use TargetPathTrait;
 
+    /**
+     * @var array
+     */
     private array $configuration;
 
+    /**
+     * @var EventDispatcherInterface
+     */
     private EventDispatcherInterface $dispatcher;
 
+    /**
+     * @var EntityManager
+     */
     private EntityManager $entityManager;
 
+    /**
+     * @var Breadcrumb
+     */
     private Breadcrumb $breadcrumb;
 
+    /**
+     * @var TranslatorInterface
+     */
     private TranslatorInterface $translator;
 
+    /**
+     * @var SerializerInterface
+     */
     private SerializerInterface $serializer;
 
+    /**
+     * @var SessionInterface
+     */
     private SessionInterface $session;
 
+    /**
+     * CRUDController constructor.
+     * @param array $configuration
+     * @param EventDispatcherInterface $dispatcher
+     * @param EntityManager $entityManager
+     * @param Breadcrumb $breadcrumb
+     * @param TranslatorInterface $translator
+     * @param SerializerInterface $serializer
+     * @param SessionInterface $session
+     */
     public function __construct(array $configuration, EventDispatcherInterface $dispatcher, EntityManager $entityManager, Breadcrumb $breadcrumb, TranslatorInterface $translator, SerializerInterface $serializer, SessionInterface $session)
     {
         $this->configuration = $configuration;
@@ -47,6 +85,13 @@ class CRUDController extends AbstractController
         $this->session = $session;
     }
 
+    /**
+     * @param Request $request
+     * @param string $type
+     * @param int $id
+     * @return Response
+     * @throws Exception
+     */
     public function show(Request $request, string $type, int $id)
     {
         $configuration = $this->entityManager->getEntity($type);
@@ -77,6 +122,12 @@ class CRUDController extends AbstractController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param string $type
+     * @return Response
+     * @throws Exception
+     */
     public function list(Request $request, string $type)
     {
         $configuration = $this->entityManager->getEntity($type);
@@ -109,6 +160,12 @@ class CRUDController extends AbstractController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param string $type
+     * @return Response
+     * @throws Exception
+     */
     public function admin(Request $request, string $type)
     {
         $configuration = $this->entityManager->getEntity($type);
@@ -142,6 +199,12 @@ class CRUDController extends AbstractController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param string $type
+     * @return RedirectResponse|Response
+     * @throws Exception
+     */
     public function add(Request $request, string $type)
     {
         $configuration = $this->entityManager->getEntity($type);
@@ -190,6 +253,13 @@ class CRUDController extends AbstractController
         ]);
     }
 
+    /**
+     * @param Request $request
+     * @param string $type
+     * @param int|null $id
+     * @return RedirectResponse|Response
+     * @throws Exception
+     */
     public function edit(Request $request, string $type, ?int $id)
     {
         $configuration = $this->entityManager->getEntity($type);
@@ -239,6 +309,12 @@ class CRUDController extends AbstractController
         ]);
     }
 
+    /**
+     * @param string $type
+     * @param int $id
+     * @return RedirectResponse
+     * @throws Exception
+     */
     public function delete(string $type, int $id)
     {
         $configuration = $this->entityManager->getEntity($type);
@@ -256,6 +332,11 @@ class CRUDController extends AbstractController
         return $this->redirect($this->getTargetPath($this->session, 'main'));
     }
 
+    /**
+     * @param string $type
+     * @return JsonResponse
+     * @throws Exception
+     */
     public function all(string $type)
     {
         $configuration = $this->entityManager->getEntity($type);

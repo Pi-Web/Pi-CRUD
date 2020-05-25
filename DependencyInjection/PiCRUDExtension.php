@@ -2,13 +2,21 @@
 
 namespace PiWeb\PiCRUD\DependencyInjection;
 
+use Exception;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 
+/**
+ * Class PiCRUDExtension
+ * @package PiWeb\PiCRUD\DependencyInjection
+ */
 class PiCRUDExtension extends Extension
 {
+    /**
+     * @var array|string[]
+     */
     private array $defaultsTemplates = [
         'admin' => '@PiCRUD/admin.html.twig',
         'list' => '@PiCRUD/list.html.twig',
@@ -23,11 +31,19 @@ class PiCRUDExtension extends Extension
         'label_checkbox' => '@PiCRUD/fields/label_checkbox.html.twig',
     ];
 
+    /**
+     * @var array|string[]
+     */
     private array $defaultsEntitiesTemplates = [
         'item_default' => '@PiCRUD/items/item_default.html.twig',
         'item_row' => '@PiCRUD/items/item_row.html.twig',
     ];
 
+    /**
+     * @param array $configs
+     * @param ContainerBuilder $container
+     * @throws Exception
+     */
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration();
@@ -40,17 +56,11 @@ class PiCRUDExtension extends Extension
 
         $definition = $container->getDefinition('PiWeb\PiCRUD\Controller\CRUDController');
         $definition->setArgument('$configuration', $config);
-
-        $definition = $container->getDefinition('PiWeb\PiCRUD\Form\EntityFormType');
-        $definition->setArgument('$configuration', $config);
-
-        $definition = $container->getDefinition('block.admin_menu');
-        $definition->setArgument('$configuration', $config);
-
-        $definition = $container->getDefinition('block.item');
-        $definition->setArgument('$configuration', $config);
     }
 
+    /**
+     * @param array $config
+     */
     private function setDefaults(array &$config)
     {
         $config['templates'] = array_merge($this->defaultsTemplates, $config['templates']);

@@ -19,11 +19,23 @@ class Property
      */
     public string $label;
 
+    /**
+     * @var string
+     */
     public string $type = 'default';
 
-    public $options;
+    /**
+     * @var array
+     */
+    public array $options;
 
-    public $admin;
+    /**
+     * @var array
+     */
+    public array $admin;
 
-    public $form;
+    /**
+     * @var array
+     */
+    public array $form;
 }

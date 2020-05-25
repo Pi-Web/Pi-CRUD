@@ -19,9 +19,15 @@ class Entity
      */
     public string $name;
 
-    public $show;
+    /**
+     * @var array
+     */
+    public array $show;
 
-    public $form;
+    /**
+     * @var array
+     */
+    public array $form;
 
     /**
      * @return string

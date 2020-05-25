@@ -5,20 +5,19 @@ namespace PiWeb\PiCRUD\Block;
 use Symfony\Component\HttpFoundation\Response;
 use Sonata\BlockBundle\Block\BlockContextInterface;
 use Sonata\BlockBundle\Block\Service\AbstractBlockService;
-use Twig\Environment;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Class ItemBlock
+ * @package PiWeb\PiCRUD\Block
+ */
 final class ItemBlock extends AbstractBlockService
 {
-    private array $configuration;
-
-    public function __construct(Environment $environment, array $configuration = [])
-    {
-        parent::__construct($environment);
-
-        $this->configuration = $configuration;
-    }
-
+    /**
+     * @param BlockContextInterface $blockContext
+     * @param Response|null $response
+     * @return Response
+     */
     public function execute(BlockContextInterface $blockContext, Response $response = null): Response
     {
         $settings = $blockContext->getSettings();
@@ -30,12 +29,14 @@ final class ItemBlock extends AbstractBlockService
 
         return $this->renderResponse($template, [
             'type' => $settings['type'],
-            'configuration' => $this->configuration['entities'],
             'entity' => $settings['item'],
             'attr' => $settings['attr'],
         ], $response);
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureSettings(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
