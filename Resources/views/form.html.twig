@@ -18,7 +18,7 @@
         {% block form_content %}
             {{ form_start(form) }}
                 <div class="row">
-                    {% for field, property in configuration.properties|filter(a => a.form is defined and a.form is not null) %}
+                    {% for field, property in configuration.properties|filter(a => a.form is defined and a.form is not empty) %}
                         <div class="col-12 {{ property.form.class ?? 'order-12' }}">
                             {% include templates['field_' ~ field] ?? templates['field_' ~ property.type] ?? templates['field_default'] ?? '@PiCRUD/fields/field_default.html.twig' ignore missing with {'field': form[field], 'configuration': property} %}
                         </div>
