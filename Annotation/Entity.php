@@ -17,17 +17,17 @@ class Entity
      *
      * @var string
      */
-    public string $name;
+    public string $name = '';
 
     /**
      * @var array
      */
-    public array $show;
+    public array $show = [];
 
     /**
      * @var array
      */
-    public array $form;
+    public array $form = [];
 
     /**
      * @return string

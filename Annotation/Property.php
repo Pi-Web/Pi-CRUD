@@ -17,7 +17,7 @@ class Property
      *
      * @var string
      */
-    public string $label;
+    public string $label = '';
 
     /**
      * @var string
@@ -27,15 +27,15 @@ class Property
     /**
      * @var array
      */
-    public array $options;
+    public array $options = [];
 
     /**
      * @var array
      */
-    public array $admin;
+    public array $admin = [];
 
     /**
      * @var array
      */
-    public array $form;
+    public array $form = [];
 }
