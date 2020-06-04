@@ -47,7 +47,7 @@ class EntityFormType extends AbstractType
     {
         $properties = $this->entityManager->getEntity($options['type'])['properties'];
         foreach ($properties as $name => $property) {
-            if ($property->form === null) {
+            if (empty($property->form)) {
                 continue;
             }
 
