@@ -94,18 +94,23 @@ class CRUDController extends AbstractController
      */
     public function show(Request $request, string $type, int $id)
     {
-        $configuration = $this->entityManager->getEntity($type);
+        try {
+            $configuration = $this->entityManager->getEntity($type);
+        }
+        catch (Exception $e) {
+            throw $this->createNotFoundException();
+        }
 
         $this->saveTargetPath($this->session, 'main', $request->getUri());
 
         $this->breadcrumb->addItem(
-            $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
-            $this->generateUrl('pi_crud_list', ['type' => $type])
+          $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
+          $this->generateUrl('pi_crud_list', ['type' => $type])
         );
 
         $entity = $this->getDoctrine()
-            ->getRepository($configuration['class'])
-            ->find($id);
+          ->getRepository($configuration['class'])
+          ->find($id);
 
         $this->denyAccessUnlessGranted('show', $entity);
 
@@ -117,8 +122,8 @@ class CRUDController extends AbstractController
         }
 
         return $this->render($template, [
-            'entity' => $entity,
-            'type' => $type
+          'entity' => $entity,
+          'type' => $type
         ]);
     }
 
@@ -130,20 +135,25 @@ class CRUDController extends AbstractController
      */
     public function list(Request $request, string $type)
     {
-        $configuration = $this->entityManager->getEntity($type);
+        try {
+            $configuration = $this->entityManager->getEntity($type);
+        }
+        catch (Exception $e) {
+            throw $this->createNotFoundException();
+        }
 
         $this->denyAccessUnlessGranted('list', $type);
 
         $this->saveTargetPath($this->session, 'main', $request->getUri());
 
         $this->breadcrumb->addItem(
-            $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
-            $this->generateUrl('pi_crud_list', ['type' => $type])
+          $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
+          $this->generateUrl('pi_crud_list', ['type' => $type])
         );
 
         $queryBuilder = $this->getDoctrine()
-            ->getRepository($configuration['class'])
-            ->createQueryBuilder('entity');
+          ->getRepository($configuration['class'])
+          ->createQueryBuilder('entity');
 
         $event = new QueryEvent($this->getUser(), $type, $queryBuilder);
         $this->dispatcher->dispatch($event, PiCrudEvents::POST_LIST_QUERY_BUILDER);
@@ -154,9 +164,9 @@ class CRUDController extends AbstractController
         }
 
         return $this->render($template, [
-            'type' => $type,
-            'configuration' => $configuration,
-            'entities' => $event->getQueryBuilder()->getQuery()->execute()
+          'type' => $type,
+          'configuration' => $configuration,
+          'entities' => $event->getQueryBuilder()->getQuery()->execute()
         ]);
     }
 
@@ -168,20 +178,25 @@ class CRUDController extends AbstractController
      */
     public function admin(Request $request, string $type)
     {
-        $configuration = $this->entityManager->getEntity($type);
+        try {
+            $configuration = $this->entityManager->getEntity($type);
+        }
+        catch (Exception $e) {
+            throw $this->createNotFoundException();
+        }
 
         $this->denyAccessUnlessGranted('admin', $type);
 
         $this->saveTargetPath($this->session, 'main', $request->getUri());
 
         $this->breadcrumb->addItem(
-            $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
-            $this->generateUrl('pi_crud_admin', ['type' => $type])
+          $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
+          $this->generateUrl('pi_crud_admin', ['type' => $type])
         );
 
         $queryBuilder = $this->getDoctrine()
-            ->getRepository($configuration['class'])
-            ->createQueryBuilder('entity');
+          ->getRepository($configuration['class'])
+          ->createQueryBuilder('entity');
 
         $event = new QueryEvent($this->getUser(), $type, $queryBuilder);
         $this->dispatcher->dispatch($event, PiCrudEvents::POST_ADMIN_QUERY_BUILDER);
@@ -192,10 +207,10 @@ class CRUDController extends AbstractController
         }
 
         return $this->render($template, [
-            'type' => $type,
-            'configuration' => $configuration,
-            'templates' => $this->configuration['templates'],
-            'entities' => $event->getQueryBuilder()->getQuery()->execute()
+          'type' => $type,
+          'configuration' => $configuration,
+          'templates' => $this->configuration['templates'],
+          'entities' => $event->getQueryBuilder()->getQuery()->execute()
         ]);
     }
 
@@ -207,18 +222,23 @@ class CRUDController extends AbstractController
      */
     public function add(Request $request, string $type)
     {
-        $configuration = $this->entityManager->getEntity($type);
+        try {
+            $configuration = $this->entityManager->getEntity($type);
+        }
+        catch (Exception $e) {
+            throw $this->createNotFoundException();
+        }
 
         $this->denyAccessUnlessGranted('add', $type);
 
         $this->breadcrumb->addItem(
-            $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
-            $this->generateUrl('pi_crud_admin', ['type' => $type])
+          $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
+          $this->generateUrl('pi_crud_admin', ['type' => $type])
         );
 
         $this->breadcrumb->addItem(
-            $this->translator->trans('pi_crud.form.add.title', ['entity_label' => $type]),
-            $this->generateUrl('pi_crud_add', ['type' => $type])
+          $this->translator->trans('pi_crud.form.add.title', ['entity_label' => $type]),
+          $this->generateUrl('pi_crud_add', ['type' => $type])
         );
 
         $entity = $this->entityManager->create($type);
@@ -245,11 +265,11 @@ class CRUDController extends AbstractController
         }
 
         return $this->render($template, [
-            'type' => $type,
-            'configuration' => $configuration,
-            'templates' => $this->configuration['templates'],
-            'entity' => $entity,
-            'form' => $form->createView(),
+          'type' => $type,
+          'configuration' => $configuration,
+          'templates' => $this->configuration['templates'],
+          'entity' => $entity,
+          'form' => $form->createView(),
         ]);
     }
 
@@ -262,21 +282,26 @@ class CRUDController extends AbstractController
      */
     public function edit(Request $request, string $type, ?int $id)
     {
-        $configuration = $this->entityManager->getEntity($type);
+        try {
+            $configuration = $this->entityManager->getEntity($type);
+        }
+        catch (Exception $e) {
+            throw $this->createNotFoundException();
+        }
 
         $this->breadcrumb->addItem(
-            $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
-            $this->generateUrl('pi_crud_admin', ['type' => $type])
+          $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
+          $this->generateUrl('pi_crud_admin', ['type' => $type])
         );
 
         $this->breadcrumb->addItem(
-            $this->translator->trans('pi_crud.form.edit.title', ['entity_label' => $type]),
-            $this->generateUrl('pi_crud_add', ['type' => $type])
+          $this->translator->trans('pi_crud.form.edit.title', ['entity_label' => $type]),
+          $this->generateUrl('pi_crud_add', ['type' => $type])
         );
 
         $entity = $this->getDoctrine()
-            ->getRepository($configuration['class'])
-            ->find($id);
+          ->getRepository($configuration['class'])
+          ->find($id);
 
         $this->denyAccessUnlessGranted('edit', $entity);
 
@@ -291,7 +316,7 @@ class CRUDController extends AbstractController
             $entityManager->flush();
 
             $this->dispatcher->dispatch(new GenericEvent($entity), PiCrudEvents::POST_ENTITY_UPDATE);
-            
+
             return $this->redirect($this->getTargetPath($this->session, 'main'));
         }
 
@@ -301,11 +326,11 @@ class CRUDController extends AbstractController
         }
 
         return $this->render($template, [
-            'type' => $type,
-            'configuration' => $configuration,
-            'templates' => $this->configuration['templates'],
-            'entity' => $entity,
-            'form' => $form->createView(),
+          'type' => $type,
+          'configuration' => $configuration,
+          'templates' => $this->configuration['templates'],
+          'entity' => $entity,
+          'form' => $form->createView(),
         ]);
     }
 
@@ -317,11 +342,16 @@ class CRUDController extends AbstractController
      */
     public function delete(string $type, int $id)
     {
-        $configuration = $this->entityManager->getEntity($type);
+        try {
+            $configuration = $this->entityManager->getEntity($type);
+        }
+        catch (Exception $e) {
+            throw $this->createNotFoundException();
+        }
 
         $entity = $this->getDoctrine()
-            ->getRepository($configuration['class'])
-            ->find($id);
+          ->getRepository($configuration['class'])
+          ->find($id);
 
         $this->denyAccessUnlessGranted('delete', $entity);
 
@@ -339,14 +369,19 @@ class CRUDController extends AbstractController
      */
     public function all(string $type)
     {
-        $configuration = $this->entityManager->getEntity($type);
+        try {
+            $configuration = $this->entityManager->getEntity($type);
+        }
+        catch (Exception $e) {
+            throw $this->createNotFoundException();
+        }
 
         $queryBuilder = $this->getDoctrine()
-            ->getRepository($configuration['class'])
-            ->createQueryBuilder('entity');
+          ->getRepository($configuration['class'])
+          ->createQueryBuilder('entity');
 
         $events = $this->serializer->serialize($queryBuilder->getQuery()->execute(), 'json', [
-            'groups' => 'default'
+          'groups' => 'default'
         ]);
 
         return new JsonResponse($events);
