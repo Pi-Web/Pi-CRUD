@@ -13,7 +13,7 @@
 {% block title %}Administration{% endblock %}
 
 {% block content %}
-    <div class="container py-4">
+    <div class="container py-2 py-lg-4">
         {{ sonata_block_render({ 'type': 'block.breadcrumb' }, {}) }}
         <h1>{{ 'pi_crud.admin.title'|trans({'entity_label': type}) }}</h1>
         {% if is_granted('add', type) %}
