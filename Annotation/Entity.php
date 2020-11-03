@@ -30,9 +30,9 @@ class Entity
     public array $form = [];
 
     /**
-     * @var array
+     * @var bool
      */
-    public array $search = [];
+    public bool $search = false;
 
     /**
      * @return string

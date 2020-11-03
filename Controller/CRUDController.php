@@ -157,24 +157,26 @@ class CRUDController extends AbstractController
           ->getRepository($configuration['class'])
           ->createQueryBuilder('entity');
 
-        $searchEntity = $this->entityManager->create($type);
-        $searchForm = null;
-        $searchForm = $this->createForm(SearchFormType::class, $searchEntity, ['type' => $type]);
-        $searchForm->handleRequest($request);
-        foreach ($searchForm->all() as $field) {
-            if (!empty($searchEntity->{'get' . $field->getName()}())) {
-                $operator = $field->getConfig()->getOption('attr')['operator'];
+        if ($configuration['annotation']->search) {
+            $searchEntity = $this->entityManager->create($type);
+            $searchForm = null;
+            $searchForm = $this->createForm(SearchFormType::class, $searchEntity, ['type' => $type]);
+            $searchForm->handleRequest($request);
+            foreach ($searchForm->all() as $field) {
+                if (!empty($searchEntity->{'get' . $field->getName()}())) {
+                    $operator = $field->getConfig()->getOption('attr')['operator'];
 
-                $expression = $queryBuilder->expr()->orX('entity.' . $field->getName().' ' . $operator . ' :'.$field->getName());
+                    $expression = $queryBuilder->expr()->orX('entity.' . $field->getName().' ' . $operator . ' :'.$field->getName());
 
-                $event = new FilterEvent($this->getUser(), $type, $queryBuilder, $expression, $field->getName());
-                $this->dispatcher->dispatch($event, PiCrudEvents::POST_FILTER_QUERY_BUILDER);
+                    $event = new FilterEvent($this->getUser(), $type, $queryBuilder, $expression, $field->getName());
+                    $this->dispatcher->dispatch($event, PiCrudEvents::POST_FILTER_QUERY_BUILDER);
 
-                $queryBuilder->andWhere($event->getComposite());
-                $queryBuilder->setParameter(
-                  $field->getName(),
-                  $searchEntity->{'get'.$field->getName()}()
-                );
+                    $queryBuilder->andWhere($event->getComposite());
+                    $queryBuilder->setParameter(
+                      $field->getName(),
+                      $searchEntity->{'get'.$field->getName()}()
+                    );
+                }
             }
         }
 
@@ -191,7 +193,7 @@ class CRUDController extends AbstractController
           'configuration' => $configuration,
           'entities' => $event->getQueryBuilder()->getQuery()->execute(),
           'templates' => $this->configuration['templates'],
-          'searchForm' => $searchForm->createView(),
+          'searchForm' => isset($searchForm) ? $searchForm->createView() : NULL,
         ]);
     }
 

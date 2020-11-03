@@ -9,20 +9,22 @@
         {% endblock content_body_title %}
 
         {% block content_body_search_form %}
-            {{ form_start(searchForm) }}
-            <div class="row">
-                {% for field, property in configuration.properties|filter(a => a.search is defined and a.search is not empty) %}
-                    <div class="col-12 col-md-6 col-lg-3 {{ property.search.class ?? 'order-12' }}">
-                        {% include templates['field_' ~ field] ?? templates['field_' ~ property.type] ?? templates['field_default'] ?? '@PiCRUD/fields/field_default.html.twig' ignore missing with {'field': searchForm[field], 'configuration': property} %}
-                    </div>
-                {% endfor %}
-            </div>
-            <div class="d-none">
-                {{ form_rest(searchForm)}}
-            </div>
-            <button type="submit" class="btn btn-primary mt-0"><i class="fa fa-search"></i> Filtrer</button>
-            {% block form_extra_link %}{% endblock %}
-            {{ form_end(searchForm) }}
+            {% if searchForm is defined and searchForm is not empty %}
+                {{ form_start(searchForm) }}
+                <div class="row">
+                    {% for field, property in configuration.properties|filter(a => a.search is defined and a.search is not empty) %}
+                        <div class="col-12 col-md-6 col-lg-3 {{ property.search.class ?? 'order-12' }}">
+                            {% include templates['field_' ~ field] ?? templates['field_' ~ property.type] ?? templates['field_default'] ?? '@PiCRUD/fields/field_default.html.twig' ignore missing with {'field': searchForm[field], 'configuration': property} %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="d-none">
+                    {{ form_rest(searchForm)}}
+                </div>
+                <button type="submit" class="btn btn-primary mt-0"><i class="fa fa-search"></i> Filtrer</button>
+                {% block form_extra_link %}{% endblock %}
+                {{ form_end(searchForm) }}
+            {% endif %}
         {% endblock content_body_search_form %}
 
         <div class="row pt-4">
