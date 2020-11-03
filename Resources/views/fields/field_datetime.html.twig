@@ -1,23 +1,35 @@
 <div class="form-group">
     <label for="{{ field.vars.id }}" class="font-weight-bold required">{% if configuration.icon is defined %}<i class="fa fa-{{ configuration.icon }}"></i> {% endif %} {{ configuration.label ?? configuration.id|capitalize }}</label>
     <div class="form-inline">
-        <div class="form-group pr-1">
-            {{ form_widget(field.date.day, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control', 'autofocus': 'autofocus'}}) }}
-        </div>
-        <div class="form-group pr-1">
-            {{ form_widget(field.date.month, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control', 'autofocus': 'autofocus'}}) }}
-        </div>
-        <div class="form-group pr-4">
-            {{ form_widget(field.date.year, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control', 'autofocus': 'autofocus'}}) }}
-        </div>
-        <div class="form-group pr-1">
-            {{ form_widget(field.time.hour, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control', 'autofocus': 'autofocus'}}) }}
-        </div>
-        <div class="form-group">
-            {{ form_widget(field.time.minute, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control', 'autofocus': 'autofocus'}}) }}
-        </div>
-        <div class="invalid-feedback">
-            {{ form_errors(field) }}
-        </div>
+        {% if field.date is defined and field.date is not empty %}
+            <div class="form-group pr-1">
+                {{ form_widget(field.date.day, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+            </div>
+            <div class="form-group pr-1">
+                {{ form_widget(field.date.month, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+            </div>
+            <div class="form-group pr-4">
+                {{ form_widget(field.date.year, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+            </div>
+            <div class="form-group pr-1">
+                {{ form_widget(field.time.hour, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_widget(field.time.minute, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+            </div>
+            <div class="invalid-feedback">
+                {{ form_errors(field) }}
+            </div>
+        {% else %}
+            <div class="form-group pr-1">
+                {{ form_widget(field.day, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+            </div>
+            <div class="form-group pr-1">
+                {{ form_widget(field.month, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+            </div>
+            <div class="form-group">
+                {{ form_widget(field.year, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+            </div>
+        {% endif %}
     </div>
 </div>

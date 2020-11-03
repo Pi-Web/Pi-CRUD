@@ -3,12 +3,14 @@
 namespace PiWeb\PiCRUD\Controller;
 
 use Exception;
+use PiWeb\PiCRUD\Form\SearchFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use PiWeb\PiCRUD\Event\FilterEvent;
 use PiWeb\PiCRUD\Event\QueryEvent;
 use PiWeb\PiCRUD\Event\PiCrudEvents;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -155,6 +157,27 @@ class CRUDController extends AbstractController
           ->getRepository($configuration['class'])
           ->createQueryBuilder('entity');
 
+        $searchEntity = $this->entityManager->create($type);
+        $searchForm = null;
+        $searchForm = $this->createForm(SearchFormType::class, $searchEntity, ['type' => $type]);
+        $searchForm->handleRequest($request);
+        foreach ($searchForm->all() as $field) {
+            if (!empty($searchEntity->{'get' . $field->getName()}())) {
+                $operator = $field->getConfig()->getOption('attr')['operator'];
+
+                $expression = $queryBuilder->expr()->orX('entity.' . $field->getName().' ' . $operator . ' :'.$field->getName());
+
+                $event = new FilterEvent($this->getUser(), $type, $queryBuilder, $expression, $field->getName());
+                $this->dispatcher->dispatch($event, PiCrudEvents::POST_FILTER_QUERY_BUILDER);
+
+                $queryBuilder->andWhere($event->getComposite());
+                $queryBuilder->setParameter(
+                  $field->getName(),
+                  $searchEntity->{'get'.$field->getName()}()
+                );
+            }
+        }
+
         $event = new QueryEvent($this->getUser(), $type, $queryBuilder);
         $this->dispatcher->dispatch($event, PiCrudEvents::POST_LIST_QUERY_BUILDER);
 
@@ -166,7 +189,9 @@ class CRUDController extends AbstractController
         return $this->render($template, [
           'type' => $type,
           'configuration' => $configuration,
-          'entities' => $event->getQueryBuilder()->getQuery()->execute()
+          'entities' => $event->getQueryBuilder()->getQuery()->execute(),
+          'templates' => $this->configuration['templates'],
+          'searchForm' => $searchForm->createView(),
         ]);
     }
 

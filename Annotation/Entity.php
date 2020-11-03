@@ -30,6 +30,11 @@ class Entity
     public array $form = [];
 
     /**
+     * @var array
+     */
+    public array $search = [];
+
+    /**
      * @return string
      */
     public function getName()

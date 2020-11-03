@@ -38,4 +38,9 @@ class Property
      * @var array
      */
     public array $form = [];
+
+    /**
+     * @var array
+     */
+    public array $search = [];
 }
