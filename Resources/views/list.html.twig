@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}{{ 'pi_crud.list.title'|trans({'entity_label': type}) }}{% endblock %}
+
 {% block content %}
     <div class="container py-2 py-lg-4">
         {{ sonata_block_render({ 'type': 'block.breadcrumb' }, {}) }}
@@ -27,7 +29,7 @@
             {% endif %}
         {% endblock content_body_search_form %}
 
-        <div class="row pt-4">
+        <div class="row pt-4" itemscope itemtype="http://schema.org/ListItem">
             {% for entity in entities %}
                 {% if is_granted('show', entity) %}
                     {{ sonata_block_render({ 'type': 'block.item' }, {
