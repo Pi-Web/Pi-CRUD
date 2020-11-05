@@ -33,12 +33,4 @@ class Entity
      * @var bool
      */
     public bool $search = false;
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
 }

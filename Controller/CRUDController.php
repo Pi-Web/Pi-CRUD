@@ -116,7 +116,10 @@ class CRUDController extends AbstractController
 
         $this->denyAccessUnlessGranted('show', $entity);
 
-        $this->breadcrumb->addItem($entity);
+        $this->breadcrumb->addItem(
+          $entity,
+          $this->generateUrl('pi_crud_show', ['type' => $type, 'id' => $id])
+        );
 
         $template = '@PiCRUD/show.html.twig';
         if ($this->get('twig')->getLoader()->exists('entities/show/' . $type . '.html.twig')) {

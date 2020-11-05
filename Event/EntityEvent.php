@@ -31,7 +31,7 @@ final class EntityEvent extends Event
      * @param $subject
      * @param array $options
      */
-    public function __construct(string $type, $subject, $options = [])
+    public function __construct(string $type, $subject, array $options = [])
     {
         $this->type = $type;
         $this->subject = $subject;

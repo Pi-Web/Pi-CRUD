@@ -97,7 +97,7 @@ class EntityDiscovery
             }
 
             /** @var Entity $annotation */
-            $this->entities[$annotation->getName()] = [
+            $this->entities[$annotation->name] = [
                 'class' => $class,
                 'annotation' => $annotation,
                 'properties' => $propertiesAnnotation
