@@ -12,7 +12,7 @@
     </div>
 
     <article itemscope itemtype="http://schema.org/Article">
-        <div class="container pb-4">
+        <div class="container">
             {% block entity_title %}
                 <h1 itemprop="name">{{ entity }}</h1>
                 <div class="font-italic">
@@ -21,9 +21,7 @@
             {% endblock %}
 
             {% block content_header_admin_actions %}
-                <div class="mt-4">
-                    {% include '@PiCRUD/includes/admin_actions.html.twig' %}
-                </div>
+                {% include '@PiCRUD/includes/admin_actions.html.twig' %}
             {% endblock %}
         </div>
         {% if entity.image is defined and entity.image.name is not null and entity.image is not null %}
@@ -32,7 +30,8 @@
 
         <section itemprop="text">
             {% if entity.content is defined and entity.content is not null %}
-                <div class="container py-4 text-justify" >
+                <span class="d-none" itemprop="headline"></span>
+                <div class="container text-justify" >
                     {{ entity.content|raw }}
                 </div>
             {% endif %}
