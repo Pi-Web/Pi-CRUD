@@ -167,7 +167,7 @@ class CRUDController extends AbstractController
             $searchForm->handleRequest($request);
             foreach ($searchForm->all() as $field) {
                 if (!empty($searchEntity->{'get' . $field->getName()}())) {
-                    $operator = $field->getConfig()->getOption('attr')['operator'];
+                    $operator = $field->getConfig()->getOption('attr')['operator'] ?? '=';
 
                     $expression = $queryBuilder->expr()->orX('entity.' . $field->getName().' ' . $operator . ' :'.$field->getName());
 
