@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD\Event;
 
 use Doctrine\ORM\Query\Expr\Composite;
@@ -14,45 +16,20 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class FilterEvent extends Event
 {
     /**
-     * @var UserInterface|null
-     */
-    private ?UserInterface $user;
-
-    /**
-     * @var string
-     */
-    private string $type;
-
-    /**
-     * @var QueryBuilder
-     */
-    private QueryBuilder $queryBuilder;
-
-    /**
-     * @var Composite
-     */
-    private Composite $composite;
-
-    /**
-     * @var string
-     */
-    private string $name;
-
-    /**
      * QueryEvent constructor.
      * @param UserInterface|null $user
      * @param string $type
-     * @param $queryBuilder
+     * @param QueryBuilder $queryBuilder
      * @param Composite $composite
      * @param string $name
      */
-    public function __construct(?UserInterface $user, string $type, QueryBuilder $queryBuilder, Composite $composite, string $name)
-    {
-        $this->user = $user;
-        $this->type = $type;
-        $this->queryBuilder = $queryBuilder;
-        $this->composite = $composite;
-        $this->name = $name;
+    public function __construct(
+        private ?UserInterface $user,
+        private string $type,
+        private QueryBuilder $queryBuilder,
+        private Composite $composite,
+        private string $name
+    ) {
     }
 
     /**
@@ -106,7 +83,7 @@ final class FilterEvent extends Event
     /**
      * @return string $name
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }

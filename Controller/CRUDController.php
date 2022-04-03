@@ -1,22 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD\Controller;
 
 use Exception;
-use PiWeb\PiCRUD\Form\SearchFormType;
+use PiWeb\PiCRUD\Service\ConfigurationService;
+use PiWeb\PiCRUD\Service\FormService;
+use PiWeb\PiCRUD\Service\TemplateService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use PiWeb\PiCRUD\Event\FilterEvent;
 use PiWeb\PiCRUD\Event\QueryEvent;
 use PiWeb\PiCRUD\Event\PiCrudEvents;
-use Symfony\Component\EventDispatcher\GenericEvent;
-use PiWeb\PiCRUD\Tools\EntityManager;
-use PiWeb\PiCRUD\Form\EntityFormType;
-use PiWeb\PiCRUD\Event\EntityEvent;
 use PiWeb\PiBreadcrumb\Model\Breadcrumb;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,59 +32,28 @@ class CRUDController extends AbstractController
     use TargetPathTrait;
 
     /**
-     * @var array
-     */
-    private array $configuration;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private EventDispatcherInterface $dispatcher;
-
-    /**
-     * @var EntityManager
-     */
-    private EntityManager $entityManager;
-
-    /**
-     * @var Breadcrumb
-     */
-    private Breadcrumb $breadcrumb;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private TranslatorInterface $translator;
-
-    /**
-     * @var SerializerInterface
-     */
-    private SerializerInterface $serializer;
-
-    /**
-     * @var SessionInterface
-     */
-    private SessionInterface $session;
-
-    /**
      * CRUDController constructor.
      * @param array $configuration
      * @param EventDispatcherInterface $dispatcher
-     * @param EntityManager $entityManager
      * @param Breadcrumb $breadcrumb
      * @param TranslatorInterface $translator
      * @param SerializerInterface $serializer
      * @param SessionInterface $session
+     * @param ConfigurationService $configurationService
+     * @param FormService $formService
+     * @param TemplateService $templateService
      */
-    public function __construct(array $configuration, EventDispatcherInterface $dispatcher, EntityManager $entityManager, Breadcrumb $breadcrumb, TranslatorInterface $translator, SerializerInterface $serializer, SessionInterface $session)
-    {
-        $this->configuration = $configuration;
-        $this->dispatcher = $dispatcher;
-        $this->entityManager = $entityManager;
-        $this->breadcrumb = $breadcrumb;
-        $this->translator = $translator;
-        $this->serializer = $serializer;
-        $this->session = $session;
+    public function __construct(
+        private array $configuration,
+        private EventDispatcherInterface $dispatcher,
+        private Breadcrumb $breadcrumb,
+        private TranslatorInterface $translator,
+        private SerializerInterface $serializer,
+        private SessionInterface $session,
+        private ConfigurationService $configurationService,
+        private FormService $formService,
+        private TemplateService $templateService,
+    ) {
     }
 
     /**
@@ -94,16 +63,9 @@ class CRUDController extends AbstractController
      * @return Response
      * @throws Exception
      */
-    public function show(Request $request, string $type, int $id)
+    public function show(Request $request, string $type, int $id): Response
     {
-        try {
-            $configuration = $this->entityManager->getEntity($type);
-        }
-        catch (Exception $e) {
-            throw $this->createNotFoundException();
-        }
-
-        $this->saveTargetPath($this->session, 'main', $request->getUri());
+        $configuration = $this->configurationService->getEntityConfiguration($type);
 
         $this->breadcrumb->addItem(
           $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
@@ -116,20 +78,20 @@ class CRUDController extends AbstractController
 
         $this->denyAccessUnlessGranted('show', $entity);
 
+        $this->saveTargetPath($this->session, 'main', $request->getUri());
+
         $this->breadcrumb->addItem(
           $entity,
           $this->generateUrl('pi_crud_show', ['type' => $type, 'id' => $id])
         );
 
-        $template = '@PiCRUD/show.html.twig';
-        if ($this->get('twig')->getLoader()->exists('entities/show/' . $type . '.html.twig')) {
-            $template = 'entities/show/' . $type . '.html.twig';
-        }
-
-        return $this->render($template, [
-          'entity' => $entity,
-          'type' => $type
-        ]);
+        return $this->render(
+            $this->templateService->getPath(TemplateService::FORMAT_SHOW, $type),
+            [
+                'entity' => $entity,
+                'type' => $type
+            ]
+        );
     }
 
     /**
@@ -138,16 +100,11 @@ class CRUDController extends AbstractController
      * @return Response
      * @throws Exception
      */
-    public function list(Request $request, string $type)
+    public function list(Request $request, string $type): Response
     {
-        try {
-            $configuration = $this->entityManager->getEntity($type);
-        }
-        catch (Exception $e) {
-            throw $this->createNotFoundException();
-        }
-
         $this->denyAccessUnlessGranted('list', $type);
+
+        $configuration = $this->configurationService->getEntityConfiguration($type);
 
         $this->saveTargetPath($this->session, 'main', $request->getUri());
 
@@ -156,48 +113,30 @@ class CRUDController extends AbstractController
           $this->generateUrl('pi_crud_list', ['type' => $type])
         );
 
-        $queryBuilder = $this->getDoctrine()
-          ->getRepository($configuration['class'])
-          ->createQueryBuilder('entity');
+        $queryBuilder = $this
+            ->getDoctrine()
+            ->getRepository($configuration['class'])
+            ->createQueryBuilder('entity');
 
-        if ($configuration['annotation']->search) {
-            $searchEntity = $this->entityManager->create($type);
-            $searchForm = null;
-            $searchForm = $this->createForm(SearchFormType::class, $searchEntity, ['type' => $type]);
-            $searchForm->handleRequest($request);
-            foreach ($searchForm->all() as $field) {
-                if (!empty($searchEntity->{'get' . $field->getName()}())) {
-                    $operator = $field->getConfig()->getOption('attr')['operator'] ?? '=';
-
-                    $expression = $queryBuilder->expr()->orX('entity.' . $field->getName().' ' . $operator . ' :'.$field->getName());
-
-                    $event = new FilterEvent($this->getUser(), $type, $queryBuilder, $expression, $field->getName());
-                    $this->dispatcher->dispatch($event, PiCrudEvents::POST_FILTER_QUERY_BUILDER);
-
-                    $queryBuilder->andWhere($event->getComposite());
-                    $queryBuilder->setParameter(
-                      $field->getName(),
-                      $searchEntity->{'get'.$field->getName()}()
-                    );
-                }
-            }
-        }
+        $searchForm = $configuration['annotation']->search ?
+            $this->formService->getSearchForm($request, $type, $queryBuilder) :
+            null;
 
         $event = new QueryEvent($this->getUser(), $type, $queryBuilder);
         $this->dispatcher->dispatch($event, PiCrudEvents::POST_LIST_QUERY_BUILDER);
 
-        $template = '@PiCRUD/list.html.twig';
-        if ($this->get('twig')->getLoader()->exists('entities/list/' . $type . '.html.twig')) {
-            $template = 'entities/list/' . $type . '.html.twig';
-        }
-
-        return $this->render($template, [
-          'type' => $type,
-          'configuration' => $configuration,
-          'entities' => $event->getQueryBuilder()->getQuery()->execute(),
-          'templates' => $this->configuration['templates'],
-          'searchForm' => isset($searchForm) ? $searchForm->createView() : NULL,
-        ]);
+        return $this->render(
+            $this->templateService->getPath(TemplateService::FORMAT_LIST, $type),
+            [
+                'type' => $type,
+                'configuration' => $configuration,
+                'entities' => $event->getQueryBuilder()->getQuery()->execute(),
+                'templates' => $this->configuration['templates'],
+                'searchForm' => $searchForm instanceof FormInterface ?
+                    $searchForm->createView() :
+                    null,
+            ]
+        );
     }
 
     /**
@@ -206,16 +145,11 @@ class CRUDController extends AbstractController
      * @return Response
      * @throws Exception
      */
-    public function admin(Request $request, string $type)
+    public function admin(Request $request, string $type): Response
     {
-        try {
-            $configuration = $this->entityManager->getEntity($type);
-        }
-        catch (Exception $e) {
-            throw $this->createNotFoundException();
-        }
-
         $this->denyAccessUnlessGranted('admin', $type);
+
+        $configuration = $this->configurationService->getEntityConfiguration($type);
 
         $this->saveTargetPath($this->session, 'main', $request->getUri());
 
@@ -231,17 +165,15 @@ class CRUDController extends AbstractController
         $event = new QueryEvent($this->getUser(), $type, $queryBuilder);
         $this->dispatcher->dispatch($event, PiCrudEvents::POST_ADMIN_QUERY_BUILDER);
 
-        $template = '@PiCRUD/admin.html.twig';
-        if ($this->get('twig')->getLoader()->exists('entities/admin/' . $type . '.html.twig')) {
-            $template = 'entities/admin/' . $type . '.html.twig';
-        }
-
-        return $this->render($template, [
-          'type' => $type,
-          'configuration' => $configuration,
-          'templates' => $this->configuration['templates'],
-          'entities' => $event->getQueryBuilder()->getQuery()->execute()
-        ]);
+        return $this->render(
+            $this->templateService->getPath(TemplateService::FORMAT_ADMIN, $type),
+            [
+                'type' => $type,
+                'configuration' => $configuration,
+                'templates' => $this->configuration['templates'],
+                'entities' => $event->getQueryBuilder()->getQuery()->execute()
+            ]
+        );
     }
 
     /**
@@ -250,14 +182,9 @@ class CRUDController extends AbstractController
      * @return RedirectResponse|Response
      * @throws Exception
      */
-    public function add(Request $request, string $type)
+    public function add(Request $request, string $type): RedirectResponse|Response
     {
-        try {
-            $configuration = $this->entityManager->getEntity($type);
-        }
-        catch (Exception $e) {
-            throw $this->createNotFoundException();
-        }
+        $configuration = $this->configurationService->getEntityConfiguration($type);
 
         $this->denyAccessUnlessGranted('add', $type);
 
@@ -271,36 +198,20 @@ class CRUDController extends AbstractController
           $this->generateUrl('pi_crud_add', ['type' => $type])
         );
 
-        $entity = $this->entityManager->create($type);
-        $this->dispatcher->dispatch(new EntityEvent($type, $entity, $request->query->all()), PiCrudEvents::POST_ENTITY_CREATE);
+        $form = $this->formService->getAdminForm($request, $type);
 
-        $form = $this->createForm(EntityFormType::class, $entity, ['type' => $type]);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatcher->dispatch(new GenericEvent($entity), PiCrudEvents::PRE_ENTITY_PERSIST);
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($entity);
-            $entityManager->flush();
-
-            $this->dispatcher->dispatch(new GenericEvent($entity), PiCrudEvents::POST_ENTITY_PERSIST);
-
-            return $this->redirect($this->getTargetPath($this->session, 'main'));
-        }
-
-        $template = '@PiCRUD/add.html.twig';
-        if ($this->get('twig')->getLoader()->exists('entities/add/' . $type . '.html.twig')) {
-            $template = 'entities/add/' . $type . '.html.twig';
-        }
-
-        return $this->render($template, [
-          'type' => $type,
-          'configuration' => $configuration,
-          'templates' => $this->configuration['templates'],
-          'entity' => $entity,
-          'form' => $form->createView(),
-        ]);
+        return $form instanceof FormInterface ?
+            $this->render(
+                $this->templateService->getPath(TemplateService::FORMAT_ADD, $type),
+                [
+                    'type' => $type,
+                    'configuration' => $configuration,
+                    'templates' => $this->configuration['templates'],
+                    'entity' => $form->getData(),
+                    'form' => $form->createView(),
+                ]
+            ) :
+            $this->redirect($this->getTargetPath($this->session, 'main'));
     }
 
     /**
@@ -310,14 +221,9 @@ class CRUDController extends AbstractController
      * @return RedirectResponse|Response
      * @throws Exception
      */
-    public function edit(Request $request, string $type, ?int $id)
+    public function edit(Request $request, string $type, ?int $id): RedirectResponse|Response
     {
-        try {
-            $configuration = $this->entityManager->getEntity($type);
-        }
-        catch (Exception $e) {
-            throw $this->createNotFoundException();
-        }
+        $configuration = $this->configurationService->getEntityConfiguration($type);
 
         $this->breadcrumb->addItem(
           $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
@@ -335,33 +241,20 @@ class CRUDController extends AbstractController
 
         $this->denyAccessUnlessGranted('edit', $entity);
 
-        $form = $this->createForm(EntityFormType::class, $entity, ['type' => $type]);
-        $form->handleRequest($request);
+        $form = $this->formService->getAdminForm($request, $type, $entity);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->dispatcher->dispatch(new GenericEvent($entity), PiCrudEvents::PRE_ENTITY_UPDATE);
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($entity);
-            $entityManager->flush();
-
-            $this->dispatcher->dispatch(new GenericEvent($entity), PiCrudEvents::POST_ENTITY_UPDATE);
-
-            return $this->redirect($this->getTargetPath($this->session, 'main'));
-        }
-
-        $template = '@PiCRUD/edit.html.twig';
-        if ($this->get('twig')->getLoader()->exists('entities/edit/' . $type . '.html.twig')) {
-            $template = 'entities/edit/' . $type . '.html.twig';
-        }
-
-        return $this->render($template, [
-          'type' => $type,
-          'configuration' => $configuration,
-          'templates' => $this->configuration['templates'],
-          'entity' => $entity,
-          'form' => $form->createView(),
-        ]);
+        return $form instanceof FormInterface ?
+            $this->render(
+                $this->templateService->getPath(TemplateService::FORMAT_EDIT, $type),
+                [
+                    'type' => $type,
+                    'configuration' => $configuration,
+                    'templates' => $this->configuration['templates'],
+                    'entity' => $entity,
+                    'form' => $form->createView(),
+                ]
+            ) :
+            $this->redirect($this->getTargetPath($this->session, 'main'));
     }
 
     /**
@@ -370,18 +263,13 @@ class CRUDController extends AbstractController
      * @return RedirectResponse
      * @throws Exception
      */
-    public function delete(string $type, int $id)
+    public function delete(string $type, int $id): RedirectResponse
     {
-        try {
-            $configuration = $this->entityManager->getEntity($type);
-        }
-        catch (Exception $e) {
-            throw $this->createNotFoundException();
-        }
+        $configuration = $this->configurationService->getEntityConfiguration($type);
 
         $entity = $this->getDoctrine()
-          ->getRepository($configuration['class'])
-          ->find($id);
+            ->getRepository($configuration['class'])
+            ->find($id);
 
         $this->denyAccessUnlessGranted('delete', $entity);
 
@@ -397,23 +285,21 @@ class CRUDController extends AbstractController
      * @return JsonResponse
      * @throws Exception
      */
-    public function all(string $type)
+    public function all(string $type): JsonResponse
     {
-        try {
-            $configuration = $this->entityManager->getEntity($type);
-        }
-        catch (Exception $e) {
-            throw $this->createNotFoundException();
-        }
+        $configuration = $this->configurationService->getEntityConfiguration($type);
 
-        $queryBuilder = $this->getDoctrine()
-          ->getRepository($configuration['class'])
-          ->createQueryBuilder('entity');
-
-        $events = $this->serializer->serialize($queryBuilder->getQuery()->execute(), 'json', [
-          'groups' => 'default'
-        ]);
-
-        return new JsonResponse($events);
+        return new JsonResponse($this->serializer->serialize(
+            $this
+                ->getDoctrine()
+                ->getRepository($configuration['class'])
+                ->createQueryBuilder('entity')
+                ->getQuery()
+                ->execute(),
+            'json',
+            [
+                'groups' => 'default'
+            ]
+        ));
     }
 }

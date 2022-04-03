@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD\Block;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -22,16 +24,19 @@ final class ItemBlock extends AbstractBlockService
     {
         $settings = $blockContext->getSettings();
 
-        $template = '@PiCRUD/item_' . $settings['mode'] . '.html.twig';
-        if ($this->getTwig()->getLoader()->exists('entities/item/' . $settings['type'] . '_' . $settings['mode'] . '.html.twig')) {
-            $template = 'entities/item/' . $settings['type'] . '_' . $settings['mode'] . '.html.twig';
-        }
+        $overloadedTemplatePath = sprintf('entities/item/%s_%s.html.twig', $settings['type'], $settings['mode']);
 
-        return $this->renderResponse($template, [
-            'type' => $settings['type'],
-            'entity' => $settings['item'],
-            'attr' => $settings['attr'],
-        ], $response);
+        return $this->renderResponse(
+            $this->getTwig()->getLoader()->exists($overloadedTemplatePath) ?
+                $overloadedTemplatePath :
+                sprintf('@PiCRUD/item_%s.html.twig', $settings['mode']),
+            [
+                'type' => $settings['type'],
+                'entity' => $settings['item'],
+                'attr' => $settings['attr'],
+            ],
+            $response
+        );
     }
 
     /**

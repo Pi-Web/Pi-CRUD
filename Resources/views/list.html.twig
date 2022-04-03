@@ -29,7 +29,7 @@
             {% endif %}
         {% endblock content_body_search_form %}
 
-        <div class="row pt-4" itemscope itemtype="http://schema.org/ListItem">
+        <div class="row pt-4" itemscope itemtype="https://schema.org/ListItem">
             {% for entity in entities %}
                 {% if is_granted('show', entity) %}
                     {{ sonata_block_render({ 'type': 'block.item' }, {

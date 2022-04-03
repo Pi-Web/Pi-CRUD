@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;

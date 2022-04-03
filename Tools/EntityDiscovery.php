@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD\Tools;
 
 use PiWeb\PiCRUD\Annotation\Entity;
@@ -27,21 +29,9 @@ class EntityDiscovery
     private string $directory;
 
     /**
-     * @var Reader
-     */
-    private Reader $annotationReader;
-
-    /**
-     * The Kernel root directory
-     * @var string
-     */
-    private string $rootDir;
-
-    /**
      * @var array
      */
     private array $entities = [];
-
 
     /**
      * EntityDiscovery constructor.
@@ -49,19 +39,20 @@ class EntityDiscovery
      * @param $rootDir
      * @param Reader $annotationReader
      */
-    public function __construct($rootDir, Reader $annotationReader)
-    {
+    public function __construct(
+        private $rootDir,
+        private Reader $annotationReader
+    ) {
         $this->namespace = 'App\Entity';
-        $this->annotationReader = $annotationReader;
         $this->directory = 'Entity';
-        $this->rootDir = $rootDir;
     }
 
     /**
      * @return array
      * @throws ReflectionException
      */
-    public function getEntities() {
+    public function getEntities(): array
+    {
         if (!$this->entities) {
             $this->discoverEntities();
         }
@@ -72,7 +63,8 @@ class EntityDiscovery
     /**
      * @throws ReflectionException
      */
-    private function discoverEntities() {
+    private function discoverEntities()
+    {
         $path = $this->rootDir . '/src/' . $this->directory;
         $finder = new Finder();
         $finder->files()->in($path);

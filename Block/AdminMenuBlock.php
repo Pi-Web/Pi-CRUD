@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD\Block;
 
 use ReflectionException;
@@ -16,20 +18,15 @@ use PiWeb\PiCRUD\Tools\EntityManager;
 final class AdminMenuBlock extends AbstractBlockService
 {
     /**
-     * @var EntityManager
-     */
-    private EntityManager $entityManager;
-
-    /**
      * AdminMenuBlock constructor.
      * @param Environment $environment
      * @param EntityManager $entityManager
      */
-    public function __construct(Environment $environment, EntityManager $entityManager)
-    {
+    public function __construct(
+        Environment $environment,
+        private EntityManager $entityManager
+    ) {
         parent::__construct($environment);
-
-        $this->entityManager = $entityManager;
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD\Tools;
 
 use Exception;
@@ -12,20 +14,10 @@ use ReflectionException;
  */
 class EntityManager
 {
-    /**
-     * @var EntityDiscovery
-     */
-    private EntityDiscovery $discovery;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityDiscovery $discovery, EntityManagerInterface $em)
-    {
-        $this->discovery = $discovery;
-        $this->em = $em;
+    public function __construct(
+        private EntityDiscovery $discovery,
+        private EntityManagerInterface $em
+    ) {
     }
 
     /**
@@ -34,7 +26,8 @@ class EntityManager
      * @return array
      * @throws ReflectionException
      */
-    public function getEntities() {
+    public function getEntities(): array
+    {
         return $this->discovery->getEntities();
     }
 
@@ -46,7 +39,8 @@ class EntityManager
      *
      * @throws Exception
      */
-    public function getEntity($name) {
+    public function getEntity($name): array
+    {
         $entities = $this->discovery->getEntities();
         if (isset($entities[$name])) {
             return $entities[$name];
@@ -56,14 +50,15 @@ class EntityManager
     }
 
     /**
-     * Creates a entity
+     * Creates an entity
      *
      * @param $name
      *
      * @return mixed
      * @throws Exception
      */
-    public function create($name) {
+    public function create($name): mixed
+    {
         $entities = $this->discovery->getEntities();
         if (array_key_exists($name, $entities)) {
             $class = $entities[$name]['class'];

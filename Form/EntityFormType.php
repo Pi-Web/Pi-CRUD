@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD\Form;
 
 use Exception;
@@ -18,24 +20,14 @@ use PiWeb\PiCRUD\Event\PiCrudEvents;
 class EntityFormType extends AbstractType
 {
     /**
-     * @var EntityManager
-     */
-    private EntityManager $entityManager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private EventDispatcherInterface $dispatcher;
-
-    /**
      * EntityFormType constructor.
      * @param EntityManager $entityManager
      * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(EntityManager $entityManager, EventDispatcherInterface $dispatcher)
-    {
-        $this->entityManager = $entityManager;
-        $this->dispatcher = $dispatcher;
+    public function __construct(
+        private EntityManager $entityManager,
+        private EventDispatcherInterface $dispatcher
+    ) {
     }
 
     /**

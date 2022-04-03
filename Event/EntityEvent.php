@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
@@ -11,31 +13,16 @@ use Symfony\Contracts\EventDispatcher\Event;
 final class EntityEvent extends Event
 {
     /**
-     * @var string
-     */
-    private string $type;
-
-    /**
-     * @var Object
-     */
-    private Object $subject;
-
-    /**
-     * @var array
-     */
-    private array $options;
-
-    /**
      * EntityEvent constructor.
      * @param string $type
-     * @param $subject
+     * @param Object $subject
      * @param array $options
      */
-    public function __construct(string $type, $subject, array $options = [])
-    {
-        $this->type = $type;
-        $this->subject = $subject;
-        $this->options = $options;
+    public function __construct(
+        private string $type,
+        private Object $subject,
+        private array $options = []
+    ) {
     }
 
     /**
@@ -49,7 +36,7 @@ final class EntityEvent extends Event
     /**
      * @return Object
      */
-    public function getSubject()
+    public function getSubject(): object
     {
         return $this->subject;
     }

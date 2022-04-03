@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD\Event;
 
 use Doctrine\ORM\QueryBuilder;
@@ -13,31 +15,16 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class QueryEvent extends Event
 {
     /**
-     * @var UserInterface|null
-     */
-    private ?UserInterface $user;
-
-    /**
-     * @var string
-     */
-    private string $type;
-
-    /**
-     * @var QueryBuilder
-     */
-    private QueryBuilder $queryBuilder;
-
-    /**
      * QueryEvent constructor.
      * @param UserInterface|null $user
      * @param string $type
-     * @param $queryBuilder
+     * @param QueryBuilder $queryBuilder
      */
-    public function __construct(?UserInterface $user, string $type, QueryBuilder $queryBuilder)
-    {
-        $this->user = $user;
-        $this->type = $type;
-        $this->queryBuilder = $queryBuilder;
+    public function __construct(
+        private ?UserInterface $user,
+        private string $type,
+        private QueryBuilder $queryBuilder
+    ) {
     }
 
     /**

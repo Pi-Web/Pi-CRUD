@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
@@ -12,44 +14,24 @@ use Symfony\Component\Form\FormBuilderInterface;
 final class FormEvent extends Event
 {
     /**
-     * @var string
-     */
-    private string $field;
-
-    /**
-     * @var
-     */
-    private $properties;
-
-    /**
-     * @var FormBuilderInterface
-     */
-    private FormBuilderInterface $builder;
-
-    /**
-     * @var array
-     */
-    private array $options;
-
-    /**
      * FormEvent constructor.
      * @param string $field
      * @param $properties
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    public function __construct(string $field, $properties, FormBuilderInterface $builder, array $options)
-    {
-        $this->field = $field;
-        $this->properties = $properties;
-        $this->builder = $builder;
-        $this->options = $options;
+    public function __construct(
+        private string $field,
+        private $properties,
+        private FormBuilderInterface $builder,
+        private array $options
+    ) {
     }
 
     /**
      * @return string
      */
-    public function getField()
+    public function getField(): string
     {
         return $this->field;
     }
@@ -57,7 +39,7 @@ final class FormEvent extends Event
     /**
      * @return mixed
      */
-    public function getProperties()
+    public function getProperties(): mixed
     {
         return $this->properties;
     }
@@ -65,7 +47,7 @@ final class FormEvent extends Event
     /**
      * @return FormBuilderInterface
      */
-    public function getBuilder()
+    public function getBuilder(): FormBuilderInterface
     {
         return $this->builder;
     }
@@ -73,7 +55,7 @@ final class FormEvent extends Event
     /**
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }

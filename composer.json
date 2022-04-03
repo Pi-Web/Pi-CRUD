@@ -21,7 +21,7 @@
         "doctrine/annotations": "^1.10",
         "sonata-project/block-bundle": "^4.2",
         "symfony/serializer": "^5.0",
-        "pi-web/pi-breadcrumb": "1.*",
+        "pi-web/pi-breadcrumb": "2.*",
         "symfony/security-bundle": "^5.0",
         "doctrine/orm": "^2.7"
     }
