@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -21,7 +22,6 @@ use PiWeb\PiBreadcrumb\Model\Breadcrumb;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Class CRUDController
@@ -38,7 +38,7 @@ class CRUDController extends AbstractController
      * @param Breadcrumb $breadcrumb
      * @param TranslatorInterface $translator
      * @param SerializerInterface $serializer
-     * @param SessionInterface $session
+     * @param RequestStack $requestStack
      * @param ConfigurationService $configurationService
      * @param FormService $formService
      * @param TemplateService $templateService
@@ -49,7 +49,7 @@ class CRUDController extends AbstractController
         private Breadcrumb $breadcrumb,
         private TranslatorInterface $translator,
         private SerializerInterface $serializer,
-        private SessionInterface $session,
+        private RequestStack $requestStack,
         private ConfigurationService $configurationService,
         private FormService $formService,
         private TemplateService $templateService,
@@ -78,7 +78,7 @@ class CRUDController extends AbstractController
 
         $this->denyAccessUnlessGranted('show', $entity);
 
-        $this->saveTargetPath($this->session, 'main', $request->getUri());
+        $this->saveTargetPath($this->requestStack->getSession(), 'main', $request->getUri());
 
         $this->breadcrumb->addItem(
           $entity,
@@ -106,7 +106,7 @@ class CRUDController extends AbstractController
 
         $configuration = $this->configurationService->getEntityConfiguration($type);
 
-        $this->saveTargetPath($this->session, 'main', $request->getUri());
+        $this->saveTargetPath($this->requestStack->getSession(), 'main', $request->getUri());
 
         $this->breadcrumb->addItem(
           $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
@@ -151,7 +151,7 @@ class CRUDController extends AbstractController
 
         $configuration = $this->configurationService->getEntityConfiguration($type);
 
-        $this->saveTargetPath($this->session, 'main', $request->getUri());
+        $this->saveTargetPath($this->requestStack->getSession(), 'main', $request->getUri());
 
         $this->breadcrumb->addItem(
           $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
@@ -211,7 +211,7 @@ class CRUDController extends AbstractController
                     'form' => $form->createView(),
                 ]
             ) :
-            $this->redirect($this->getTargetPath($this->session, 'main'));
+            $this->redirect($this->getTargetPath($this->requestStack->getSession(), 'main'));
     }
 
     /**
@@ -254,7 +254,7 @@ class CRUDController extends AbstractController
                     'form' => $form->createView(),
                 ]
             ) :
-            $this->redirect($this->getTargetPath($this->session, 'main'));
+            $this->redirect($this->getTargetPath($this->requestStack->getSession(), 'main'));
     }
 
     /**
@@ -277,7 +277,7 @@ class CRUDController extends AbstractController
         $entityManager->remove($entity);
         $entityManager->flush();
 
-        return $this->redirect($this->getTargetPath($this->session, 'main'));
+        return $this->redirect($this->getTargetPath($this->requestStack->getSession(), 'main'));
     }
 
     /**

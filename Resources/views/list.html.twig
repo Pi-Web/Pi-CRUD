@@ -3,7 +3,7 @@
 {% block title %}{{ 'pi_crud.list.title'|trans({'entity_label': type}) }}{% endblock %}
 
 {% block content %}
-    <div class="container py-2 py-lg-4">
+    <div class="container-xl py-2 py-lg-4">
         {{ sonata_block_render({ 'type': 'block.breadcrumb' }, {}) }}
 
         {% block content_body_title %}
@@ -15,7 +15,7 @@
                 {{ form_start(searchForm) }}
                 <div class="row">
                     {% for field, property in configuration.properties|filter(a => a.search is defined and a.search is not empty) %}
-                        <div class="col-12 col-md-6 col-lg-3 {{ property.search.class ?? 'order-12' }}">
+                        <div class="col-12 col-md-6 col-lg-4 {{ property.search.class ?? 'order-12' }}">
                             {% include templates['field_' ~ field] ?? templates['field_' ~ property.type] ?? templates['field_default'] ?? '@PiCRUD/fields/field_default.html.twig' ignore missing with {'field': searchForm[field], 'configuration': property} %}
                         </div>
                     {% endfor %}

@@ -5,16 +5,17 @@
 {% block title %}{{ entity }}{% endblock %}
 
 {% block content %}
-    <div class="container py-2 pt-lg-4 pb-lg-0">
+    <div class="container-xl py-2 pt-lg-4 pb-lg-0">
         {% block entity_breadcrumb %}
             {{ sonata_block_render({ 'type': 'block.breadcrumb' }, {}) }}
         {% endblock %}
     </div>
 
     <article itemscope itemtype="https://schema.org/Article">
-        <div class="container">
+        <div class="container-xl">
             {% block entity_title %}
                 <h1 itemprop="name">{{ entity }}</h1>
+                <span class="d-none" itemprop="author">{{ app_name }}</span>
                 <div class="font-italic">
                     Publié le <time itemprop="dateCreated" datetime="{{ entity.createAt|date('c') }}">{{ entity.createAt|format_datetime('full', 'medium', locale='fr') }}</time>, modifié le <time itemprop="dateModified" datetime="{{ entity.updateAt|date('c') }}">{{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}</time>
                 </div>
@@ -31,7 +32,7 @@
         <section itemprop="text">
             {% if entity.content is defined and entity.content is not null %}
                 <span class="d-none" itemprop="headline"></span>
-                <div class="container text-justify" >
+                <div class="container-xl text-justify" >
                     {{ entity.content|raw }}
                 </div>
             {% endif %}
