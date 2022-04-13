@@ -18,11 +18,11 @@
         }
     },
     "require": {
-        "doctrine/annotations": "^1.10",
-        "sonata-project/block-bundle": "^4.2",
+        "doctrine/annotations": "^1.13.2",
+        "sonata-project/block-bundle": "^4.11.0",
         "symfony/serializer": "^5.0",
         "pi-web/pi-breadcrumb": "2.*",
         "symfony/security-bundle": "^5.0",
-        "doctrine/orm": "^2.7"
+        "doctrine/orm": "^2.11.2"
     }
 }
