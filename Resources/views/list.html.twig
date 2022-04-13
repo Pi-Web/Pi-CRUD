@@ -10,6 +10,9 @@
             <h1>{{ 'pi_crud.list.title'|trans({'entity_label': type}) }}</h1>
         {% endblock content_body_title %}
 
+        {% block content_body_description %}
+        {% endblock content_body_description %}
+
         {% block content_body_search_form %}
             {% if searchForm is defined and searchForm is not empty %}
                 {{ form_start(searchForm) }}
