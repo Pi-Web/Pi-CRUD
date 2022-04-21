@@ -9,6 +9,12 @@
             </trans-unit>
 
             <!-- Liste -->
+            <trans-unit id="pi_crud.dashboard.title">
+                <source>pi_crud.dashboard.title</source>
+                <target>Dashboard d'administration</target>
+            </trans-unit>
+
+            <!-- Liste -->
             <trans-unit id="pi_crud.list.title">
                 <source>pi_crud.list.title</source>
                 <target>Liste entity_label</target>

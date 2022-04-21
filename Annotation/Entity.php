@@ -33,4 +33,9 @@ class Entity
      * @var bool
      */
     public bool $search = false;
+
+    /**
+     * @var array
+     */
+    public array $dashboard = [];
 }
