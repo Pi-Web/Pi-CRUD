@@ -42,6 +42,7 @@ class AdminController extends AbstractController
      * @param ConfigurationService $configurationService
      * @param FormService $formService
      * @param TemplateService $templateService
+     * @param EntityManager $entityManager
      */
     public function __construct(
         private EventDispatcherInterface $dispatcher,

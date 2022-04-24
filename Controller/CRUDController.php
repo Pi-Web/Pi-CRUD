@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PiWeb\PiCRUD\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use PiWeb\PiCRUD\Service\ConfigurationService;
 use PiWeb\PiCRUD\Service\FormService;
@@ -42,6 +43,7 @@ class CRUDController extends AbstractController
      * @param ConfigurationService $configurationService
      * @param FormService $formService
      * @param TemplateService $templateService
+     * @param ManagerRegistry $managerRegistry
      */
     public function __construct(
         private array $configuration,
@@ -53,6 +55,7 @@ class CRUDController extends AbstractController
         private ConfigurationService $configurationService,
         private FormService $formService,
         private TemplateService $templateService,
+        private ManagerRegistry $managerRegistry,
     ) {
     }
 
@@ -72,7 +75,7 @@ class CRUDController extends AbstractController
           $this->generateUrl('pi_crud_list', ['type' => $type])
         );
 
-        $entity = $this->getDoctrine()
+        $entity = $this->managerRegistry
           ->getRepository($configuration['class'])
           ->find($id);
 
@@ -113,8 +116,7 @@ class CRUDController extends AbstractController
           $this->generateUrl('pi_crud_list', ['type' => $type])
         );
 
-        $queryBuilder = $this
-            ->getDoctrine()
+        $queryBuilder = $this->managerRegistry
             ->getRepository($configuration['class'])
             ->createQueryBuilder('entity');
 
@@ -158,7 +160,7 @@ class CRUDController extends AbstractController
           $this->generateUrl('pi_crud_admin', ['type' => $type])
         );
 
-        $queryBuilder = $this->getDoctrine()
+        $queryBuilder = $this->managerRegistry
           ->getRepository($configuration['class'])
           ->createQueryBuilder('entity');
 
@@ -235,7 +237,7 @@ class CRUDController extends AbstractController
           $this->generateUrl('pi_crud_add', ['type' => $type])
         );
 
-        $entity = $this->getDoctrine()
+        $entity = $this->managerRegistry
           ->getRepository($configuration['class'])
           ->find($id);
 
@@ -267,13 +269,13 @@ class CRUDController extends AbstractController
     {
         $configuration = $this->configurationService->getEntityConfiguration($type);
 
-        $entity = $this->getDoctrine()
+        $entity = $this->managerRegistry
             ->getRepository($configuration['class'])
             ->find($id);
 
         $this->denyAccessUnlessGranted('delete', $entity);
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager = $this->managerRegistry->getManager();
         $entityManager->remove($entity);
         $entityManager->flush();
 
@@ -290,8 +292,7 @@ class CRUDController extends AbstractController
         $configuration = $this->configurationService->getEntityConfiguration($type);
 
         return new JsonResponse($this->serializer->serialize(
-            $this
-                ->getDoctrine()
+            $this->managerRegistry
                 ->getRepository($configuration['class'])
                 ->createQueryBuilder('entity')
                 ->getQuery()
