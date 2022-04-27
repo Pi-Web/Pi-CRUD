@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% block meta_description %}{{ 'pi_crud.list.meta_description'|trans({'entity_label': type}) }}{% endblock %}
+
 {% block title %}{{ 'pi_crud.list.title'|trans({'entity_label': type}) }}{% endblock %}
 
 {% block content %}
