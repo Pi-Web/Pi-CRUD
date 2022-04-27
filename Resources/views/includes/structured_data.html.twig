@@ -1,0 +1,7 @@
+{% block structured_data %}
+    {% if structuredData is defined and structuredData is not empty %}
+        <script type="application/ld+json">
+                {{ structuredData|raw }}
+            </script>
+    {% endif %}
+{% endblock %}

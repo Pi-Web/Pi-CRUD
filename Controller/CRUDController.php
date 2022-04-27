@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use PiWeb\PiCRUD\Service\ConfigurationService;
 use PiWeb\PiCRUD\Service\FormService;
+use PiWeb\PiCRUD\Service\StructuredDataService;
 use PiWeb\PiCRUD\Service\TemplateService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -56,6 +57,7 @@ class CRUDController extends AbstractController
         private FormService $formService,
         private TemplateService $templateService,
         private ManagerRegistry $managerRegistry,
+        private StructuredDataService $structuredDataService,
     ) {
     }
 
@@ -89,10 +91,11 @@ class CRUDController extends AbstractController
         );
 
         return $this->render(
-            $this->templateService->getPath(TemplateService::FORMAT_SHOW, $type),
+            $this->templateService->getTemplatePath(TemplateService::FORMAT_SHOW, $type),
             [
                 'entity' => $entity,
-                'type' => $type
+                'type' => $type,
+                'structuredData' => $this->structuredDataService->getStructuredData($entity),
             ]
         );
     }
@@ -128,7 +131,7 @@ class CRUDController extends AbstractController
         $this->dispatcher->dispatch($event, PiCrudEvents::POST_LIST_QUERY_BUILDER);
 
         return $this->render(
-            $this->templateService->getPath(TemplateService::FORMAT_LIST, $type),
+            $this->templateService->getTemplatePath(TemplateService::FORMAT_LIST, $type),
             [
                 'type' => $type,
                 'configuration' => $configuration,
@@ -156,6 +159,11 @@ class CRUDController extends AbstractController
         $this->saveTargetPath($this->requestStack->getSession(), 'main', $request->getUri());
 
         $this->breadcrumb->addItem(
+            $this->translator->trans('pi_crud.dashboard.title'),
+            $this->generateUrl('pi_crud_dashboard')
+        );
+
+        $this->breadcrumb->addItem(
           $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
           $this->generateUrl('pi_crud_admin', ['type' => $type])
         );
@@ -168,7 +176,7 @@ class CRUDController extends AbstractController
         $this->dispatcher->dispatch($event, PiCrudEvents::POST_ADMIN_QUERY_BUILDER);
 
         return $this->render(
-            $this->templateService->getPath(TemplateService::FORMAT_ADMIN, $type),
+            $this->templateService->getTemplatePath(TemplateService::FORMAT_ADMIN, $type),
             [
                 'type' => $type,
                 'configuration' => $configuration,
@@ -191,6 +199,11 @@ class CRUDController extends AbstractController
         $this->denyAccessUnlessGranted('add', $type);
 
         $this->breadcrumb->addItem(
+            $this->translator->trans('pi_crud.dashboard.title'),
+            $this->generateUrl('pi_crud_dashboard')
+        );
+
+        $this->breadcrumb->addItem(
           $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
           $this->generateUrl('pi_crud_admin', ['type' => $type])
         );
@@ -204,7 +217,7 @@ class CRUDController extends AbstractController
 
         return $form instanceof FormInterface ?
             $this->render(
-                $this->templateService->getPath(TemplateService::FORMAT_ADD, $type),
+                $this->templateService->getTemplatePath(TemplateService::FORMAT_ADD, $type),
                 [
                     'type' => $type,
                     'configuration' => $configuration,
@@ -228,6 +241,11 @@ class CRUDController extends AbstractController
         $configuration = $this->configurationService->getEntityConfiguration($type);
 
         $this->breadcrumb->addItem(
+            $this->translator->trans('pi_crud.dashboard.title'),
+            $this->generateUrl('pi_crud_dashboard')
+        );
+
+        $this->breadcrumb->addItem(
           $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
           $this->generateUrl('pi_crud_admin', ['type' => $type])
         );
@@ -247,7 +265,7 @@ class CRUDController extends AbstractController
 
         return $form instanceof FormInterface ?
             $this->render(
-                $this->templateService->getPath(TemplateService::FORMAT_EDIT, $type),
+                $this->templateService->getTemplatePath(TemplateService::FORMAT_EDIT, $type),
                 [
                     'type' => $type,
                     'configuration' => $configuration,

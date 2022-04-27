@@ -1,29 +1,26 @@
 {% if is_granted('show', entity) %}
     {% set class_primary = 'primary' %}
     {% set class_secondary = 'secondary' %}
-    {% set item_type = 'http://schema.org/Article' %}
 
     {% block item %}
-        <div class="{{ attr.class }} mb-4" itemscope itemtype="{{ item_type }}">
+        <div class="{{ attr.class }} mb-4">
             <div class="card bg-dark border-{{ class_primary }} h-100">
-                <img itemprop="image" src="{{ asset(entity.image.name is not null ? 'images/' ~ entity.image.name : 'images/default.webp') | imagine_filter('thumbnail') }}" class="card-img-top position-absolute opacity-20 h-100" alt="...">
+                <img src="{{ asset(entity.image.name is not null ? 'images/' ~ entity.image.name : 'images/default.webp') | imagine_filter('thumbnail') }}" class="card-img-top position-absolute opacity-20 h-100" alt="...">
                 <div class="card-body text-white z-index-10">
-                    {% block item_title %}<span class="h3 card-title" itemprop="name">{{ entity.title }}</span>{% endblock item_title %}
+                    {% block item_title %}<span class="h3 card-title">{{ entity.title }}</span>{% endblock item_title %}
                     {% block item_content %}
                         <div class="mb-2">
-                            <time class="d-none" itemprop="dateModified" datetime="{{ entity.createAt|date('c') }}">{{ entity.createAt|format_datetime('full', 'medium', locale='fr') }}</time>
-                            Modifié le <time itemprop="dateCreated" datetime="{{ entity.updateAt|date('c') }}">{{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}</time>
+                            Modifié le <time>{{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}</time>
                         </div>
                     {% endblock item_content %}
-                    {% if entity.content is defined and entity.content is not empty %}
-                        <span itemprop="headline" class="d-none">{{ entity.content|striptags|u.truncate(100)|raw }} ...</span>
-                    {% endif %}
                     <div class="item-links">
-                        {% block item_link %}<a href="{{ path('pi_crud_show', {'type': type, 'id': entity.id}) }}" class="btn btn-{{ class_primary }} stretched-link" itemprop="url">Plus d'informations</a>{% endblock item_link %}
+                        {% block item_link %}<a href="{{ path('pi_crud_show', {'type': type, 'id': entity.id}) }}" class="btn btn-{{ class_primary }} stretched-link">Plus d'informations</a>{% endblock item_link %}
                         {% block item_admin %}{% include '@PiCRUD/includes/admin_actions.html.twig' ignore missing with {'label_attr': 'd-none'} %}{% endblock item_admin %}
                     </div>
                 </div>
             </div>
         </div>
     {% endblock %}
+
+    {% include '@PiCRUD/includes/structured_data.html.twig' %}
 {% endif %}

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace PiWeb\PiCRUD\Block;
 
+use PiWeb\PiCRUD\Service\StructuredDataService;
 use Symfony\Component\HttpFoundation\Response;
 use Sonata\BlockBundle\Block\BlockContextInterface;
 use Sonata\BlockBundle\Block\Service\AbstractBlockService;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Twig\Environment;
 
 /**
  * Class ItemBlock
@@ -15,6 +17,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 final class ItemBlock extends AbstractBlockService
 {
+    public function __construct(
+        Environment $twig,
+        private StructuredDataService $structuredDataService,
+    ) {
+        parent::__construct($twig);
+    }
+
     /**
      * @param BlockContextInterface $blockContext
      * @param Response|null $response
@@ -34,6 +43,7 @@ final class ItemBlock extends AbstractBlockService
                 'type' => $settings['type'],
                 'entity' => $settings['item'],
                 'attr' => $settings['attr'],
+                'structuredData' => $this->structuredDataService->getStructuredData($settings['item']),
             ],
             $response
         );
