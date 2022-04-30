@@ -21,7 +21,7 @@
         "php": "^8.1",
         "doctrine/annotations": "^1.13.2",
         "symfony/serializer": "^5.0",
-        "pi-web/pi-breadcrumb": "3.*",
+        "pi-web/pi-breadcrumb": ">=3.0",
         "symfony/security-bundle": "^5.4",
         "doctrine/orm": "^2.12.1"
     }
