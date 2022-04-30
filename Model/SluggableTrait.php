@@ -3,6 +3,7 @@
 namespace PiWeb\PiCRUD\Model;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 Trait SluggableTrait
@@ -12,6 +13,7 @@ Trait SluggableTrait
      *
      * @Gedmo\Slug(fields={"title"}, unique=false)
      * @ORM\Column(length=256)
+     * @Groups("default")
      */
     protected string $slug = '';
 
