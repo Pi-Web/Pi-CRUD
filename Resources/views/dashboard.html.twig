@@ -10,7 +10,7 @@
             <h1>{{ 'pi_crud.dashboard.title'|trans }}</h1>
         {% endblock content_body_title %}
 
-        <h2 class="text-balise">Gérer les contenus</h2>
+        <h2 class="text-balise">{{ 'pi_crud.dashboard.entities'|trans }}</h2>
         <div class="row">
             {% for item in items %}
                 {% set color = item.options.color|default('primary') %}

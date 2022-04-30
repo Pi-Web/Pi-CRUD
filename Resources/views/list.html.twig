@@ -1,8 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}{{ 'pi_crud.list.meta_title'|trans({'entity_label': type}) }}{% endblock %}
 {% block meta_description %}{{ 'pi_crud.list.meta_description'|trans({'entity_label': type}) }}{% endblock %}
-
-{% block title %}{{ 'pi_crud.list.title'|trans({'entity_label': type}) }}{% endblock %}
 
 {% block content %}
     <div class="container-xl py-2 py-lg-4">
@@ -28,7 +27,7 @@
                 <div class="d-none">
                     {{ form_rest(searchForm)}}
                 </div>
-                <button type="submit" class="btn btn-primary mt-0"><i class="fa fa-search"></i> Filtrer</button>
+                <button type="submit" class="btn btn-primary mt-0"><i class="fa fa-search"></i> {{ 'pi_crud.list.filter'|trans({'entity_label': type}) }}</button>
                 {% block form_extra_link %}{% endblock %}
                 {{ form_end(searchForm) }}
             {% endif %}
@@ -44,13 +43,11 @@
                         'attr': {'class': 'col-12 col-md-6 col-lg-4'}
                     })) }}
                 {% endif %}
-            {% endfor %}
-
-            {% if entities|length == 0 %}
+            {% else %}
                 <div class="col-12">
-                    {{ 'pi_crud.list.empty_result'|trans({'entity_label': type}) }}
+                    <p class="lead">{{ 'pi_crud.list.empty_result'|trans({'entity_label': type}) }}</p>
                 </div>
-            {% endif %}
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

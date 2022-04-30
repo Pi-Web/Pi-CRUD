@@ -6,16 +6,16 @@
                 <h1 class="text-primary">{{ entity.title }}</h1>
 
                 {% if entity.createAt != entity.updateAt and entity.updateAt > date()|date_modify('-1 day') %}
-                    <span class="badge badge-secondary">Mise à jour récente</span>
+                    <span class="badge badge-secondary">{{ 'pi_crud.item.recently_updated'|trans({'entity_label': type}) }}</span>
                 {% endif %}
                 <p class="text-white font-italic">
-                    Modifié le {{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}
+                    {{ 'pi_crud.item.updated_at'|trans({'entity_label': type}) }} {{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}
                 </p>
                 <p class="text-justify d-lg-none">{{ entity.content|striptags|u.truncate(255)|raw }} ...</p>
                 <p class="text-justify d-none d-lg-block">{{ entity.content|striptags|u.truncate(500)|raw }} ...</p>
                 <p>
                     <a class="btn btn-primary" href="{{ path('pi_crud_show', {'type': type, 'id': entity.id, 'slug': entity.slug}) }}" role="button">
-                        Lire la suite
+                        {{ 'pi_crud.item.read_more'|trans({'entity_label': type}) }}
                     </a>
                     {% include '@PiCRUD/includes/admin_actions.html.twig' ignore missing %}
                 </p>

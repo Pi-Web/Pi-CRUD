@@ -2,16 +2,14 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
     <file source-language="en" target-language="fr" datatype="plaintext" original="file.ext">
         <body>
-            <!-- Menu d'administration -->
-            <trans-unit id="pi_crud.menu.entity">
-                <source>pi_crud.menu.entity</source>
-                <target>Administrer entity_label</target>
-            </trans-unit>
-
-            <!-- Liste -->
+            <!-- Dashboard -->
             <trans-unit id="pi_crud.dashboard.title">
                 <source>pi_crud.dashboard.title</source>
                 <target>Dashboard d'administration</target>
+            </trans-unit>
+            <trans-unit id="pi_crud.dashboard.entities">
+                <source>pi_crud.dashboard.entities</source>
+                <target>Gérer les contenus</target>
             </trans-unit>
 
             <!-- Liste -->
@@ -19,6 +17,43 @@
                 <source>pi_crud.list.title</source>
                 <target>Liste entity_label</target>
             </trans-unit>
+            <trans-unit id="pi_crud.list.meta_title">
+                <source>pi_crud.list.meta_title</source>
+                <target>Liste entity_label</target>
+            </trans-unit>
+            <trans-unit id="pi_crud.list.meta_description">
+                <source>pi_crud.list.meta_description</source>
+                <target></target>
+            </trans-unit>
+            <trans-unit id="pi_crud.list.filter">
+                <source>pi_crud.list.filter</source>
+                <target>Filtrer entity_label</target>
+            </trans-unit>
+
+            <!-- Items -->
+            <trans-unit id="pi_crud.item.updated_at">
+                <source>pi_crud.item.updated_at</source>
+                <target>Modifié le</target>
+            </trans-unit>
+            <trans-unit id="pi_crud.item.recently_updated">
+                <source>pi_crud.item.recently_updated</source>
+                <target>Mise à jour récente</target>
+            </trans-unit>
+            <trans-unit id="pi_crud.item.more_informations">
+                <source>pi_crud.item.more_informations</source>
+                <target>Plus d'informations</target>
+            </trans-unit>
+            <trans-unit id="pi_crud.item.read_more">
+                <source>pi_crud.item.read_more</source>
+                <target>Lire la suite</target>
+            </trans-unit>
+
+            <!-- Visualisation -->
+            <trans-unit id="pi_crud.show.updated_at">
+                <source>pi_crud.show.updated_at</source>
+                <target>Modifié le</target>
+            </trans-unit>
+
 
             <!-- Formulaire -->
             <trans-unit id="pi_crud.form.add.title">
@@ -43,6 +78,18 @@
                 <source>pi_crud.delete.title</source>
                 <target>Êtes vous sûr de vouloir supprimer entity_label ?</target>
             </trans-unit>
+            <trans-unit id="pi_crud.delete.content">
+                <source>pi_crud.delete.content</source>
+                <target>Cette action est irréversible.</target>
+            </trans-unit>
+            <trans-unit id="pi_crud.delete.cancel">
+                <source>pi_crud.delete.cancel</source>
+                <target>Annuler</target>
+            </trans-unit>
+            <trans-unit id="pi_crud.delete.confirm">
+                <source>pi_crud.delete.confirm</source>
+                <target>Confirmer la suppression</target>
+            </trans-unit>
 
             <!-- Liste d'administration -->
             <trans-unit id="pi_crud.admin.title">
@@ -52,6 +99,24 @@
             <trans-unit id="pi_crud.admin.add">
                 <source>pi_crud.admin.add</source>
                 <target>Ajouter entity_label</target>
+            </trans-unit>
+            <trans-unit id="pi_crud.admin.actions">
+                <source>pi_crud.admin.actions</source>
+                <target>Actions</target>
+            </trans-unit>
+
+            <!-- Actions d'administration -->
+            <trans-unit id="pi_crud.admin_actions.edit">
+                <source>pi_crud.admin_actions.edit</source>
+                <target>Modifier</target>
+            </trans-unit>
+            <trans-unit id="pi_crud.admin_actions.delete">
+                <source>pi_crud.admin_actions.delete</source>
+                <target>Supprimer</target>
+            </trans-unit>
+            <trans-unit id="pi_crud.admin_actions.show">
+                <source>pi_crud.admin_actions.show</source>
+                <target>Visualiser</target>
             </trans-unit>
         </body>
     </file>

@@ -17,7 +17,7 @@
             {% block entity_title %}
                 <h1>{{ entity }}</h1>
                 <div class="font-italic">
-                    Publié le <time itemprop="dateCreated" datetime="{{ entity.createAt|date('c') }}">{{ entity.createAt|format_datetime('full', 'medium', locale='fr') }}</time>, modifié le <time itemprop="dateModified" datetime="{{ entity.updateAt|date('c') }}">{{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}</time>
+                    {{ 'pi_crud.show.updated_at'|trans({'entity_label': type}) }} <time>{{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}</time>
                 </div>
             {% endblock %}
 

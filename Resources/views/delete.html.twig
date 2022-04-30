@@ -8,11 +8,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                Cette action est irréversible.
+                {{ 'pi_crud.delete.content'|trans({'entity_label': type}) }}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-link text-muted" data-dismiss="modal">Annuler</button>
-                <a type="button" class="btn btn-danger">Confirmer la suppression</a>
+                <button type="button" class="btn btn-link text-muted" data-dismiss="modal">{{ 'pi_crud.delete.cancel'|trans({'entity_label': type}) }}</button>
+                <a type="button" class="btn btn-danger">{{ 'pi_crud.delete.confirm'|trans({'entity_label': type}) }}</a>
             </div>
         </div>
     </div>
