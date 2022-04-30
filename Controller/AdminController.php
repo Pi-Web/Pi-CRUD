@@ -12,8 +12,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
-use PiWeb\PiBreadcrumb\Model\Breadcrumb;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class AdminController
@@ -25,15 +23,11 @@ class AdminController extends AbstractController
 
     /**
      * CRUDController constructor.
-     * @param Breadcrumb $breadcrumb
-     * @param TranslatorInterface $translator
      * @param RequestStack $requestStack
      * @param TemplateService $templateService
      * @param EntityManager $entityManager
      */
     public function __construct(
-        private Breadcrumb $breadcrumb,
-        private TranslatorInterface $translator,
         private RequestStack $requestStack,
         private TemplateService $templateService,
         private EntityManager $entityManager,
@@ -43,14 +37,7 @@ class AdminController extends AbstractController
 
     public function index(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_WEBMASTER');
-
         $this->saveTargetPath($this->requestStack->getSession(), 'main', $request->getUri());
-
-        $this->breadcrumb->addItem(
-            $this->translator->trans('pi_crud.dashboard.title'),
-            $this->generateUrl('pi_crud_dashboard')
-        );
 
         $entities = $this->entityManager->getEntities();
 

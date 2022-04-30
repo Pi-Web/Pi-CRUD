@@ -14,7 +14,7 @@
 
 {% block content %}
     <div class="container-xl py-2 py-lg-4">
-        {{ sonata_block_render({ 'type': 'block.breadcrumb' }, {}) }}
+        {{ render(path('pi_breadcrumb_block')) }}
         <h1>{{ 'pi_crud.admin.title'|trans({'entity_label': type}) }}</h1>
         {% if is_granted('add', type) %}
             <a href="{{ path('pi_crud_add', {'type': type}) }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i> {{ 'pi_crud.admin.add'|trans({'entity_label': type}) }}</a>
@@ -35,7 +35,7 @@
                             {% if property.admin is defined and property.admin is not empty %}<td class="{{ property.admin.class is defined ? property.admin.class }}">{% include templates['label_' ~ (property.type ?? 'default')] with {'value': attribute(entity, name), 'options': (property.admin.options is defined ? property.admin.options : {})} only %}</td>{% endif %}
                         {% endfor %}
                         <td>
-                            {% if configuration.annotation.show is defined and configuration.annotation.show is not null %}<a href="{{ path('pi_crud_show', {'type': type, 'id': entity.id}) }}" class="btn btn-outline-primary view_link" title="Visualiser"><i class="fa fa-eye" aria-hidden="true"></i></a>{% endif %}
+                            {% if configuration.annotation.show is defined and configuration.annotation.show is not null %}<a href="{{ path('pi_crud_show', {'type': type, 'id': entity.id, 'slug': entity.slug}) }}" class="btn btn-outline-primary view_link" title="Visualiser"><i class="fa fa-eye" aria-hidden="true"></i></a>{% endif %}
                             {% include '@PiCRUD/includes/admin_actions.html.twig' with {'label_attr': 'd-none'} %}
                         </td>
                     </tr>

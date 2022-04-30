@@ -11,6 +11,7 @@ use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 /**
  * Class EntityDiscovery
@@ -18,6 +19,8 @@ use Symfony\Component\Finder\SplFileInfo;
  */
 class EntityDiscovery
 {
+    private const ENTITIES_CACHE_KEY = 'cache.pi_crud.entity_discovery.entities';
+
     /**
      * @var string
      */
@@ -41,7 +44,8 @@ class EntityDiscovery
      */
     public function __construct(
         private $rootDir,
-        private Reader $annotationReader
+        private Reader $annotationReader,
+        private AdapterInterface $cache,
     ) {
         $this->namespace = 'App\Entity';
         $this->directory = 'Entity';
@@ -53,11 +57,19 @@ class EntityDiscovery
      */
     public function getEntities(): array
     {
-        if (!$this->entities) {
-            $this->discoverEntities();
+        if (!empty($this->entities)) {
+            return $this->entities;
         }
 
-        return $this->entities;
+        $item = $this->cache->getItem(self::ENTITIES_CACHE_KEY);
+        if(!$item->isHit()) {
+            $this->discoverEntities();
+            $item->set($this->entities);
+            $item->expiresAfter(604800);
+            $this->cache->save($item);
+        }
+
+        return $this->entities = $item->get();
     }
 
     /**

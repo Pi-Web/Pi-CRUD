@@ -10,12 +10,14 @@ services:
         resource: '../../*'
         exclude: '../../{Annotation,DependencyInjection,Event,Migrations,Tests,Kernel.php}'
 
-    block.admin_menu:
-        class: PiWeb\PiCRUD\Block\AdminMenuBlock
+    serializer.normalizer.structured_data:
+        class: PiWeb\PiCRUD\Serializer\StructuredData\DefaultStructuredDataSerializer
         tags:
-            - { name: sonata.block }
+            - { name: serializer.normalizer, priority: -910 }
 
-    block.item:
-        class: PiWeb\PiCRUD\Block\ItemBlock
+    gedmo.listener.sluggable:
+        class: Gedmo\Sluggable\SluggableListener
         tags:
-            - { name: sonata.block }
+            - { name: doctrine.event_subscriber, connection: default }
+        calls:
+            - [ setAnnotationReader, [ "@annotation_reader" ] ]

@@ -8,7 +8,7 @@
 {% block content %}
     <div class="container-xl py-2 pt-lg-4 pb-lg-0">
         {% block entity_breadcrumb %}
-            {{ sonata_block_render({ 'type': 'block.breadcrumb' }, {}) }}
+            {{ render(path('pi_breadcrumb_block')) }}
         {% endblock %}
     </div>
 

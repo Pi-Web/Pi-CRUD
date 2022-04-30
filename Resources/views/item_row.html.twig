@@ -14,7 +14,7 @@
                 <p class="text-justify d-lg-none">{{ entity.content|striptags|u.truncate(255)|raw }} ...</p>
                 <p class="text-justify d-none d-lg-block">{{ entity.content|striptags|u.truncate(500)|raw }} ...</p>
                 <p>
-                    <a class="btn btn-primary" href="{{ path('pi_crud_show', {'type': type, 'id': entity.id}) }}" role="button" itemid="{{ path('pi_crud_show', {'type': type, 'id': entity.id}) }}">
+                    <a class="btn btn-primary" href="{{ path('pi_crud_show', {'type': type, 'id': entity.id, 'slug': entity.slug}) }}" role="button">
                         Lire la suite
                     </a>
                     {% include '@PiCRUD/includes/admin_actions.html.twig' ignore missing %}

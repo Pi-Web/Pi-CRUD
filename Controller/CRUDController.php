@@ -6,7 +6,6 @@ namespace PiWeb\PiCRUD\Controller;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
-use PiWeb\PiCRUD\Service\ConfigurationService;
 use PiWeb\PiCRUD\Service\FormService;
 use PiWeb\PiCRUD\Service\StructuredDataService;
 use PiWeb\PiCRUD\Service\TemplateService;
@@ -14,14 +13,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use PiWeb\PiCRUD\Event\QueryEvent;
 use PiWeb\PiCRUD\Event\PiCrudEvents;
-use PiWeb\PiBreadcrumb\Model\Breadcrumb;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -37,11 +33,7 @@ class CRUDController extends AbstractController
      * CRUDController constructor.
      * @param array $configuration
      * @param EventDispatcherInterface $dispatcher
-     * @param Breadcrumb $breadcrumb
-     * @param TranslatorInterface $translator
      * @param SerializerInterface $serializer
-     * @param RequestStack $requestStack
-     * @param ConfigurationService $configurationService
      * @param FormService $formService
      * @param TemplateService $templateService
      * @param ManagerRegistry $managerRegistry
@@ -49,11 +41,7 @@ class CRUDController extends AbstractController
     public function __construct(
         private array $configuration,
         private EventDispatcherInterface $dispatcher,
-        private Breadcrumb $breadcrumb,
-        private TranslatorInterface $translator,
         private SerializerInterface $serializer,
-        private RequestStack $requestStack,
-        private ConfigurationService $configurationService,
         private FormService $formService,
         private TemplateService $templateService,
         private ManagerRegistry $managerRegistry,
@@ -70,28 +58,10 @@ class CRUDController extends AbstractController
      */
     public function show(Request $request, string $type, int $id): Response
     {
-        $configuration = $this->configurationService->getEntityConfiguration($type);
-
-        $this->breadcrumb->addItem(
-          $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
-          $this->generateUrl('pi_crud_list', ['type' => $type])
-        );
-
-        $entity = $this->managerRegistry
-          ->getRepository($configuration['class'])
-          ->find($id);
-
-        $this->denyAccessUnlessGranted('show', $entity);
-
-        $this->saveTargetPath($this->requestStack->getSession(), 'main', $request->getUri());
-
-        $this->breadcrumb->addItem(
-          $entity,
-          $this->generateUrl('pi_crud_show', ['type' => $type, 'id' => $id])
-        );
+        $entity = $request->attributes->get('entity');
 
         return $this->render(
-            $this->templateService->getTemplatePath(TemplateService::FORMAT_SHOW, $type),
+            $this->templateService->getTemplatePath(TemplateService::FORMAT_SHOW, [$type]),
             [
                 'entity' => $entity,
                 'type' => $type,
@@ -108,16 +78,7 @@ class CRUDController extends AbstractController
      */
     public function list(Request $request, string $type): Response
     {
-        $this->denyAccessUnlessGranted('list', $type);
-
-        $configuration = $this->configurationService->getEntityConfiguration($type);
-
-        $this->saveTargetPath($this->requestStack->getSession(), 'main', $request->getUri());
-
-        $this->breadcrumb->addItem(
-          $this->translator->trans('pi_crud.list.title', ['entity_label' => $type]),
-          $this->generateUrl('pi_crud_list', ['type' => $type])
-        );
+        $configuration = $request->attributes->get('configuration');
 
         $queryBuilder = $this->managerRegistry
             ->getRepository($configuration['class'])
@@ -131,7 +92,7 @@ class CRUDController extends AbstractController
         $this->dispatcher->dispatch($event, PiCrudEvents::POST_LIST_QUERY_BUILDER);
 
         return $this->render(
-            $this->templateService->getTemplatePath(TemplateService::FORMAT_LIST, $type),
+            $this->templateService->getTemplatePath(TemplateService::FORMAT_LIST, [$type]),
             [
                 'type' => $type,
                 'configuration' => $configuration,
@@ -152,31 +113,17 @@ class CRUDController extends AbstractController
      */
     public function admin(Request $request, string $type): Response
     {
-        $this->denyAccessUnlessGranted('admin', $type);
-
-        $configuration = $this->configurationService->getEntityConfiguration($type);
-
-        $this->saveTargetPath($this->requestStack->getSession(), 'main', $request->getUri());
-
-        $this->breadcrumb->addItem(
-            $this->translator->trans('pi_crud.dashboard.title'),
-            $this->generateUrl('pi_crud_dashboard')
-        );
-
-        $this->breadcrumb->addItem(
-          $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
-          $this->generateUrl('pi_crud_admin', ['type' => $type])
-        );
+        $configuration = $request->attributes->get('configuration');
 
         $queryBuilder = $this->managerRegistry
-          ->getRepository($configuration['class'])
-          ->createQueryBuilder('entity');
+            ->getRepository($configuration['class'])
+            ->createQueryBuilder('entity');
 
         $event = new QueryEvent($this->getUser(), $type, $queryBuilder);
         $this->dispatcher->dispatch($event, PiCrudEvents::POST_ADMIN_QUERY_BUILDER);
 
         return $this->render(
-            $this->templateService->getTemplatePath(TemplateService::FORMAT_ADMIN, $type),
+            $this->templateService->getTemplatePath(TemplateService::FORMAT_ADMIN, [$type]),
             [
                 'type' => $type,
                 'configuration' => $configuration,
@@ -194,39 +141,20 @@ class CRUDController extends AbstractController
      */
     public function add(Request $request, string $type): RedirectResponse|Response
     {
-        $configuration = $this->configurationService->getEntityConfiguration($type);
-
-        $this->denyAccessUnlessGranted('add', $type);
-
-        $this->breadcrumb->addItem(
-            $this->translator->trans('pi_crud.dashboard.title'),
-            $this->generateUrl('pi_crud_dashboard')
-        );
-
-        $this->breadcrumb->addItem(
-          $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
-          $this->generateUrl('pi_crud_admin', ['type' => $type])
-        );
-
-        $this->breadcrumb->addItem(
-          $this->translator->trans('pi_crud.form.add.title', ['entity_label' => $type]),
-          $this->generateUrl('pi_crud_add', ['type' => $type])
-        );
-
         $form = $this->formService->getAdminForm($request, $type);
 
         return $form instanceof FormInterface ?
             $this->render(
-                $this->templateService->getTemplatePath(TemplateService::FORMAT_ADD, $type),
+                $this->templateService->getTemplatePath(TemplateService::FORMAT_ADD, [$type]),
                 [
                     'type' => $type,
-                    'configuration' => $configuration,
+                    'configuration' => $request->attributes->get('configuration'),
                     'templates' => $this->configuration['templates'],
                     'entity' => $form->getData(),
                     'form' => $form->createView(),
                 ]
             ) :
-            $this->redirect($this->getTargetPath($this->requestStack->getSession(), 'main'));
+            $this->redirect($this->getTargetPath($request->getSession(), 'main'));
     }
 
     /**
@@ -238,66 +166,37 @@ class CRUDController extends AbstractController
      */
     public function edit(Request $request, string $type, ?int $id): RedirectResponse|Response
     {
-        $configuration = $this->configurationService->getEntityConfiguration($type);
-
-        $this->breadcrumb->addItem(
-            $this->translator->trans('pi_crud.dashboard.title'),
-            $this->generateUrl('pi_crud_dashboard')
-        );
-
-        $this->breadcrumb->addItem(
-          $this->translator->trans('pi_crud.admin.title', ['entity_label' => $type]),
-          $this->generateUrl('pi_crud_admin', ['type' => $type])
-        );
-
-        $this->breadcrumb->addItem(
-          $this->translator->trans('pi_crud.form.edit.title', ['entity_label' => $type]),
-          $this->generateUrl('pi_crud_add', ['type' => $type])
-        );
-
-        $entity = $this->managerRegistry
-          ->getRepository($configuration['class'])
-          ->find($id);
-
-        $this->denyAccessUnlessGranted('edit', $entity);
+        $entity = $request->attributes->get('entity');
 
         $form = $this->formService->getAdminForm($request, $type, $entity);
 
         return $form instanceof FormInterface ?
             $this->render(
-                $this->templateService->getTemplatePath(TemplateService::FORMAT_EDIT, $type),
+                $this->templateService->getTemplatePath(TemplateService::FORMAT_EDIT, [$type]),
                 [
                     'type' => $type,
-                    'configuration' => $configuration,
+                    'configuration' => $request->attributes->get('configuration'),
                     'templates' => $this->configuration['templates'],
                     'entity' => $entity,
                     'form' => $form->createView(),
                 ]
             ) :
-            $this->redirect($this->getTargetPath($this->requestStack->getSession(), 'main'));
+            $this->redirect($this->getTargetPath($request->getSession(), 'main'));
     }
 
     /**
+     * @param Request $request
      * @param string $type
      * @param int $id
      * @return RedirectResponse
-     * @throws Exception
      */
-    public function delete(string $type, int $id): RedirectResponse
+    public function delete(Request $request, string $type, int $id): RedirectResponse
     {
-        $configuration = $this->configurationService->getEntityConfiguration($type);
-
-        $entity = $this->managerRegistry
-            ->getRepository($configuration['class'])
-            ->find($id);
-
-        $this->denyAccessUnlessGranted('delete', $entity);
-
         $entityManager = $this->managerRegistry->getManager();
-        $entityManager->remove($entity);
+        $entityManager->remove($request->attributes->get('entity'));
         $entityManager->flush();
 
-        return $this->redirect($this->getTargetPath($this->requestStack->getSession(), 'main'));
+        return $this->redirect($this->getTargetPath($request->getSession(), 'main'));
     }
 
     /**
@@ -305,13 +204,11 @@ class CRUDController extends AbstractController
      * @return JsonResponse
      * @throws Exception
      */
-    public function all(string $type): JsonResponse
+    public function all(Request $request, string $type): JsonResponse
     {
-        $configuration = $this->configurationService->getEntityConfiguration($type);
-
         return new JsonResponse($this->serializer->serialize(
             $this->managerRegistry
-                ->getRepository($configuration['class'])
+                ->getRepository($request->attributes->get('configuration')['class'])
                 ->createQueryBuilder('entity')
                 ->getQuery()
                 ->execute(),

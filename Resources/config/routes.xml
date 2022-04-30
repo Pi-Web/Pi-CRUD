@@ -4,7 +4,7 @@
         <default key="_controller">PiWeb\PiCRUD\Controller\AdminController::index</default>
     </route>
 
-    <route id="pi_crud_show" path="/{type}/{id}">
+    <route id="pi_crud_show" path="/{type}/{id}-{slug}.html">
         <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::show</default>
         <requirement key="id">\d+</requirement>
     </route>
@@ -37,5 +37,10 @@
 
     <route id="pi_crud_json" path="/{type}/json">
         <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::all</default>
+    </route>
+
+    <route id="pi_crud_item" path="/{type}/{id}/item?format={format}">
+        <default key="_controller">PiWeb\PiCRUD\Controller\BlockController::itemBlockAction</default>
+        <requirement key="id">\d+</requirement>
     </route>
 </routes>

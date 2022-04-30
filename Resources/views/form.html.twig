@@ -10,7 +10,7 @@
 {% block content %}
     <div class="container-xl py-2 py-lg-4">
         {% block content_breadcrumb %}
-            {{ sonata_block_render({ 'type': 'block.breadcrumb' }, {}) }}
+            {{ render(path('pi_breadcrumb_block')) }}
         {% endblock %}
 
         {% block form_title %}{% endblock %}

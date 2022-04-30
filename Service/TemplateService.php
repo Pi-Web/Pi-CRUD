@@ -19,6 +19,7 @@ final class TemplateService
     public const FORMAT_ADMIN = 'format.admin';
     public const FORMAT_ADD = 'format.add';
     public const FORMAT_EDIT = 'format.edit';
+    public const FORMAT_ITEM = 'format.item';
 
     public const DEFAULTS_FORMATS = [
         self::PAGE_DASHBOARD => '@PiCRUD/dashboard.html.twig',
@@ -27,6 +28,7 @@ final class TemplateService
         self::FORMAT_ADMIN => '@PiCRUD/admin.html.twig',
         self::FORMAT_ADD => '@PiCRUD/add.html.twig',
         self::FORMAT_EDIT => '@PiCRUD/edit.html.twig',
+        self::FORMAT_ITEM => '@PiCRUD/item_%s.html.twig',
     ];
 
     public const OVERLOADED_FORMATS = [
@@ -36,6 +38,7 @@ final class TemplateService
         self::FORMAT_ADMIN => 'entities/admin/%s.html.twig',
         self::FORMAT_ADD => 'entities/add/%s.html.twig',
         self::FORMAT_EDIT => 'entities/edit/%s.html.twig',
+        self::FORMAT_ITEM => 'entities/item/%s_%s.html.twig',
     ];
 
     public function __construct(
@@ -43,14 +46,12 @@ final class TemplateService
     ) {
     }
 
-    public function getTemplatePath(string $page, ?string $type = null): string
+    public function getTemplatePath(string $page, array $options = [], ?string $format = null): string
     {
-        $overloadedTemplatePath = empty($type) ?
-            self::OVERLOADED_FORMATS[$page] :
-            sprintf(self::OVERLOADED_FORMATS[$page], $type);
+        $overloadedTemplatePath = sprintf(self::OVERLOADED_FORMATS[$page], ...$options);
 
         return $this->environment->getLoader()->exists($overloadedTemplatePath) ?
             $overloadedTemplatePath :
-            self::DEFAULTS_FORMATS[$page];
+            sprintf(self::DEFAULTS_FORMATS[$page], $format);
     }
 }

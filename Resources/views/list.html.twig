@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="container-xl py-2 py-lg-4">
-        {{ sonata_block_render({ 'type': 'block.breadcrumb' }, {}) }}
+        {{ render(path('pi_breadcrumb_block')) }}
 
         {% block content_body_title %}
             <h1>{{ 'pi_crud.list.title'|trans({'entity_label': type}) }}</h1>
@@ -34,14 +34,15 @@
             {% endif %}
         {% endblock content_body_search_form %}
 
-        <div class="row pt-4" itemscope itemtype="https://schema.org/ListItem">
+        <div class="row pt-4">
             {% for entity in entities %}
                 {% if is_granted('show', entity) %}
-                    {{ sonata_block_render({ 'type': 'block.item' }, {
+                    {{ render(path('pi_crud_item', {
+                        'id': entity.id,
                         'type': type,
-                        'mode': 'default',
-                        'item': entity
-                    }) }}
+                        'format': 'default',
+                        'attr': {'class': 'col-12 col-md-6 col-lg-4'}
+                    })) }}
                 {% endif %}
             {% endfor %}
 

@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="container-xl py-2 py-lg-4">
-        {{ sonata_block_render({ 'type': 'block.breadcrumb' }, {}) }}
+        {{ render(path('pi_breadcrumb_block')) }}
 
         {% block content_body_title %}
             <h1>{{ 'pi_crud.dashboard.title'|trans }}</h1>
@@ -16,7 +16,7 @@
                 {% set color = item.options.color|default('primary') %}
                 <div class="{{ item.options.classes.card|default('col-12 col-lg-4 col-xl-4')}} my-2">
                     {% if item.options.format is defined and item.options.format is same as('extanded') %}
-                        <div class="card bg-dark border-{{ color}} h-100">
+                        <div class="card border-{{ color}} h-100">
                             <div class="card-body">
                                 <div class="mb-4">
                                     <span class="h1 text-{{ color }}">{{ item.count }}</span>
