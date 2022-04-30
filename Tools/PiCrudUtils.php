@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace PiWeb\PiCRUD\Tools;
 
-use Exception;
-use Doctrine\ORM\EntityManagerInterface;
-use ReflectionException;
-
 /**
- * Class RouteName
+ * Class PiCrudUtils
  * @package PiWeb\PiCRUD\Tools
  */
 final class PiCrudUtils

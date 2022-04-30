@@ -52,11 +52,10 @@ class CRUDController extends AbstractController
     /**
      * @param Request $request
      * @param string $type
-     * @param int $id
      * @return Response
      * @throws Exception
      */
-    public function show(Request $request, string $type, int $id): Response
+    public function show(Request $request, string $type): Response
     {
         $entity = $request->attributes->get('entity');
 
@@ -160,11 +159,10 @@ class CRUDController extends AbstractController
     /**
      * @param Request $request
      * @param string $type
-     * @param int|null $id
      * @return RedirectResponse|Response
      * @throws Exception
      */
-    public function edit(Request $request, string $type, ?int $id): RedirectResponse|Response
+    public function edit(Request $request, string $type): RedirectResponse|Response
     {
         $entity = $request->attributes->get('entity');
 
@@ -186,11 +184,9 @@ class CRUDController extends AbstractController
 
     /**
      * @param Request $request
-     * @param string $type
-     * @param int $id
      * @return RedirectResponse
      */
-    public function delete(Request $request, string $type, int $id): RedirectResponse
+    public function delete(Request $request): RedirectResponse
     {
         $entityManager = $this->managerRegistry->getManager();
         $entityManager->remove($request->attributes->get('entity'));
@@ -200,11 +196,10 @@ class CRUDController extends AbstractController
     }
 
     /**
-     * @param string $type
+     * @param Request $request
      * @return JsonResponse
-     * @throws Exception
      */
-    public function all(Request $request, string $type): JsonResponse
+    public function all(Request $request): JsonResponse
     {
         return new JsonResponse($this->serializer->serialize(
             $this->managerRegistry

@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace PiWeb\PiCRUD\EventSubscriber;
 
 use Doctrine\Persistence\ManagerRegistry;
-use PiWeb\PiBreadcrumb\Model\Breadcrumb;
 use PiWeb\PiCRUD\Service\BreadcrumbService;
 use PiWeb\PiCRUD\Service\ConfigurationService;
 use PiWeb\PiCRUD\Service\SecurityService;
 use PiWeb\PiCRUD\Tools\PiCrudUtils;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;

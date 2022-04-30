@@ -4,15 +4,9 @@ declare(strict_types=1);
 
 namespace PiWeb\PiCRUD\Service;
 
-use Exception;
-use PiWeb\PiBreadcrumb\Model\Breadcrumb;
-use PiWeb\PiCRUD\Tools\EntityManager;
 use PiWeb\PiCRUD\Tools\PiCrudUtils;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class SecurityService

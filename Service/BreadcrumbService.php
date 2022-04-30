@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace PiWeb\PiCRUD\Service;
 
-use Exception;
 use PiWeb\PiBreadcrumb\Model\Breadcrumb;
-use PiWeb\PiCRUD\Tools\EntityManager;
 use PiWeb\PiCRUD\Tools\PiCrudUtils;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -27,8 +24,10 @@ final class BreadcrumbService
 
     /**
      * @param string $route
-     * @param string $entityType
-     * @param int $entityId
+     * @param string|null $entityType
+     * @param int|null $entityId
+     * @param string|null $entitySlug
+     * @param string|null $entityLabel
      * @return void
      */
     public function generate(string $route, ?string $entityType, ?int $entityId, ?string $entitySlug, ?string $entityLabel): void

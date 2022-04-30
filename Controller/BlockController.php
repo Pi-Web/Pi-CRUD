@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace PiWeb\PiCRUD\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
 use PiWeb\PiCRUD\Service\StructuredDataService;
 use PiWeb\PiCRUD\Service\TemplateService;
-use PiWeb\PiCRUD\Tools\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
@@ -33,7 +30,6 @@ class BlockController extends AbstractController
 
     public function itemBlockAction(
         Request $request,
-        int $id,
         string $type,
         string $format,
     ): Response {

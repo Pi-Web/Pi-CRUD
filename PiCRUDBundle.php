@@ -1,9 +1,11 @@
 <?php
+
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class PiCRUDBundle extends Bundle
+final class PiCRUDBundle extends Bundle
 {
-
 }
