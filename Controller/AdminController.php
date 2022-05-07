@@ -26,6 +26,7 @@ class AdminController extends AbstractController
      * @param RequestStack $requestStack
      * @param TemplateService $templateService
      * @param EntityManager $entityManager
+     * @param EntityManagerInterface $em
      */
     public function __construct(
         private RequestStack $requestStack,
@@ -51,7 +52,7 @@ class AdminController extends AbstractController
             $items[$entity['annotation']->dashboard['order'] ?? $entity['annotation']->name] = [
                 'name' => $entity['annotation']->name,
                 'options' => $dashboardConfig,
-                'count' => !empty($dashboardConfig['format']) && 'extanded' === $dashboardConfig['format'] ?
+                'count' => !empty($dashboardConfig['format']) && 'extended' === $dashboardConfig['format'] ?
                     $this->em->getRepository($entity['class'])->count([]) :
                     0,
             ];

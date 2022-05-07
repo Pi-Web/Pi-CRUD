@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr" xml:lang="fr" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        {% block header_scripts %}{% endblock %}
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {% block extra_meta_balise %}{% endblock %}
+
+        {% block favicon %}
+            <link rel="icon" href="{{ asset('favicon.ico') }}" />
+        {% endblock %}
+
+        <title>{% block title %}{% endblock %}</title>
+
+        {% block stylesheets %}{% endblock %}
+
+        <link rel="manifest" href="{{ asset('build/manifest.json') }}">
+    </head>
+    <body>
+        {% block navbar_header %}{% endblock %}
+
+        {% block messages %}
+            {% set flashes = app.flashes %}
+            {% if flashes is not empty %}
+                <div class="container-xl">
+                    {% for label, messages in flashes %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ label }} alert-dismissible fade show my-2" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Fermer">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endblock %}
+
+        {% block content %}{% endblock %}
+
+        {% block content_footer %}{% endblock %}
+
+        {% block navbar_footer %}{% endblock %}
+
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

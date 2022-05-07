@@ -37,6 +37,7 @@ class CRUDController extends AbstractController
      * @param FormService $formService
      * @param TemplateService $templateService
      * @param ManagerRegistry $managerRegistry
+     * @param StructuredDataService $structuredDataService
      */
     public function __construct(
         private array $configuration,
@@ -62,6 +63,7 @@ class CRUDController extends AbstractController
         return $this->render(
             $this->templateService->getTemplatePath(TemplateService::FORMAT_SHOW, [$type]),
             [
+                'configuration' => $request->attributes->get('configuration'),
                 'entity' => $entity,
                 'type' => $type,
                 'structuredData' => $this->structuredDataService->getStructuredData($entity),

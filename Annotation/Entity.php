@@ -40,4 +40,9 @@ class Entity
      * @var array
      */
     public array $dashboard = [];
+
+    /**
+     * @var array
+     */
+    public array $options = [];
 }

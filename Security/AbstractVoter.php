@@ -35,7 +35,7 @@ abstract class AbstractVoter extends Voter
      * @param mixed $subject
      * @return bool
      */
-    protected function supports(string $attribute, $subject)
+    protected function supports(string $attribute, $subject): bool
     {
         return method_exists($this, 'can' . ucfirst($attribute));
     }
@@ -46,7 +46,7 @@ abstract class AbstractVoter extends Voter
      * @param TokenInterface $token
      * @return bool
      */
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
 

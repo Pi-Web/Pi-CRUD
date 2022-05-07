@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD\Security;
 
 /**
@@ -13,7 +15,7 @@ class DefaultEntityVoter extends AbstractVoter
      * @param mixed $subject
      * @return bool
      */
-    protected function supports(string $attribute, $subject)
+    protected function supports(string $attribute, $subject): bool
     {
         if (!(in_array($attribute, [self::ADD, self::LIST, self::ADMIN]))) {
             return false;
@@ -27,7 +29,7 @@ class DefaultEntityVoter extends AbstractVoter
      * @param $user
      * @return bool
      */
-    protected function canAdmin($subject, $user)
+    protected function canAdmin($subject, $user): bool
     {
         return $this->security->isGranted('ROLE_ADMIN');
     }
@@ -37,7 +39,7 @@ class DefaultEntityVoter extends AbstractVoter
      * @param $user
      * @return bool
      */
-    protected function canShow($entity, $user)
+    protected function canShow($entity, $user): bool
     {
         return true;
     }
@@ -47,7 +49,7 @@ class DefaultEntityVoter extends AbstractVoter
      * @param $user
      * @return bool
      */
-    protected function canList($entity, $user)
+    protected function canList($entity, $user): bool
     {
         return true;
     }
@@ -57,7 +59,7 @@ class DefaultEntityVoter extends AbstractVoter
      * @param $user
      * @return bool
      */
-    protected function canAdd($entity, $user)
+    protected function canAdd($entity, $user): bool
     {
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
@@ -71,7 +73,7 @@ class DefaultEntityVoter extends AbstractVoter
      * @param $user
      * @return bool
      */
-    protected function canEdit($entity, $user)
+    protected function canEdit($entity, $user): bool
     {
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
@@ -85,7 +87,7 @@ class DefaultEntityVoter extends AbstractVoter
      * @param $user
      * @return bool
      */
-    protected function canDelete($map, $user)
+    protected function canDelete($map, $user): bool
     {
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;

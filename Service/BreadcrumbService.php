@@ -122,6 +122,9 @@ final class BreadcrumbService
 
     /**
      * @param string $entityType
+     * @param int $entityId
+     * @param string $entitySlug
+     * @param string $entityLabel
      * @return void
      */
     private function generateShow(string $entityType, int $entityId, string $entitySlug, string $entityLabel): void

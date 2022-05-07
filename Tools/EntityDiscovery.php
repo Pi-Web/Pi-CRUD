@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace PiWeb\PiCRUD\Tools;
 
 use Doctrine\Common\Annotations\Reader;
+use Exception;
 use PiWeb\PiCRUD\Annotation\Entity;
 use PiWeb\PiCRUD\Annotation\Property;
+use Psr\Cache\InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
@@ -36,6 +38,7 @@ class EntityDiscovery
      *
      * @param $rootDir
      * @param Reader $annotationReader
+     * @param AdapterInterface $cache
      */
     public function __construct(
         private $rootDir,
@@ -47,7 +50,7 @@ class EntityDiscovery
 
     /**
      * @return array
-     * @throws ReflectionException
+     * @throws InvalidArgumentException
      */
     public function getEntities(): array
     {
@@ -59,13 +62,11 @@ class EntityDiscovery
         if(!$item->isHit()) {
             try {
                 $this->discoverEntities();
-            } catch (\Exception $e) {
-                dd($e);
+            } catch (Exception) {
             }
             $item->set($this->entities);
             $item->expiresAfter(604800);
             $this->cache->save($item);
-        } else {
         }
 
         return $this->entities = $item->get();

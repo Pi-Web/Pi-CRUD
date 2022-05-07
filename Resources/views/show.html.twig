@@ -3,6 +3,12 @@
 {% set class_primary = 'primary' %}
 {% set class_secondary = 'secondary' %}
 
+{% block extra_meta_balise %}
+    {% if configuration.annotation is not empty and constant('PiWeb\\PiCRUD\\Utils\\EntityOptions::NOINDEX') in configuration.annotation.options %}
+        <meta name="robots" content="noindex">
+    {% endif %}
+{% endblock %}
+
 {% block title %}{{ entity }}{% endblock %}
 
 {% block content %}

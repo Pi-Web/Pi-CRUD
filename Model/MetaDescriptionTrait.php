@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use PiWeb\PiCRUD\Annotation as PiCRUD;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 Trait MetaDescriptionTrait
 {

@@ -66,9 +66,9 @@ class KernelRequestEventSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @return array|string[]
+     * @return array
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             RequestEvent::class => 'onKernelRequest',
@@ -106,6 +106,8 @@ class KernelRequestEventSubscriber implements EventSubscriberInterface
      * @param string $route
      * @param string|null $type
      * @param int|null $id
+     * @param string|null $slug
+     * @param string|null $label
      * @return void
      */
     private function generateBreadcrumb(string $route, ?string $type, ?int $id, ?string $slug, ?string $label): void
