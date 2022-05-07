@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace PiWeb\PiCRUD\Tools;
 
+use Doctrine\Common\Annotations\Reader;
 use PiWeb\PiCRUD\Annotation\Entity;
 use PiWeb\PiCRUD\Annotation\Property;
-use Doctrine\Common\Annotations\Reader;
 use ReflectionClass;
 use ReflectionException;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
 
 /**
  * Class EntityDiscovery
@@ -20,11 +20,6 @@ use Symfony\Component\Cache\Adapter\AdapterInterface;
 class EntityDiscovery
 {
     private const ENTITIES_CACHE_KEY = 'cache.pi_crud.entity_discovery.entities';
-
-    /**
-     * @var string
-     */
-    private string $namespace;
 
     /**
      * @var string
@@ -47,7 +42,6 @@ class EntityDiscovery
         private Reader $annotationReader,
         private AdapterInterface $cache,
     ) {
-        $this->namespace = 'App\Entity';
         $this->directory = 'Entity';
     }
 
@@ -63,10 +57,15 @@ class EntityDiscovery
 
         $item = $this->cache->getItem(self::ENTITIES_CACHE_KEY);
         if(!$item->isHit()) {
-            $this->discoverEntities();
+            try {
+                $this->discoverEntities();
+            } catch (\Exception $e) {
+                dd($e);
+            }
             $item->set($this->entities);
             $item->expiresAfter(604800);
             $this->cache->save($item);
+        } else {
         }
 
         return $this->entities = $item->get();
@@ -77,13 +76,19 @@ class EntityDiscovery
      */
     private function discoverEntities()
     {
-        $path = $this->rootDir . '/src/' . $this->directory;
+        $path = [
+            sprintf('%s/src/%s', $this->rootDir, $this->directory),
+            sprintf('%s/vendor/*/*/%s', $this->rootDir, $this->directory),
+        ];
+
         $finder = new Finder();
-        $finder->files()->in($path);
+        $finder->in($path)->name('*.php');
 
         /** @var SplFileInfo $file */
         foreach ($finder as $file) {
-            $class = $this->namespace . '\\' . $file->getBasename('.php');
+            $class = str_starts_with($file->getPathname(), sprintf('%s/src/%s', $this->rootDir, $this->directory)) ?
+                sprintf('App\Entity\%s', $file->getBasename('.php')) :
+                sprintf('PiWeb\PiCRUD\Entity\%s', $file->getBasename('.php'));
             $reflectionClass = new ReflectionClass($class);
 
             $annotation = $this->annotationReader->getClassAnnotation($reflectionClass, Entity::class);

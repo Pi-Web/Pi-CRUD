@@ -15,7 +15,7 @@ Trait SluggableTrait
      * @ORM\Column(length=256)
      * @Groups("default")
      */
-    protected string $slug = '';
+    protected string $slug;
 
     /**
      * @return string|null
@@ -23,16 +23,5 @@ Trait SluggableTrait
     public function getSlug()
     {
         return $this->slug;
-    }
-
-    /**
-     * @param string $slug
-     * @return $this
-     */
-    public function setSlug(string $slug): self
-    {
-        $this->slug = $slug;
-
-        return $this;
     }
 }
