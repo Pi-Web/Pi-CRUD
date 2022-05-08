@@ -11,8 +11,20 @@
                 <p class="text-white font-italic">
                     {{ 'pi_crud.item.updated_at'|trans({'entity_label': type}) }} {{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}
                 </p>
-                <p class="text-justify d-lg-none">{{ entity.content|striptags|u.truncate(255)|raw }} ...</p>
-                <p class="text-justify d-none d-lg-block">{{ entity.content|striptags|u.truncate(500)|raw }} ...</p>
+                <p class="text-justify d-lg-none">
+                    {% if entity.metaDescription is defined and entity.metaDescription is not empty %}
+                        {{ entity.metaDescription|u.truncate(100) }} [...]
+                    {% else %}
+                        {{ entity.content|striptags|u.truncate(100)|raw }} [...]
+                    {% endif %}
+                </p>
+                <p class="text-justify d-none d-lg-block">
+                    {% if entity.metaDescription is defined and entity.metaDescription is not empty %}
+                        {{ entity.metaDescription|u.truncate(500) }}
+                    {% else %}
+                        {{ entity.content|striptags|u.truncate(500)|raw }} [...]
+                    {% endif %}
+                </p>
                 <p>
                     <a class="btn btn-primary" href="{{ path('pi_crud_show', {'type': type, 'id': entity.id, 'slug': entity.slug}) }}" role="button">
                         {{ 'pi_crud.item.read_more'|trans({'entity_label': type}) }}
