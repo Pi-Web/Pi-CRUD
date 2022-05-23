@@ -5,11 +5,11 @@
             <div class="carousel-caption text-center">
                 <span class="text-primary h2">{{ entity.title }}</span>
 
-                {% if entity.createAt != entity.updateAt and entity.updateAt > date()|date_modify('-1 day') %}
-                    <span class="badge badge-secondary">{{ 'pi_crud.item.recently_updated'|trans({'entity_label': type}) }}</span>
-                {% endif %}
                 <p class="text-white lead">
                     {{ 'pi_crud.item.updated_at'|trans({'entity_label': type}) }} {{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}
+                    {% if entity.createAt != entity.updateAt and entity.updateAt > date()|date_modify('-1 day') %}
+                        <span class="badge badge-secondary">{{ 'pi_crud.item.recently_updated'|trans({'entity_label': type}) }}</span>
+                    {% endif %}
                 </p>
                 <p class="text-center lead d-lg-none">
                     {% if entity.metaDescription is defined and entity.metaDescription is not empty %}
