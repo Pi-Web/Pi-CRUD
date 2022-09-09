@@ -39,7 +39,7 @@
 
         {% block extra_content %}{% endblock %}
 
-        <h2 class="text-balise">{{ 'pi_crud.dashboard.logs'|trans }}</h2>
+        <h2 class="text-balise">{{ 'pi_crud.dashboard.entity.title'|trans({'entity_label': 'log'}) }}</h2>
         <div class="row">
             <a class="btn btn-outline-primary" href="{{ path('pi_crud_admin', {'type': 'log'}) }}">Voir les logs du site</a>
         </div>

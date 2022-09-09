@@ -20,6 +20,8 @@
                     {% endblock item_content %}
                     <div class="item-links">
                         {% block item_link %}<a href="{{ path('pi_crud_show', {'type': type, 'id': entity.id, 'slug': entity.slug}) }}" class="btn btn-{{ class_primary }} stretched-link">{{ 'pi_crud.item.more_informations'|trans({'entity_label': type}) }}</a>{% endblock item_link %}
+                    </div>
+                    <div class="item-links mt-2">
                         {% block item_admin %}{% include '@PiCRUD/includes/admin_actions.html.twig' ignore missing with {'label_attr': 'd-none'} %}{% endblock item_admin %}
                     </div>
                 </div>
