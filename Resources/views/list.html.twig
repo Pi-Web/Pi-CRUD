@@ -33,21 +33,23 @@
             {% endif %}
         {% endblock content_body_search_form %}
 
-        <div class="row pt-4">
-            {% for entity in entities %}
-                {% if is_granted('show', entity) %}
-                    {{ render(path('pi_crud_item', {
-                        'id': entity.id,
-                        'type': type,
-                        'format': 'default',
-                        'attr': {'class': 'col-12 col-md-6 col-lg-4'}
-                    })) }}
-                {% endif %}
-            {% else %}
-                <div class="col-12">
-                    <p class="lead">{{ 'pi_crud.list.empty_result'|trans({'entity_label': type}) }}</p>
-                </div>
-            {% endfor %}
-        </div>
+        {% block content_body_entities %}
+            <div class="row pt-4">
+                {% for entity in entities %}
+                    {% if is_granted('show', entity) %}
+                        {{ render(path('pi_crud_item', {
+                            'id': entity.id,
+                            'type': type,
+                            'format': 'default',
+                            'attr': {'class': 'col-12 col-md-6 col-lg-4'}
+                        })) }}
+                    {% endif %}
+                {% else %}
+                    <div class="col-12">
+                        <p class="lead">{{ 'pi_crud.list.empty_result'|trans({'entity_label': type}) }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endblock content_body_entities %}
     </div>
 {% endblock %}

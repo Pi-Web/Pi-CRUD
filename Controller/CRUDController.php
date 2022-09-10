@@ -6,6 +6,7 @@ namespace PiWeb\PiCRUD\Controller;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
+use PiWeb\PiCRUD\Event\QueryResultEvent;
 use PiWeb\PiCRUD\Service\FormService;
 use PiWeb\PiCRUD\Service\StructuredDataService;
 use PiWeb\PiCRUD\Service\TemplateService;
@@ -92,12 +93,17 @@ class CRUDController extends AbstractController
         $event = new QueryEvent($this->getUser(), $type, $queryBuilder);
         $this->dispatcher->dispatch($event, PiCrudEvents::POST_LIST_QUERY_BUILDER);
 
+        $entities = $event->getQueryBuilder()->getQuery()->execute();
+
+        $resultEvent = new QueryResultEvent($type, $entities);
+        $this->dispatcher->dispatch($resultEvent, PiCrudEvents::POST_LIST_QUERY_RESULT);
+
         return $this->render(
             $this->templateService->getTemplatePath(TemplateService::FORMAT_LIST, [$type]),
             [
                 'type' => $type,
                 'configuration' => $configuration,
-                'entities' => $event->getQueryBuilder()->getQuery()->execute(),
+                'entities' => $resultEvent->getResults(),
                 'templates' => $this->configuration['templates'],
                 'searchForm' => $searchForm instanceof FormInterface ?
                     $searchForm->createView() :
