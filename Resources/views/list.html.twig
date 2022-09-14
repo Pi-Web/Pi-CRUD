@@ -4,11 +4,19 @@
 {% block meta_description %}{{ 'pi_crud.list.meta_description'|trans({'entity_label': type}) }}{% endblock %}
 
 {% block content %}
-    <div class="container-xl py-2 py-lg-4">
-        {{ render(path('pi_breadcrumb_block')) }}
+    <div class="container-fluid my-4">
+        <div class="row">
+            <div class="col-12 col-lg-10 offset-lg-1">
+                {{ render(path('pi_breadcrumb_block')) }}
+            </div>
+        </div>
 
         {% block content_body_title %}
-            <h1>{{ 'pi_crud.list.title'|trans({'entity_label': type}) }}</h1>
+            <div class="row">
+                <div class="col-12 col-lg-10 offset-lg-1">
+                    <h1>{{ 'pi_crud.list.title'|trans({'entity_label': type}) }}</h1>
+                </div>
+            </div>
         {% endblock content_body_title %}
 
         {% block content_body_description %}
@@ -16,39 +24,49 @@
 
         {% block content_body_search_form %}
             {% if searchForm is defined and searchForm is not empty %}
-                {{ form_start(searchForm) }}
-                <div class="row">
-                    {% for field, property in configuration.properties|filter(a => a.search is defined and a.search is not empty) %}
-                        <div class="col-12 col-md-6 col-lg-4 {{ property.search.class ?? 'order-12' }}">
-                            {% include templates['field_' ~ field] ?? templates['field_' ~ property.type] ?? templates['field_default'] ?? '@PiCRUD/fields/field_default.html.twig' ignore missing with {'field': searchForm[field], 'configuration': property} %}
+                <div class="row my-4">
+                    <div class="col-12 col-lg-10 offset-lg-1">
+                        {{ form_start(searchForm) }}
+                        <div class="row">
+                            {% for field, property in configuration.properties|filter(a => a.search is defined and a.search is not empty) %}
+                                <div class="col-12 col-md-6 col-lg-4 {{ property.search.class ?? 'order-12' }}">
+                                    {% include templates['field_' ~ field] ?? templates['field_' ~ property.type] ?? templates['field_default'] ?? '@PiCRUD/fields/field_default.html.twig' ignore missing with {'field': searchForm[field], 'configuration': property} %}
+                                </div>
+                            {% endfor %}
                         </div>
-                    {% endfor %}
+
+                        <div class="d-none">
+                            {{ form_rest(searchForm)}}
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-0"><i class="fa fa-search"></i> {{ 'pi_crud.list.filter'|trans({'entity_label': type}) }}</button>
+
+                        {% block form_extra_link %}{% endblock %}
+                        {{ form_end(searchForm) }}
+                    </div>
                 </div>
-                <div class="d-none">
-                    {{ form_rest(searchForm)}}
-                </div>
-                <button type="submit" class="btn btn-primary mt-0"><i class="fa fa-search"></i> {{ 'pi_crud.list.filter'|trans({'entity_label': type}) }}</button>
-                {% block form_extra_link %}{% endblock %}
-                {{ form_end(searchForm) }}
             {% endif %}
         {% endblock content_body_search_form %}
 
         {% block content_body_entities %}
-            <div class="row pt-4">
-                {% for entity in entities %}
-                    {% if is_granted('show', entity) %}
-                        {{ render(path('pi_crud_item', {
-                            'id': entity.id,
-                            'type': type,
-                            'format': 'default',
-                            'attr': {'class': 'col-12 col-md-6 col-lg-4'}
-                        })) }}
-                    {% endif %}
-                {% else %}
-                    <div class="col-12">
-                        <p class="lead">{{ 'pi_crud.list.empty_result'|trans({'entity_label': type}) }}</p>
+            <div class="row my-4">
+                <div class="col-12 col-lg-10 offset-lg-1">
+                    <div class="row">
+                        {% for entity in entities %}
+                            {% if is_granted('show', entity) %}
+                                {{ render(path('pi_crud_item', {
+                                    'id': entity.id,
+                                    'type': type,
+                                    'format': 'default',
+                                    'attr': {'class': 'col-12 col-md-6 col-lg-4'}
+                                })) }}
+                            {% endif %}
+                        {% else %}
+                            <div class="col-12">
+                                <p class="lead">{{ 'pi_crud.list.empty_result'|trans({'entity_label': type}) }}</p>
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
+                </div>
             </div>
         {% endblock content_body_entities %}
     </div>

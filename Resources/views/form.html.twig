@@ -8,30 +8,38 @@
 {% block title %}Administration{% endblock %}
 
 {% block content %}
-    <div class="container-xl py-2 py-lg-4">
+    <div class="container-fluid py-2 py-lg-4">
         {% block content_breadcrumb %}
-            {{ render(path('pi_breadcrumb_block')) }}
+            <div class="row">
+                <div class="col-12 col-lg-10 offset-lg-1">
+                    {{ render(path('pi_breadcrumb_block')) }}
+                </div>
+            </div>
         {% endblock %}
 
         {% block form_title %}{% endblock %}
 
         {% block form_content %}
-            {{ form_start(form) }}
-                <div class="row">
-                    {% for field, property in configuration.properties|filter(a => a.form is defined and a.form is not empty) %}
-                        {% if form[field] is defined %}
-                            <div class="col-12 {{ property.form.class ?? 'order-12' }}">
-                                {% include templates['field_' ~ field] ?? templates['field_' ~ property.type] ?? templates['field_default'] ?? '@PiCRUD/fields/field_default.html.twig' ignore missing with {'field': form[field], 'configuration': property} %}
-                            </div>
-                        {% endif %}
-                    {% endfor %}
+            <div class="row">
+                <div class="col-12 col-lg-10 offset-lg-1">
+                    {{ form_start(form) }}
+                        <div class="row">
+                            {% for field, property in configuration.properties|filter(a => a.form is defined and a.form is not empty) %}
+                                {% if form[field] is defined %}
+                                    <div class="col-12 {{ property.form.class ?? 'order-12' }}">
+                                        {% include templates['field_' ~ field] ?? templates['field_' ~ property.type] ?? templates['field_default'] ?? '@PiCRUD/fields/field_default.html.twig' ignore missing with {'field': form[field], 'configuration': property} %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="d-none">
+                            {{ form_rest(form)}}
+                        </div>
+                        <button type="submit" class="btn btn-lg btn-primary">{% block form_action %}{% endblock %}</button>
+                        {% block form_extra_link %}{% endblock %}
+                    {{ form_end(form) }}
                 </div>
-                <div class="d-none">
-                    {{ form_rest(form)}}
-                </div>
-                <button type="submit" class="btn btn-lg btn-primary">{% block form_action %}{% endblock %}</button>
-                {% block form_extra_link %}{% endblock %}
-            {{ form_end(form) }}
+            </div>
         {% endblock %}
     </div>
 {% endblock %}

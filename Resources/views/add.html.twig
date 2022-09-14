@@ -1,7 +1,11 @@
 {% extends '@PiCRUD/form.html.twig' %}
 
 {% block form_title %}
-    <h1>{{ 'pi_crud.form.add.title'|trans({'entity_label': type}) }} <span class="text-primary">{{ entity }}</span></h1>
+    <div class="row my-4">
+        <div class="col-12 col-lg-10 offset-lg-1">
+            <h1>{{ 'pi_crud.form.add.title'|trans({'entity_label': type}) }} <span class="text-primary">{{ entity }}</span></h1>
+        </div>
+    </div>
 {% endblock %}
 
 {% block form_action %}

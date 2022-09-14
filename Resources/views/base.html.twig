@@ -24,7 +24,7 @@
         {% block messages %}
             {% set flashes = app.flashes %}
             {% if flashes is not empty %}
-                <div class="container-xl">
+                <div class="messages">
                     {% for label, messages in flashes %}
                         {% for message in messages %}
                             <div class="alert alert-{{ label }} alert-dismissible fade show my-2" role="alert">

@@ -13,28 +13,36 @@
 {% block title %}{{ entity }}{% endblock %}
 
 {% block content %}
-    <div class="container-xl py-2 pt-lg-4 pb-lg-0">
-        {% block entity_breadcrumb %}
-            {{ render(path('pi_breadcrumb_block')) }}
-        {% endblock %}
+    <div class="container-fluid my-4">
+        <div class="row">
+            <div class="col-12 col-lg-10 offset-lg-1">
+                {% block entity_breadcrumb %}
+                    {{ render(path('pi_breadcrumb_block')) }}
+                {% endblock %}
+            </div>
+        </div>
     </div>
 
     <article>
-        <div class="container-xl">
-            {% block entity_title %}
-                <h1>{{ entity }}</h1>
-                <div class="font-italic">
-                    {{ 'pi_crud.show.updated_at'|trans({'entity_label': type}) }} <time>{{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}</time>
-                </div>
-            {% endblock %}
+        <div class="container-fluid my-2">
+            <div class="row">
+                <div class="col-12 col-lg-10 offset-lg-1">
+                    {% block entity_title %}
+                        <h1 class="display-4">{{ entity }}</h1>
+                        <p class="font-italic lead">
+                            {{ 'pi_crud.show.updated_at'|trans({'entity_label': type}) }} <time>{{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}</time>
+                        </p>
+                    {% endblock %}
 
-            {% block content_header_admin_actions %}
-                {% if is_granted('edit', entity) or is_granted('delete', entity) %}
-                    <div class="my-4">
-                        {% include '@PiCRUD/includes/admin_actions.html.twig' %}
-                    </div>
-                {% endif %}
-            {% endblock %}
+                    {% block content_header_admin_actions %}
+                        {% if is_granted('edit', entity) or is_granted('delete', entity) %}
+                            <div class="my-2">
+                                {% include '@PiCRUD/includes/admin_actions.html.twig' %}
+                            </div>
+                        {% endif %}
+                    {% endblock %}
+                </div>
+            </div>
         </div>
 
         {% block content_description %}{% endblock %}
@@ -43,13 +51,15 @@
             <img class="img-fluid mx-auto w-100" src="{{ asset('images/' ~ entity.image.name) | imagine_filter('carousel_header') }}" alt="Image du contenu">
         {% endif %}
 
-        <section class="my-4">
-            {% if entity.content is defined and entity.content is not null %}
-                <div class="container-xl text-justify" >
-                    {{ entity.content|raw }}
+        {% if entity.content is defined and entity.content is not null %}
+            <div class="container-fluid text-justify my-4">
+                <div class="row">
+                    <div class="col-12 col-lg-10 offset-lg-1">
+                        {{ entity.content|raw }}
+                    </div>
                 </div>
-            {% endif %}
-        </section>
+            </div>
+        {% endif %}
 
         {% block extra_content %}{% endblock %}
     </article>
