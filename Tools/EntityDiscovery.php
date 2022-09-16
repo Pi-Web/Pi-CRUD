@@ -15,41 +15,22 @@ use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
-/**
- * Class EntityDiscovery
- * @package PiWeb\PiCRUD\Tools
- */
 class EntityDiscovery
 {
     private const ENTITIES_CACHE_KEY = 'cache.pi_crud.entity_discovery.entities';
 
-    /**
-     * @var string
-     */
     private string $directory;
-
-    /**
-     * @var array
-     */
     private array $entities = [];
 
-    /**
-     * EntityDiscovery constructor.
-     *
-     * @param $rootDir
-     * @param Reader $annotationReader
-     * @param AdapterInterface $cache
-     */
     public function __construct(
-        private $rootDir,
-        private Reader $annotationReader,
-        private AdapterInterface $cache,
+        private readonly string $rootDir,
+        private readonly Reader $annotationReader,
+        private readonly AdapterInterface $cache,
     ) {
         $this->directory = 'Entity';
     }
 
     /**
-     * @return array
      * @throws InvalidArgumentException
      */
     public function getEntities(): array

@@ -14,11 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-/**
- * Class KernelRequestEventSubscriber
- * @package PiWeb\PiCRUD\EventSubscriber
- */
-class KernelRequestEventSubscriber implements EventSubscriberInterface
+final class KernelRequestEventSubscriber implements EventSubscriberInterface
 {
     use TargetPathTrait;
 
@@ -65,9 +61,6 @@ class KernelRequestEventSubscriber implements EventSubscriberInterface
         );
     }
 
-    /**
-     * @return array
-     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -102,14 +95,6 @@ class KernelRequestEventSubscriber implements EventSubscriberInterface
         return $entity ?? null;
     }
 
-    /**
-     * @param string $route
-     * @param string|null $type
-     * @param int|null $id
-     * @param string|null $slug
-     * @param string|null $label
-     * @return void
-     */
     private function generateBreadcrumb(string $route, ?string $type, ?int $id, ?string $slug, ?string $label): void
     {
         $this->breadcrumbService->generate($route, $type, $id, $slug, $label);

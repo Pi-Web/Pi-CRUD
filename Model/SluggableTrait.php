@@ -11,17 +11,12 @@ use Gedmo\Mapping\Annotation as Gedmo;
 Trait SluggableTrait
 {
     /**
-     * @var string
-     *
      * @Gedmo\Slug(fields={"title"}, unique=false)
      * @ORM\Column(length=256)
      * @Groups("default")
      */
     protected string $slug;
 
-    /**
-     * @return string
-     */
     public function getSlug(): string
     {
         return $this->slug;

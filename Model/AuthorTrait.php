@@ -52,18 +52,11 @@ Trait AuthorTrait
      */
     protected ?DateTimeInterface $updateAt = null;
 
-    /**
-     * @return User|null
-     */
     public function getCreateBy(): ?User
     {
         return $this->createBy;
     }
 
-    /**
-     * @param User|null $user
-     * @return $this
-     */
     public function setCreateBy(?User $user): self
     {
         $this->createBy = $user;
@@ -71,19 +64,11 @@ Trait AuthorTrait
         return $this;
     }
 
-    /**
-     * @return DateTimeInterface|null
-     */
     public function getCreateAt(): ?DateTimeInterface
     {
         return $this->createAt;
     }
 
-    /**
-     * @ORM\PrePersist
-     *
-     * @return $this
-     */
     public function setCreateAt(): self
     {
         $this->createAt = new DateTime();
@@ -91,9 +76,6 @@ Trait AuthorTrait
         return $this;
     }
 
-    /**
-     * @return DateTimeInterface|null
-     */
     public function getUpdateAt(): ?DateTimeInterface
     {
         return $this->updateAt;
@@ -102,8 +84,6 @@ Trait AuthorTrait
     /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
-     *
-     * @return $this
      */
     public function setUpdateAt(): self
     {
@@ -112,18 +92,11 @@ Trait AuthorTrait
         return $this;
     }
 
-    /**
-     * @return User|null
-     */
     public function getUpdateBy(): ?User
     {
         return $this->updateBy;
     }
 
-    /**
-     * @param User|null $user
-     * @return $this
-     */
     public function setUpdateBy(?User $user): self
     {
         $this->updateBy = $user;

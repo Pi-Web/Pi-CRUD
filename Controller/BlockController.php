@@ -11,11 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-/**
- * Class BlockController
- * @package PiWeb\PiCRUD\Controller
- */
-class BlockController extends AbstractController
+final class BlockController extends AbstractController
 {
     use TargetPathTrait;
 
@@ -23,8 +19,8 @@ class BlockController extends AbstractController
      * BlockController constructor.
      */
     public function __construct(
-        private TemplateService $templateService,
-        private StructuredDataService $structuredDataService,
+        private readonly TemplateService $templateService,
+        private readonly StructuredDataService $structuredDataService,
     ) {
     }
 

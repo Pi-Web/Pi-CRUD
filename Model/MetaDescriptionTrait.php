@@ -18,18 +18,11 @@ Trait MetaDescriptionTrait
      */
     protected ?string $metaDescription = null;
 
-    /**
-     * @return string|null
-     */
     public function getMetaDescription(): ?string
     {
         return $this->metaDescription;
     }
 
-    /**
-     * @param string|null $title
-     * @return $this
-     */
     public function setMetaDescription(?string $metaDescription): self
     {
         $this->metaDescription = $metaDescription;

@@ -8,10 +8,6 @@ use PiWeb\PiCRUD\Tools\PiCrudUtils;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Security;
 
-/**
- * Class SecurityService
- * @package PiWeb\PiCRUD\Service
- */
 final class SecurityService
 {
     private const ROUTE_PERMISSIONS = [
@@ -24,7 +20,7 @@ final class SecurityService
     ];
     
     public function __construct(
-        private Security $security,
+        private readonly Security $security,
     ) {
     }
 

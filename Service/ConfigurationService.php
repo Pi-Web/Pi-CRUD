@@ -8,14 +8,10 @@ use Exception;
 use PiWeb\PiCRUD\Tools\EntityManager;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * Class ConfigurationService
- * @package PiWeb\PiCRUD\Service
- */
 final class ConfigurationService
 {
     public function __construct(
-        private EntityManager $entityManager,
+        private readonly EntityManager $entityManager,
     ) {
     }
 

@@ -6,10 +6,6 @@ namespace PiWeb\PiCRUD\Serializer\StructuredData;
 
 use PiWeb\PiCRUD\Exception\StructuredDataNotImplementedException;
 
-/**
- * Class DefaultStructuredDataSerializer
- * @package PiWeb\PiCRUD\StructuredData
- */
 final class DefaultStructuredDataSerializer extends AbstractStructuredDataSerializer
 {
     public function normalize($object, string $format = null, array $context = []): string

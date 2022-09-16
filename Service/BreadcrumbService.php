@@ -9,27 +9,15 @@ use PiWeb\PiCRUD\Tools\PiCrudUtils;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * Class BreadcrumbService
- * @package PiWeb\PiCRUD\Service
- */
 final class BreadcrumbService
 {
     public function __construct(
-        private Breadcrumb $breadcrumb,
-        private TranslatorInterface $translator,
-        private RouterInterface $router,
+        private readonly Breadcrumb $breadcrumb,
+        private readonly TranslatorInterface $translator,
+        private readonly RouterInterface $router,
     ) {
     }
 
-    /**
-     * @param string $route
-     * @param string|null $entityType
-     * @param int|null $entityId
-     * @param string|null $entitySlug
-     * @param string|null $entityLabel
-     * @return void
-     */
     public function generate(string $route, ?string $entityType, ?int $entityId, ?string $entitySlug, ?string $entityLabel): void
     {
         switch ($route) {
@@ -60,9 +48,6 @@ final class BreadcrumbService
         }
     }
 
-    /**
-     * @return void
-     */
     private function generateDashboard(): void
     {
         $this->breadcrumb->addItem(
@@ -71,10 +56,6 @@ final class BreadcrumbService
         );
     }
 
-    /**
-     * @param string $entityType
-     * @return void
-     */
     private function generateAdmin(string $entityType): void
     {
         $this->breadcrumb->addItem(
@@ -83,10 +64,6 @@ final class BreadcrumbService
         );
     }
 
-    /**
-     * @param string $entityType
-     * @return void
-     */
     private function generateAdd(string $entityType): void
     {
         $this->breadcrumb->addItem(
@@ -95,11 +72,6 @@ final class BreadcrumbService
         );
     }
 
-    /**
-     * @param string $entityType
-     * @param int $entityId
-     * @return void
-     */
     private function generateEdit(string $entityType, int $entityId): void
     {
         $this->breadcrumb->addItem(
@@ -108,10 +80,6 @@ final class BreadcrumbService
         );
     }
 
-    /**
-     * @param string $entityType
-     * @return void
-     */
     private function generateList(string $entityType): void
     {
         $this->breadcrumb->addItem(
@@ -120,13 +88,6 @@ final class BreadcrumbService
         );
     }
 
-    /**
-     * @param string $entityType
-     * @param int $entityId
-     * @param string $entitySlug
-     * @param string $entityLabel
-     * @return void
-     */
     private function generateShow(string $entityType, int $entityId, string $entitySlug, string $entityLabel): void
     {
         $this->breadcrumb->addItem(

@@ -13,26 +13,15 @@ use PiWeb\PiCRUD\Tools\EntityManager;
 use PiWeb\PiCRUD\Event\FormEvent;
 use PiWeb\PiCRUD\Event\PiCrudEvents;
 
-/**
- * Class EntityFormType
- * @package PiWeb\PiCRUD\Form
- */
-class EntityFormType extends AbstractType
+final class EntityFormType extends AbstractType
 {
-    /**
-     * EntityFormType constructor.
-     * @param EntityManager $entityManager
-     * @param EventDispatcherInterface $dispatcher
-     */
     public function __construct(
-        private EntityManager $entityManager,
-        private EventDispatcherInterface $dispatcher
+        private readonly EntityManager $entityManager,
+        private readonly EventDispatcherInterface $dispatcher
     ) {
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
      * @throws Exception
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -49,9 +38,6 @@ class EntityFormType extends AbstractType
         }
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

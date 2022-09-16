@@ -13,26 +13,15 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
-/**
- * Class AdminController
- * @package PiWeb\PiCRUD\Controller
- */
-class AdminController extends AbstractController
+final class AdminController extends AbstractController
 {
     use TargetPathTrait;
 
-    /**
-     * CRUDController constructor.
-     * @param RequestStack $requestStack
-     * @param TemplateService $templateService
-     * @param EntityManager $entityManager
-     * @param EntityManagerInterface $em
-     */
     public function __construct(
-        private RequestStack $requestStack,
-        private TemplateService $templateService,
-        private EntityManager $entityManager,
-        private EntityManagerInterface $em,
+        private readonly RequestStack $requestStack,
+        private readonly TemplateService $templateService,
+        private readonly EntityManager $entityManager,
+        private readonly EntityManagerInterface $em,
     ) {
     }
 

@@ -17,9 +17,6 @@ Trait IdTrait
      */
     protected ?int $id = null;
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;

@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace PiWeb\PiCRUD\Tools;
 
-/**
- * Class PiCrudUtils
- * @package PiWeb\PiCRUD\Tools
- */
 final class PiCrudUtils
 {
     public const ROUTE_DASHBOARD = 'pi_crud_dashboard';

@@ -6,10 +6,6 @@ namespace PiWeb\PiCRUD\Service;
 
 use Twig\Environment;
 
-/**
- * Class FormService
- * @package PiWeb\PiCRUD\Service
- */
 final class TemplateService
 {
     public const PAGE_DASHBOARD = 'page.dashboard';
@@ -42,7 +38,7 @@ final class TemplateService
     ];
 
     public function __construct(
-        private Environment $environment,
+        private readonly Environment $environment,
     ) {
     }
 

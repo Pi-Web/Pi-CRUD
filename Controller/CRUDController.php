@@ -22,39 +22,22 @@ use PiWeb\PiCRUD\Event\PiCrudEvents;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 
-/**
- * Class CRUDController
- * @package PiWeb\PiCRUD\Controller
- */
-class CRUDController extends AbstractController
+final class CRUDController extends AbstractController
 {
     use TargetPathTrait;
 
-    /**
-     * CRUDController constructor.
-     * @param array $configuration
-     * @param EventDispatcherInterface $dispatcher
-     * @param SerializerInterface $serializer
-     * @param FormService $formService
-     * @param TemplateService $templateService
-     * @param ManagerRegistry $managerRegistry
-     * @param StructuredDataService $structuredDataService
-     */
     public function __construct(
-        private array $configuration,
-        private EventDispatcherInterface $dispatcher,
-        private SerializerInterface $serializer,
-        private FormService $formService,
-        private TemplateService $templateService,
-        private ManagerRegistry $managerRegistry,
-        private StructuredDataService $structuredDataService,
+        private readonly array $configuration,
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly SerializerInterface $serializer,
+        private readonly FormService $formService,
+        private readonly TemplateService $templateService,
+        private readonly ManagerRegistry $managerRegistry,
+        private readonly StructuredDataService $structuredDataService,
     ) {
     }
 
     /**
-     * @param Request $request
-     * @param string $type
-     * @return Response
      * @throws Exception
      */
     public function show(Request $request, string $type): Response
@@ -73,9 +56,6 @@ class CRUDController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param string $type
-     * @return Response
      * @throws Exception
      */
     public function list(Request $request, string $type): Response
@@ -113,9 +93,6 @@ class CRUDController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param string $type
-     * @return Response
      * @throws Exception
      */
     public function admin(Request $request, string $type): Response
@@ -141,12 +118,9 @@ class CRUDController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param string $type
-     * @return RedirectResponse|Response
      * @throws Exception
      */
-    public function add(Request $request, string $type): RedirectResponse|Response
+    public function add(Request $request, string $type): Response
     {
         $form = $this->formService->getAdminForm($request, $type);
 
@@ -165,12 +139,9 @@ class CRUDController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param string $type
-     * @return RedirectResponse|Response
      * @throws Exception
      */
-    public function edit(Request $request, string $type): RedirectResponse|Response
+    public function edit(Request $request, string $type): Response
     {
         $entity = $request->attributes->get('entity');
 
@@ -190,10 +161,6 @@ class CRUDController extends AbstractController
             $this->redirect($this->getTargetPath($request->getSession(), 'main'));
     }
 
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     */
     public function delete(Request $request): RedirectResponse
     {
         $entityManager = $this->managerRegistry->getManager();
@@ -203,10 +170,6 @@ class CRUDController extends AbstractController
         return $this->redirect($this->getTargetPath($request->getSession(), 'main'));
     }
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
     public function all(Request $request): JsonResponse
     {
         return new JsonResponse($this->serializer->serialize(

@@ -19,18 +19,14 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 
-/**
- * Class FormService
- * @package PiWeb\PiCRUD\Service
- */
 final class FormService
 {
     public function __construct(
-        private PiCrudEntityManager $piCrudEntityManager,
-        private FormFactoryInterface $formFactory,
-        private EventDispatcherInterface $dispatcher,
-        private Security $security,
-        private EntityManagerInterface $entityManager,
+        private readonly PiCrudEntityManager $piCrudEntityManager,
+        private readonly FormFactoryInterface $formFactory,
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly Security $security,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 

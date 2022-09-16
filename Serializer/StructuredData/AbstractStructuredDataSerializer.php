@@ -9,14 +9,10 @@ use Symfony\Component\Serializer\Normalizer\CacheableSupportsMethodInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-/**
- * Class AbstractStructuredDataSerializer
- * @package PiWeb\PiCRUD\StructuredData
- */
 abstract class AbstractStructuredDataSerializer implements NormalizerInterface, ContextAwareNormalizerInterface, CacheableSupportsMethodInterface
 {
     public function __construct(
-        protected RouterInterface $router,
+        protected readonly RouterInterface $router,
     ) {
     }
 

@@ -19,18 +19,11 @@ Trait ContentTrait
      */
     protected ?string $content = null;
 
-    /**
-     * @return string|null
-     */
     public function getContent(): ?string
     {
         return $this->content;
     }
 
-    /**
-     * @param string|null $content
-     * @return $this
-     */
     public function setContent(?string $content): self
     {
         $this->content = $content;

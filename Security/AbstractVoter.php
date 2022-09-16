@@ -8,10 +8,6 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 
-/**
- * Class AbstractVoter
- * @package App\Security
- */
 abstract class AbstractVoter extends Voter
 {
     const SHOW = 'show';
@@ -21,32 +17,17 @@ abstract class AbstractVoter extends Voter
     const EDIT = 'edit';
     const DELETE = 'delete';
 
-    /**
-     * AbstractVoter constructor.
-     * @param Security $security
-     */
     public function __construct(
-        protected Security $security
+        protected readonly Security $security
     ) {
     }
 
-    /**
-     * @param string $attribute
-     * @param mixed $subject
-     * @return bool
-     */
-    protected function supports(string $attribute, $subject): bool
+    protected function supports(string $attribute, mixed $subject): bool
     {
         return method_exists($this, 'can' . ucfirst($attribute));
     }
 
-    /**
-     * @param string $attribute
-     * @param mixed $subject
-     * @param TokenInterface $token
-     * @return bool
-     */
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
 
