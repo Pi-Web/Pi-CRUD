@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PiWeb\PiCRUD\Service;
 
+use PiWeb\PiCRUD\Exception\StructuredDataNotImplementedException;
 use PiWeb\PiCRUD\Serializer\StructuredData\StructuredDataSerializerInterface;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 final class StructuredDataService
@@ -22,7 +22,7 @@ final class StructuredDataService
                 $object,
                 StructuredDataSerializerInterface::SERIALIZER_FORMAT_STRUCTURED_DATA
             );
-        } catch (ExceptionInterface) {
+        } catch (StructuredDataNotImplementedException) {
             return null;
         }
 
