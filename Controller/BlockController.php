@@ -15,9 +15,6 @@ final class BlockController extends AbstractController
 {
     use TargetPathTrait;
 
-    /**
-     * BlockController constructor.
-     */
     public function __construct(
         private readonly TemplateService $templateService,
         private readonly StructuredDataService $structuredDataService,

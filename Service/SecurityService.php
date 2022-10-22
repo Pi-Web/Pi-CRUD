@@ -18,17 +18,12 @@ final class SecurityService
         PiCrudUtils::ROUTE_EDIT => 'edit',
         PiCrudUtils::ROUTE_DELETE => 'delete',
     ];
-    
+
     public function __construct(
         private readonly Security $security,
     ) {
     }
 
-    /**
-     * @param string $route
-     * @param mixed|null $subject
-     * @return void
-     */
     public function checkPermission(string $route, mixed $subject = null): void
     {
         if (!isset(self::ROUTE_PERMISSIONS[$route])) {

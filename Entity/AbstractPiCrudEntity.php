@@ -11,10 +11,6 @@ use PiWeb\PiCRUD\Model\MetaDescriptionTrait;
 use PiWeb\PiCRUD\Model\SluggableTrait;
 use PiWeb\PiCRUD\Model\TitleTrait;
 
-/**
- * Class PiCrudEntity
- * @package PiWeb\PiCRUD\Entity
- */
 abstract class AbstractPiCrudEntity
 {
     use IdTrait;

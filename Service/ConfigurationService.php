@@ -19,8 +19,7 @@ final class ConfigurationService
     {
         try {
             return $this->entityManager->getEntity($type);
-        }
-        catch (Exception) {
+        } catch (Exception) {
             throw new NotFoundHttpException();
         }
     }

@@ -40,7 +40,7 @@ class EntityDiscovery
         }
 
         $item = $this->cache->getItem(self::ENTITIES_CACHE_KEY);
-        if(!$item->isHit()) {
+        if (!$item->isHit()) {
             try {
                 $this->discoverEntities();
             } catch (Exception) {
@@ -56,7 +56,7 @@ class EntityDiscovery
     /**
      * @throws ReflectionException
      */
-    private function discoverEntities()
+    private function discoverEntities(): void
     {
         $path = [
             sprintf('%s/src/%s', $this->rootDir, $this->directory),

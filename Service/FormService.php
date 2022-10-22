@@ -6,6 +6,7 @@ namespace PiWeb\PiCRUD\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Exception;
 use PiWeb\PiCRUD\Event\EntityEvent;
 use PiWeb\PiCRUD\Event\FilterEvent;
 use PiWeb\PiCRUD\Event\PiCrudEvents;
@@ -30,6 +31,9 @@ final class FormService
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function getSearchForm(Request $request, string $type, QueryBuilder $queryBuilder): FormInterface
     {
         $searchEntity = $this->piCrudEntityManager->create($type);
@@ -38,20 +42,27 @@ final class FormService
         $searchForm->handleRequest($request);
 
         foreach ($searchForm->all() as $field) {
-            if (!empty($searchEntity->{'get' . $field->getName()}())) {
+            $getMethod = sprintf('get%s', $field->getName());
+            if (!empty($searchEntity->{$getMethod}())) {
                 $operator = $field->getConfig()->getOption('attr')['operator'] ?? '=';
 
                 $expression = $queryBuilder
                     ->expr()
                     ->orX(sprintf('entity.%s %s :%s', $field->getName(), $operator, $field->getName()));
 
-                $event = new FilterEvent($this->security->getUser(), $type, $queryBuilder, $expression, $field->getName());
+                $event = new FilterEvent(
+                    $this->security->getUser(),
+                    $type,
+                    $queryBuilder,
+                    $expression,
+                    $field->getName()
+                );
                 $this->dispatcher->dispatch($event, PiCrudEvents::POST_FILTER_QUERY_BUILDER);
 
                 $queryBuilder->andWhere($event->getComposite());
                 $queryBuilder->setParameter(
                     $field->getName(),
-                    $searchEntity->{'get'.$field->getName()}()
+                    $searchEntity->{$getMethod}()
                 );
             }
         }
@@ -65,7 +76,8 @@ final class FormService
 
         if (empty($entity)) {
             $entity = $this->piCrudEntityManager->create($type);
-            $this->dispatcher->dispatch(new EntityEvent($type, $entity, $request->query->all()), PiCrudEvents::POST_ENTITY_CREATE);
+            $event = new EntityEvent($type, $entity, $request->query->all());
+            $this->dispatcher->dispatch($event, PiCrudEvents::POST_ENTITY_CREATE);
             $isNew = true;
         }
 

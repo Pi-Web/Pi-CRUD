@@ -43,12 +43,14 @@ final class KernelRequestEventSubscriber implements EventSubscriberInterface
 
         $this->securityService->checkPermission($route, $entity ?? $type);
 
-        if (in_array($route, [
-            PiCrudUtils::ROUTE_SHOW,
-            PiCrudUtils::ROUTE_LIST,
-            PiCrudUtils::ROUTE_ADMIN,
-            PiCrudUtils::ROUTE_DASHBOARD
-        ])) {
+        if (
+            in_array($route, [
+                PiCrudUtils::ROUTE_SHOW,
+                PiCrudUtils::ROUTE_LIST,
+                PiCrudUtils::ROUTE_ADMIN,
+                PiCrudUtils::ROUTE_DASHBOARD,
+            ])
+        ) {
             $this->saveTargetPath($request->getSession(), 'main', $request->getUri());
         }
 

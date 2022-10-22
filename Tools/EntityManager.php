@@ -6,7 +6,9 @@ namespace PiWeb\PiCRUD\Tools;
 
 use Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Cache\InvalidArgumentException;
 use ReflectionException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EntityManager
 {
@@ -17,7 +19,7 @@ class EntityManager
     }
 
     /**
-     * @throws ReflectionException
+     * @throws InvalidArgumentException
      */
     public function getEntities(): array
     {
@@ -25,7 +27,7 @@ class EntityManager
     }
 
     /**
-     * @throws Exception
+     * @throws NotFoundHttpException|InvalidArgumentException
      */
     public function getEntity($name): array
     {
@@ -34,11 +36,11 @@ class EntityManager
             return $entities[$name];
         }
 
-        throw new Exception('Entity not found.');
+        throw new NotFoundHttpException('Entity not found.');
     }
 
     /**
-     * @throws Exception
+     * @throws NotFoundHttpException|InvalidArgumentException
      */
     public function create($name): mixed
     {
@@ -46,11 +48,11 @@ class EntityManager
         if (array_key_exists($name, $entities)) {
             $class = $entities[$name]['class'];
             if (!class_exists($class)) {
-                throw new Exception('Entity class does not exist.');
+                throw new NotFoundHttpException('Entity class does not exist.');
             }
             return new $class($this->em);
         }
 
-        throw new Exception('Entity does not exist.');
+        throw new NotFoundHttpException('Entity does not exist.');
     }
 }

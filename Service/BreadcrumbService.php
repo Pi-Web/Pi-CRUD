@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PiWeb\PiCRUD\Service;
 
 use PiWeb\PiBreadcrumb\Model\Breadcrumb;
+use PiWeb\PiCRUD\Config\PiCrudRoute;
 use PiWeb\PiCRUD\Tools\PiCrudUtils;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -18,8 +19,13 @@ final class BreadcrumbService
     ) {
     }
 
-    public function generate(string $route, ?string $entityType, ?int $entityId, ?string $entitySlug, ?string $entityLabel): void
-    {
+    public function generate(
+        string $route,
+        ?string $entityType,
+        ?int $entityId,
+        ?string $entitySlug,
+        ?string $entityLabel
+    ): void {
         switch ($route) {
             case PiCrudUtils::ROUTE_DASHBOARD:
                 $this->generateDashboard();
@@ -52,7 +58,7 @@ final class BreadcrumbService
     {
         $this->breadcrumb->addItem(
             $this->translator->trans('pi_crud.dashboard.title'),
-            $this->router->generate('pi_crud_dashboard')
+            $this->router->generate(PiCrudRoute::DASHBOARD->value)
         );
     }
 
@@ -60,7 +66,7 @@ final class BreadcrumbService
     {
         $this->breadcrumb->addItem(
             $this->translator->trans('pi_crud.admin.title', ['entity_label' => $entityType]),
-            $this->router->generate('pi_crud_admin', ['type' => $entityType])
+            $this->router->generate(PiCrudRoute::ADMIN->value, ['type' => $entityType])
         );
     }
 
@@ -68,7 +74,7 @@ final class BreadcrumbService
     {
         $this->breadcrumb->addItem(
             $this->translator->trans('pi_crud.form.add.title', ['entity_label' => $entityType]),
-            $this->router->generate('pi_crud_add', ['type' => $entityType])
+            $this->router->generate(PiCrudRoute::ADD->value, ['type' => $entityType])
         );
     }
 
@@ -76,7 +82,7 @@ final class BreadcrumbService
     {
         $this->breadcrumb->addItem(
             $this->translator->trans('pi_crud.form.edit.title', ['entity_label' => $entityType]),
-            $this->router->generate('pi_crud_edit', ['type' => $entityType, 'id' => $entityId])
+            $this->router->generate(PiCrudRoute::EDIT->value, ['type' => $entityType, 'id' => $entityId])
         );
     }
 
@@ -84,7 +90,7 @@ final class BreadcrumbService
     {
         $this->breadcrumb->addItem(
             $this->translator->trans('pi_crud.list.title', ['entity_label' => $entityType]),
-            $this->router->generate('pi_crud_list', ['type' => $entityType])
+            $this->router->generate(PiCrudRoute::LIST->value, ['type' => $entityType])
         );
     }
 
@@ -92,7 +98,11 @@ final class BreadcrumbService
     {
         $this->breadcrumb->addItem(
             $entityLabel,
-            $this->router->generate('pi_crud_show', ['type' => $entityType, 'id' => $entityId, 'slug' => $entitySlug])
+            $this->router->generate(PiCrudRoute::SHOW->value, [
+                'type' => $entityType,
+                'id' => $entityId,
+                'slug' => $entitySlug,
+            ])
         );
     }
 }
