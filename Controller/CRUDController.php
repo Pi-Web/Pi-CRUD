@@ -12,6 +12,7 @@ use PiWeb\PiCRUD\Event\QueryResultEvent;
 use PiWeb\PiCRUD\Service\FormService;
 use PiWeb\PiCRUD\Service\StructuredDataService;
 use PiWeb\PiCRUD\Service\TemplateService;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
@@ -29,7 +30,7 @@ final class CRUDController extends AbstractController
     public function __construct(
         private readonly array $configuration,
         private readonly EntityManagerInterface $entityManager,
-        private readonly EventDispatcherInterface $dispatcher,
+        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly SerializerInterface $serializer,
         private readonly FormService $formService,
         private readonly TemplateService $templateService,
@@ -57,6 +58,7 @@ final class CRUDController extends AbstractController
 
     /**
      * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function list(Request $request, string $type): Response
     {
@@ -66,24 +68,24 @@ final class CRUDController extends AbstractController
             ->getRepository($configuration['class'])
             ->createQueryBuilder('entity');
 
-        $searchForm = $configuration['annotation']->search ?
+        $searchForm = isset($configuration['annotation']['search']) && $configuration['annotation']['search'] ?
             $this->formService->getSearchForm($request, $type, $queryBuilder) :
             null;
 
-        $event = new QueryEvent($this->getUser(), $type, $queryBuilder);
-        $this->dispatcher->dispatch($event, PiCrudEvents::POST_LIST_QUERY_BUILDER);
+        $queryEvent = new QueryEvent($this->getUser(), $type, $queryBuilder);
+        $this->eventDispatcher->dispatch($queryEvent, PiCrudEvents::POST_LIST_QUERY_BUILDER);
 
-        $entities = $event->getQueryBuilder()->getQuery()->execute();
+        $entities = $queryEvent->getQueryBuilder()->getQuery()->execute();
 
-        $resultEvent = new QueryResultEvent($type, $entities);
-        $this->dispatcher->dispatch($resultEvent, PiCrudEvents::POST_LIST_QUERY_RESULT);
+        $queryResultEvent = new QueryResultEvent($type, $entities);
+        $this->eventDispatcher->dispatch($queryResultEvent, PiCrudEvents::POST_LIST_QUERY_RESULT);
 
         return $this->render(
             $this->templateService->getTemplatePath(TemplateService::FORMAT_LIST, [$type]),
             [
                 'type' => $type,
                 'configuration' => $configuration,
-                'entities' => $resultEvent->getResults(),
+                'entities' => $queryResultEvent->getResults(),
                 'templates' => $this->configuration['templates'],
                 'searchForm' => $searchForm instanceof FormInterface ?
                     $searchForm->createView() :
@@ -103,8 +105,8 @@ final class CRUDController extends AbstractController
             ->getRepository($configuration['class'])
             ->createQueryBuilder('entity');
 
-        $event = new QueryEvent($this->getUser(), $type, $queryBuilder);
-        $this->dispatcher->dispatch($event, PiCrudEvents::POST_ADMIN_QUERY_BUILDER);
+        $queryEvent = new QueryEvent($this->getUser(), $type, $queryBuilder);
+        $this->eventDispatcher->dispatch($queryEvent, PiCrudEvents::POST_ADMIN_QUERY_BUILDER);
 
         return $this->render(
             $this->templateService->getTemplatePath(TemplateService::FORMAT_ADMIN, [$type]),
@@ -112,7 +114,7 @@ final class CRUDController extends AbstractController
                 'type' => $type,
                 'configuration' => $configuration,
                 'templates' => $this->configuration['templates'],
-                'entities' => $event->getQueryBuilder()->getQuery()->execute()
+                'entities' => $queryEvent->getQueryBuilder()->getQuery()->execute()
             ]
         );
     }

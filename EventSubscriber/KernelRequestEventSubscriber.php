@@ -19,19 +19,19 @@ final class KernelRequestEventSubscriber implements EventSubscriberInterface
     use TargetPathTrait;
 
     public function __construct(
-        private BreadcrumbService $breadcrumbService,
-        private ConfigurationService $configurationService,
-        private ManagerRegistry $managerRegistry,
-        private SecurityService $securityService,
+        private readonly BreadcrumbService    $breadcrumbService,
+        private readonly ConfigurationService $configurationService,
+        private readonly ManagerRegistry      $managerRegistry,
+        private readonly SecurityService      $securityService,
     ) {
     }
 
-    public function onKernelRequest(RequestEvent $event)
+    public function onKernelRequest(RequestEvent $requestEvent)
     {
-        $request = $event->getRequest();
+        $request = $requestEvent->getRequest();
 
         $route = $request->get('_route');
-        if (empty($route) || !str_starts_with($route, 'pi_crud')) {
+        if (empty($route) || !str_starts_with((string) $route, 'pi_crud')) {
             return;
         }
 

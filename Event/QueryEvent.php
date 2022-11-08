@@ -11,8 +11,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class QueryEvent extends Event
 {
     public function __construct(
-        private ?UserInterface $user,
-        private string $type,
+        private readonly ?UserInterface $user,
+        private readonly string $type,
         private QueryBuilder $queryBuilder
     ) {
     }

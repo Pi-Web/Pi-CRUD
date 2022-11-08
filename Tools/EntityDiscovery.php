@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace PiWeb\PiCRUD\Tools;
 
-use Doctrine\Common\Annotations\Reader;
 use Exception;
 use PiWeb\PiCRUD\Annotation\Entity;
 use PiWeb\PiCRUD\Annotation\Property;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -19,13 +18,12 @@ class EntityDiscovery
 {
     private const ENTITIES_CACHE_KEY = 'cache.pi_crud.entity_discovery.entities';
 
-    private string $directory;
+    private readonly string $directory;
     private array $entities = [];
 
     public function __construct(
         private readonly string $rootDir,
-        private readonly Reader $annotationReader,
-        private readonly AdapterInterface $cache,
+        private readonly CacheItemPoolInterface $cacheItemPool,
     ) {
         $this->directory = 'Entity';
     }
@@ -39,18 +37,19 @@ class EntityDiscovery
             return $this->entities;
         }
 
-        $item = $this->cache->getItem(self::ENTITIES_CACHE_KEY);
-        if (!$item->isHit()) {
+        $cacheItem = $this->cacheItemPool->getItem(self::ENTITIES_CACHE_KEY);
+        if (!$cacheItem->isHit()) {
             try {
                 $this->discoverEntities();
-            } catch (Exception) {
+            } catch (Exception $e) {
+                dump($e); die;
             }
-            $item->set($this->entities);
-            $item->expiresAfter(604800);
-            $this->cache->save($item);
+            $cacheItem->set($this->entities);
+            $cacheItem->expiresAfter(604800);
+            $this->cacheItemPool->save($cacheItem);
         }
 
-        return $this->entities = $item->get();
+        return $this->entities = $cacheItem->get();
     }
 
     /**
@@ -73,25 +72,32 @@ class EntityDiscovery
                 sprintf('PiWeb\PiCRUD\Entity\%s', $file->getBasename('.php'));
             $reflectionClass = new ReflectionClass($class);
 
-            $annotation = $this->annotationReader->getClassAnnotation($reflectionClass, Entity::class);
+            $annotation = $reflectionClass->getAttributes(Entity::class);
             if (!$annotation) {
                 continue;
             }
 
             $propertiesAnnotation = [];
             foreach ($reflectionClass->getProperties() as $property) {
-                $propertyAnnotation = $this->annotationReader->getPropertyAnnotation($property, Property::class);
-
-                if ($propertyAnnotation !== null) {
-                    $propertiesAnnotation[$property->name] = $propertyAnnotation;
+                $propertyAnnotation = $property->getAttributes(Property::class);
+                if (empty($propertyAnnotation)) {
+                    continue;
                 }
+
+                $propertyAnnotationArgument = current($propertyAnnotation)->getArguments();
+                if (empty($propertyAnnotationArgument['type'])) {
+                    $propertyAnnotationArgument['type'] = 'default';
+                }
+
+                $propertiesAnnotation[$property->name] = $propertyAnnotationArgument;
             }
 
-            /** @var Entity $annotation */
-            $this->entities[$annotation->name] = [
+            $classAnnotationArgument = current($annotation)->getArguments();
+
+            $this->entities[$classAnnotationArgument['name']] = [
                 'class' => $class,
-                'annotation' => $annotation,
-                'properties' => $propertiesAnnotation
+                'annotation' => $classAnnotationArgument,
+                'properties' => $propertiesAnnotation,
             ];
         }
     }

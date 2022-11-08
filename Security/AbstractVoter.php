@@ -10,15 +10,15 @@ use Symfony\Component\Security\Core\Security;
 
 abstract class AbstractVoter extends Voter
 {
-    const SHOW = 'show';
-    const LIST = 'list';
-    const ADMIN = 'admin';
-    const ADD = 'add';
-    const EDIT = 'edit';
-    const DELETE = 'delete';
+    final const SHOW = 'show';
+    final const LIST = 'list';
+    final const ADMIN = 'admin';
+    final const ADD = 'add';
+    final const EDIT = 'edit';
+    final const DELETE = 'delete';
 
     public function __construct(
-        protected readonly Security $security
+        protected readonly Security $security,
     ) {
     }
 

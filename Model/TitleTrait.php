@@ -10,15 +10,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 Trait TitleTrait
 {
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @PiCRUD\Property(
-     *      label="Titre",
-     *      admin={"class": "font-weight-bold"},
-     *      form={"class": "order-1"}
-     * )
-     * @Groups("default")
-     */
+    #[PiCRUD\Property(
+        label: 'Titre',
+        admin: ['class' => 'font-weight-bold'],
+        form: ['class' => 'order-1'],
+    )]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups('default')]
     protected string $title = '';
 
     public function getTitle(): string

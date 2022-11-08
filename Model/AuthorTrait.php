@@ -12,44 +12,42 @@ use PiWeb\PiCRUD\Annotation as PiCRUD;
 
 Trait AuthorTrait
 {
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(nullable=true)
-     * @PiCRUD\Property(
-     *      label="Créé par",
-     *      admin={"class": "d-none d-lg-table-cell"}
-     * )
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    #[PiCRUD\Property(
+        label: 'Créer par',
+        admin: ['class' => 'd-none d-lg-table-cell']
+    )]
     protected ?User $createBy = null;
 
-    /**
-    * @ORM\Column(type="datetime", nullable=true)
-    * @PiCRUD\Property(
-    *      label="Créé le",
-    *      type="datetime",
-    *      admin={"class": "d-none d-lg-table-cell", "options": {"date": "short", "time": "short"}}
-    * )
-    */
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[PiCRUD\Property(
+        label: 'Créer le',
+        type: 'datetime',
+        admin: [
+            'class' => 'd-none d-lg-table-cell',
+            'options' => ['date' => 'short', 'time' => 'short'],
+        ]
+    )]
     protected ?DateTimeInterface $createAt = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(nullable=true)
-     * @PiCRUD\Property(
-     *      label="Modifié par",
-     *      admin={"class": "d-none d-lg-table-cell"}
-     * )
-     */
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    #[PiCRUD\Property(
+        label: 'Modifié par',
+        admin: ['class' => 'd-none d-lg-table-cell']
+    )]
     protected ?User $updateBy = null;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     * @PiCRUD\Property(
-     *      label="Modifié le",
-     *      type="datetime",
-     *      admin={"class": "d-none d-lg-table-cell", "options": {"date": "short", "time": "short"}}
-     * )
-     */
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[PiCRUD\Property(
+        label: 'Modifié le',
+        type: 'datetime',
+        admin: [
+            'class' => 'd-none d-lg-table-cell',
+            'options' => ['date' => 'short', 'time' => 'short'],
+        ]
+    )]
     protected ?DateTimeInterface $updateAt = null;
 
     public function getCreateBy(): ?User
@@ -81,10 +79,8 @@ Trait AuthorTrait
         return $this->updateAt;
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function setUpdateAt(): self
     {
         $this->updateAt = new DateTime();

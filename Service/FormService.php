@@ -13,6 +13,7 @@ use PiWeb\PiCRUD\Event\PiCrudEvents;
 use PiWeb\PiCRUD\Form\EntityFormType;
 use PiWeb\PiCRUD\Form\SearchFormType;
 use PiWeb\PiCRUD\Tools\EntityManager as PiCrudEntityManager;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -33,6 +34,7 @@ final class FormService
 
     /**
      * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function getSearchForm(Request $request, string $type, QueryBuilder $queryBuilder): FormInterface
     {

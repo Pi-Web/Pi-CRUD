@@ -19,10 +19,16 @@
     },
     "require": {
         "php": "^8.1",
-        "doctrine/annotations": "^1.13.2",
-        "symfony/serializer": "^5.0",
+        "doctrine/annotations": "^1.13.3",
+        "symfony/serializer": "^v5.4.15",
         "pi-web/pi-breadcrumb": ">=1.0|dev-master",
-        "symfony/security-bundle": "^5.4",
-        "doctrine/orm": "^2.12.1"
+        "symfony/security-bundle": "^v5.4.11",
+        "doctrine/orm": "^2.13.3",
+        "gedmo/doctrine-extensions": "^3.9",
+        "symfony/translation": "^5.4",
+        "symfony/form": "^5.4"
+    },
+    "require-dev": {
+        "rector/rector": "^0.14.7"
     }
 }

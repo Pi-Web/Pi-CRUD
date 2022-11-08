@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PiWeb\PiCRUD\Form;
 
 use Exception;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,30 +18,31 @@ final class SearchFormType extends AbstractType
 {
     public function __construct(
         private readonly EntityManager $entityManager,
-        private readonly EventDispatcherInterface $dispatcher
+        private readonly EventDispatcherInterface $eventDispatcher
     ) {
     }
 
     /**
      * @throws Exception
+     * @throws InvalidArgumentException
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $formBuilder, array $options)
     {
         $properties = $this->entityManager->getEntity($options['type'])['properties'];
         foreach ($properties as $name => $property) {
-            if (empty($property->search)) {
+            if (empty($property['search'])) {
                 continue;
             }
 
-            $builder->add($name);
+            $formBuilder->add($name);
 
-            $this->dispatcher->dispatch(new FormEvent($name, $property, $builder, $options), PiCrudEvents::POST_SEARCH_BUILDER_ADD);
+            $this->eventDispatcher->dispatch(new FormEvent($name, $property, $formBuilder, $options), PiCrudEvents::POST_SEARCH_BUILDER_ADD);
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $optionsResolver)
     {
-        $resolver->setDefaults([
+        $optionsResolver->setDefaults([
             'type' => null,
         ]);
     }

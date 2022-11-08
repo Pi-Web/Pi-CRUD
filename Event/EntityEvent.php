@@ -9,9 +9,9 @@ use Symfony\Contracts\EventDispatcher\Event;
 final class EntityEvent extends Event
 {
     public function __construct(
-        private string $type,
-        private Object $subject,
-        private array $options = []
+        private readonly string $type,
+        private readonly Object $subject,
+        private readonly array $options = []
     ) {
     }
 

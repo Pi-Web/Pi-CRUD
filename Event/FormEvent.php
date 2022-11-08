@@ -10,10 +10,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 final class FormEvent extends Event
 {
     public function __construct(
-        private string $field,
+        private readonly string $field,
         private $properties,
-        private FormBuilderInterface $builder,
-        private array $options
+        private readonly FormBuilderInterface $formBuilder,
+        private readonly array $options
     ) {
     }
 
@@ -29,7 +29,7 @@ final class FormEvent extends Event
 
     public function getBuilder(): FormBuilderInterface
     {
-        return $this->builder;
+        return $this->formBuilder;
     }
 
     public function getOptions(): array

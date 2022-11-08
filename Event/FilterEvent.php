@@ -12,11 +12,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class FilterEvent extends Event
 {
     public function __construct(
-        private ?UserInterface $user,
-        private string $type,
-        private QueryBuilder $queryBuilder,
-        private Composite $composite,
-        private string $name
+        private readonly ?UserInterface $user,
+        private readonly string         $type,
+        private QueryBuilder            $queryBuilder,
+        private Composite               $composite,
+        private string                  $name
     ) {
     }
 
