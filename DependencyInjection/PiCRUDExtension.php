@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PiWeb\PiCRUD\DependencyInjection;
 
 use Exception;
+use PiWeb\PiCRUD\Transformer\StructuredDataTransformerInterface;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -16,6 +17,8 @@ use Symfony\Component\Config\FileLocator;
  */
 class PiCRUDExtension extends Extension
 {
+    public const TAG_STRUCTURED_DATA_TRANSFORMER = 'pi_crud.transformer.structured_data';
+
     /**
      * @var array|string[]
      */
@@ -58,6 +61,10 @@ class PiCRUDExtension extends Extension
 
         $definition = $container->getDefinition('PiWeb\PiCRUD\Controller\CRUDController');
         $definition->setArgument('$configuration', $config);
+
+        $container
+            ->registerForAutoconfiguration(StructuredDataTransformerInterface::class)
+            ->addTag(StructuredDataTransformerCompilerPass::STRUCTURED_DATA_TRANSFORMER_TAG);
     }
 
     /**

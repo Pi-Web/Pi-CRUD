@@ -26,7 +26,8 @@
         "doctrine/orm": "^2.13.3",
         "gedmo/doctrine-extensions": "^3.9",
         "symfony/translation": "^5.4",
-        "symfony/form": "^5.4"
+        "symfony/form": "^5.4",
+        "symfony/dom-crawler": "^5.4"
     },
     "require-dev": {
         "rector/rector": "^0.14.7"
