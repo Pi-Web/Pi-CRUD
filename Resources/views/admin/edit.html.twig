@@ -1,0 +1,17 @@
+{% extends '@PiCRUD/admin/form.html.twig' %}
+
+{% set type = configuration.entityName %}
+{% set properties = configuration.properties(page) %}
+{% set actions = configuration.actions(page) %}
+
+{% block form_title %}
+    <div class="row my-4">
+        <div class="col-12 col-lg-10 offset-lg-1">
+            <h1>{{ 'pi_crud.admin.form.title'|trans({'entity_label': type}) }} <span class="text-primary">{{ entity }}</span></h1>
+        </div>
+    </div>
+{% endblock %}
+
+{% block form_action %}
+    {{ 'pi_crud.admin.form.save'|trans({'entity_label': type}) }}
+{% endblock %}

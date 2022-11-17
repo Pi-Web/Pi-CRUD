@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace PiWeb\PiCRUD\Form;
 
 use Exception;
+use PiWeb\PiCRUD\Component\FieldComponent;
+use PiWeb\PiCRUD\Enum\Crud\CrudPageEnum;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -28,22 +30,17 @@ final class EntityFormType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $formBuilder, array $options)
     {
-        $properties = $this->entityManager->getEntity($options['type'])['properties'];
-        foreach ($properties as $name => $property) {
-            if (empty($property['form'])) {
-                continue;
-            }
-
-            $formBuilder->add($name);
-
-            $this->eventDispatcher->dispatch(new FormEvent($name, $property, $formBuilder, $options), PiCrudEvents::POST_FORM_BUILDER_ADD);
+        /** @var FieldComponent $property */
+        foreach ($options['configuration']->getProperties($options['crudPage']) as $property) {
+            $formBuilder->add($property->name, $property->getFormType(), $property->getFormOptions());
         }
     }
 
     public function configureOptions(OptionsResolver $optionsResolver)
     {
         $optionsResolver->setDefaults([
-            'type' => null,
+            'configuration' => null,
+            'crudPage' => null,
         ]);
     }
 }

@@ -1,0 +1,31 @@
+{% set maxPage = (pagination.total / pagination.byPage) | round(0, 'ceil') %}
+{% set minDisplayPage = max(1, pagination.page - 5) %}
+{% set maxDisplayPage = min(maxPage, pagination.page + 5) %}
+
+{% if 1 < maxPage %}
+    <div class="col-12 col-md-6 col-lg-10 offset-lg-1">
+        <nav>
+            <ul class="pagination justify-content-end">
+                <li class="page-item {{ 1 == pagination.page ? 'disabled' : '' }}">
+                    <a class="page-link" href="{{ path(url, params + {'_page': 1 == pagination.page ? 1 : pagination.page - 1}) }}">
+                        {{ 'pi_crud.pagination.previous'|trans }}
+                    </a>
+                </li>
+
+                {% for displayPage in minDisplayPage..maxDisplayPage %}
+                    <li class="page-item {{ displayPage == pagination.page ? 'active' : ''}}">
+                        <a class="page-link" href="{{ path(url, params + {'_page': displayPage}) }}">
+                            {{ displayPage }}
+                        </a>
+                    </li>
+                {% endfor %}
+
+                <li class="page-item {{ maxPage == pagination.page ? 'disabled' : '' }}">
+                    <a class="page-link" href="{{ path(url, params + {'_page': maxPage == pagination.page ? maxPage : pagination.page + 1}) }}">
+                        {{ 'pi_crud.pagination.next'|trans }}
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endif %}

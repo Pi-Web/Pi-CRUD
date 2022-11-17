@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PiWeb\PiCRUD\Service;
 
+use PiWeb\PiCRUD\Config\EntityConfigInterface;
+use PiWeb\PiCRUD\Enum\Crud\EntityOptionEnum;
 use PiWeb\PiCRUD\Transformer\ContainerStructuredDataTransformerFactory;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -21,13 +23,14 @@ final class StructuredDataService
 
     public function getStructuredData(object $object): ?string
     {
+        /** @var EntityConfigInterface $configuration */
         $configuration = $this->requestStack->getCurrentRequest()->attributes->get('configuration');
-        if (!isset($configuration['annotation']['structuredDataTransformer'])) {
+        if (empty($transformerClass = $configuration->getOption(EntityOptionEnum::TRANSFORMER_STRUCTURED_DATA))) {
             return null;
         }
 
         try {
-            $transformer = $this->containerStructuredDataTransformerFactory->getTransformer($configuration['annotation']['structuredDataTransformer']);
+            $transformer = $this->containerStructuredDataTransformerFactory->getTransformer($transformerClass);
         } catch (NotFoundExceptionInterface|ContainerExceptionInterface) {
             return null;
         }

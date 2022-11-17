@@ -7,6 +7,8 @@ namespace PiWeb\PiCRUD\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Exception;
+use PiWeb\PiCRUD\Config\EntityConfigInterface;
+use PiWeb\PiCRUD\Enum\Crud\CrudPageEnum;
 use PiWeb\PiCRUD\Event\EntityEvent;
 use PiWeb\PiCRUD\Event\FilterEvent;
 use PiWeb\PiCRUD\Event\PiCrudEvents;
@@ -72,18 +74,21 @@ final class FormService
         return $searchForm;
     }
 
-    public function getAdminForm(Request $request, string $type, $entity = null): ?FormInterface
+    public function getAdminForm(Request $request, EntityConfigInterface $configuration, CrudPageEnum $crudPage, $entity = null): ?FormInterface
     {
         $isNew = false;
 
         if (empty($entity)) {
-            $entity = $this->piCrudEntityManager->create($type);
-            $event = new EntityEvent($type, $entity, $request->query->all());
+            $entity = $this->piCrudEntityManager->create($configuration);
+            $event = new EntityEvent($configuration->getEntityName(), $entity, $request->query->all());
             $this->dispatcher->dispatch($event, PiCrudEvents::POST_ENTITY_CREATE);
             $isNew = true;
         }
 
-        $form = $this->formFactory->create(EntityFormType::class, $entity, ['type' => $type]);
+        $form = $this->formFactory->create(EntityFormType::class, $entity, [
+            'configuration' => $configuration,
+            'crudPage' => $crudPage,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

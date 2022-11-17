@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PiWeb\PiCRUD\DependencyInjection;
 
 use Exception;
+use PiWeb\PiCRUD\Config\EntityConfigInterface;
 use PiWeb\PiCRUD\Transformer\StructuredDataTransformerInterface;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -65,6 +66,10 @@ class PiCRUDExtension extends Extension
         $container
             ->registerForAutoconfiguration(StructuredDataTransformerInterface::class)
             ->addTag(StructuredDataTransformerCompilerPass::STRUCTURED_DATA_TRANSFORMER_TAG);
+
+        $container
+            ->registerForAutoconfiguration(EntityConfigInterface::class)
+            ->addTag(EntityConfigCompilerPass::ENTITY_CONFIG_TAG);
     }
 
     /**

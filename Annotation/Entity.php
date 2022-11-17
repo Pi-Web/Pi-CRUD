@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PiWeb\PiCRUD\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\Annotation;
 use Symfony\Contracts\Service\Attribute\Required;
 
 #[Attribute(Attribute::TARGET_CLASS)]
@@ -19,6 +18,7 @@ class Entity
         public bool $search = false,
         public array $dashboard = [],
         public array $options = [],
+        public ?string $config = null,
         public ?string $structuredDataTransformer = null,
     ) {
     }

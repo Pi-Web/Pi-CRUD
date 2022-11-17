@@ -1,0 +1,13 @@
+{% if is_granted('delete', entity) %}
+    {% if admin is defined and admin %}
+        <a class="btn btn-outline-danger admin-link stretched-link" href="{{ path('pi_crud_admin_delete', {'type': type, 'id': entity.id}) }}" title="{{ 'pi_crud.admin.%s.action.delete'|format(type)|trans|upper }}">
+            <i class="fa fa-trash" aria-hidden="true"></i>
+            <span class="d-none">{{ 'pi_crud.admin.%s.action.delete'|format(type)|trans }}</span>
+        </a>
+    {% else %}
+        <a class="btn btn-outline-danger admin-link stretched-link" href="{{ path('pi_crud_delete', {'type': type, 'id': entity.id}) }}" title="{{ 'pi_crud.default.%s.action.delete'|format(type)|trans|upper }}">
+            <i class="fa fa-trash" aria-hidden="true"></i>
+            <span class="d-none">{{ 'pi_crud.default.%s.action.delete'|format(type)|trans }}</span>
+        </a>
+    {% endif %}
+{% endif %}

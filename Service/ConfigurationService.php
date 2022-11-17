@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PiWeb\PiCRUD\Service;
 
 use Exception;
+use PiWeb\PiCRUD\Config\EntityConfigInterface;
 use PiWeb\PiCRUD\Tools\EntityManager;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -15,11 +16,11 @@ final class ConfigurationService
     ) {
     }
 
-    public function getEntityConfiguration(string $type): array
+    public function getEntityConfiguration(string $type): array|EntityConfigInterface
     {
         try {
             return $this->entityManager->getEntity($type);
-        } catch (Exception) {
+        } catch (Exception $e) {
             throw new NotFoundHttpException();
         }
     }

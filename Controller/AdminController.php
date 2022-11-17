@@ -33,13 +33,13 @@ final class AdminController extends AbstractController
 
         $items = [];
         foreach ($entities as $entity) {
-            $dashboardConfig = $entity['annotation']->dashboard;
+            $dashboardConfig = $entity['annotation']['dashboard'] ?? [];
             if (empty($dashboardConfig)) {
                 continue;
             }
 
-            $items[$entity['annotation']->dashboard['order'] ?? $entity['annotation']->name] = [
-                'name' => $entity['annotation']->name,
+            $items[$entity['annotation']['dashboard']['order'] ?? $entity['annotation']->name] = [
+                'name' => $entity['annotation']['name'],
                 'options' => $dashboardConfig,
                 'count' => !empty($dashboardConfig['format']) && 'extended' === $dashboardConfig['format'] ?
                     $this->em->getRepository($entity['class'])->count([]) :

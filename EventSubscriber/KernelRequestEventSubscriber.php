@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PiWeb\PiCRUD\EventSubscriber;
 
 use Doctrine\Persistence\ManagerRegistry;
+use PiWeb\PiCRUD\Config\EntityConfigInterface;
 use PiWeb\PiCRUD\Service\BreadcrumbService;
 use PiWeb\PiCRUD\Service\ConfigurationService;
 use PiWeb\PiCRUD\Service\SecurityService;
@@ -19,10 +20,10 @@ final class KernelRequestEventSubscriber implements EventSubscriberInterface
     use TargetPathTrait;
 
     public function __construct(
-        private readonly BreadcrumbService    $breadcrumbService,
+        private readonly BreadcrumbService $breadcrumbService,
         private readonly ConfigurationService $configurationService,
-        private readonly ManagerRegistry      $managerRegistry,
-        private readonly SecurityService      $securityService,
+        private readonly ManagerRegistry $managerRegistry,
+        private readonly SecurityService $securityService,
     ) {
     }
 
@@ -70,7 +71,7 @@ final class KernelRequestEventSubscriber implements EventSubscriberInterface
         ];
     }
 
-    private function loadConfiguration(Request $request, ?string $type): ?array
+    private function loadConfiguration(Request $request, ?string $type): array|EntityConfigInterface|null
     {
         if (!empty($type)) {
             $configuration = $this->configurationService->getEntityConfiguration($type);
@@ -82,11 +83,11 @@ final class KernelRequestEventSubscriber implements EventSubscriberInterface
         return $configuration ?? null;
     }
 
-    private function loadEntity(Request $request, ?array $configuration, ?int $id): ?object
+    private function loadEntity(Request $request, array|EntityConfigInterface $configuration, ?int $id): ?object
     {
         if (!empty($configuration) && !empty($id)) {
             $entity = $this->managerRegistry
-                ->getRepository($configuration['class'])
+                ->getRepository($configuration instanceof EntityConfigInterface ? $configuration->getEntityClass() : $configuration['class'])
                 ->find($id);
 
             $request->attributes->add([

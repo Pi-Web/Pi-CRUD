@@ -1,0 +1,12 @@
+{% if field is defined %}
+    <div class="form-group">
+        <label for="{{ field.vars.id }}" class="font-weight-bold">{{ '%s.%s'|format(page.value, name)|trans }}</label>
+        {{ form_widget(field, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+
+        <div class="invalid-feedback">
+            {{ form_errors(field) }}
+        </div>
+    </div>
+{% else %}
+    {{ value }}
+{% endif %}

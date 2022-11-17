@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('list') }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('list') }}
+{% endblock %}
+
+{% set type = configuration.entityName %}
+{% set properties = configuration.properties(page) %}
+{% set actions = configuration.actions(page) %}
+
+{% block title %}{{ 'pi_crud.admin.list.%s.main_title'|format(type)|trans }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid my-4">
+        <div class="row">
+            <div class="col-12 col-lg-10 offset-lg-1">
+                {{ render(path('pi_breadcrumb_block')) }}
+            </div>
+        </div>
+
+        <div class="row my-4">
+            <div class="col-12 col-lg-10 offset-lg-1">
+                <h1>{{ 'pi_crud.admin.list.%s.main_title'|format(type)|trans }}</h1>
+                {% if is_granted('add', type) %}
+                    <a href="{{ path('pi_crud_admin_add', {'type': type}) }}" class="btn btn-primary">
+                        <i class="fa fa-plus-circle"></i> {{ 'pi_crud.admin.add'|trans({'entity_label': type}) }}
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row my-4">
+            <div class="col-12 col-lg-10 offset-lg-1">
+                <table class="table table-responsive table-striped">
+                    <thead class="bg-primary text-white">
+                    <tr>
+                        {% for property in properties %}
+                            <th class="{{ property.class }}">{{ 'pi_crud.admin.list.%s.%s'|format(type, property.name)|trans }}</th>
+                        {% endfor %}
+
+                        {% if actions is defined and actions is not empty %}
+                            <th>{{ 'pi_crud.admin.list.%s.action'|format(type)|trans }}</th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for entity in entities %}
+                            <tr>
+                                {% for property in properties %}
+                                    {% if property.name is defined %}
+                                        <td class="{{ property.class }}">
+                                            {% include property.template with { 'value' : attribute(entity, property.name) } only %}
+                                        </td>
+                                    {% else %}
+
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if actions is defined and actions is not empty %}
+                                    <td>
+                                        {% for action in actions %}
+                                            {% include action.template with { 'type': type, 'entity' : entity, 'admin': true } only %}
+                                        {% endfor %}
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row my-4">
+            {% include '@PiCRUD/component/pagination.html.twig' with { 'pagination': pagination, 'url': 'pi_crud_admin_list', 'params': {'type': type} } only %}
+        </div>
+    </div>
+{% endblock %}

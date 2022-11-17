@@ -5,14 +5,9 @@ declare(strict_types=1);
 namespace PiWeb\PiCRUD\Annotation;
 
 use Attribute;
-use Doctrine\Common\Annotations\Annotation;
 use Symfony\Contracts\Service\Attribute\Required;
 
-/**
- * @Annotation
- * @Target("PROPERTY")
- */
-#[Attribute(Attribute::TARGET_PROPERTY)]
+#[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD)]
 class Property
 {
     public function __construct(

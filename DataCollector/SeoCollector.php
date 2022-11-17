@@ -48,6 +48,10 @@ final class SeoCollector extends DataCollector
             ];
             $this->data['description'] = $descriptionInfo;
         }
+
+        // Structured Data
+        $structuredDatas = $crawler->filterXPath('//script[@type="application/ld+json"]');
+        $this->data['structuredDatas'] = $structuredDatas->count();
     }
 
     private function getTitleClass(int $size): string
@@ -82,6 +86,11 @@ final class SeoCollector extends DataCollector
     public function getDescription(): array
     {
         return $this->data['description'] ?? [];
+    }
+
+    public function getStructuredDatas(): int
+    {
+        return $this->data['structuredDatas'] ?? 0;
     }
 
     public function reset(): void

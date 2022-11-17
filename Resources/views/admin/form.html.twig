@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('collection') }}
+{% endblock %}
+
+{% block title %}Administration{% endblock %}
+
+{% block content %}
+    <div class="container-fluid py-2 py-lg-4">
+        {% block content_breadcrumb %}
+            <div class="row">
+                <div class="col-12 col-lg-10 offset-lg-1">
+                    {{ render(path('pi_breadcrumb_block')) }}
+                </div>
+            </div>
+        {% endblock %}
+
+        {% block form_title %}{% endblock %}
+
+        {% block form_content %}
+            <div class="row">
+                <div class="col-12 col-lg-10 offset-lg-1">
+                    {{ form_start(form) }}
+                        <div class="row">
+                            {% for property in properties %}
+                                <div class="col-12">
+                                    {% include property.template with { 'page': page, 'field': attribute(form, property.name), 'name': property.name } only %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="d-none">
+                            {{ form_rest(form) }}
+                        </div>
+                        <button type="submit" class="btn btn-lg btn-primary">{% block form_action %}{% endblock %}</button>
+                        {% block form_extra_link %}{% endblock %}
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        {% endblock %}
+    </div>
+{% endblock %}

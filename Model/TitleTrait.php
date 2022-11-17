@@ -7,6 +7,7 @@ namespace PiWeb\PiCRUD\Model;
 use Doctrine\ORM\Mapping as ORM;
 use PiWeb\PiCRUD\Annotation as PiCRUD;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 Trait TitleTrait
 {

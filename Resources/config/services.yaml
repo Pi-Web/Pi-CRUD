@@ -8,7 +8,7 @@ services:
             
     PiWeb\PiCRUD\:
         resource: '../../*'
-        exclude: '../../{Annotation,DependencyInjection,Event,Migrations,Tests,Kernel.php}'
+        exclude: '../../{Annotation,Component,DependencyInjection,Event,Migrations,Tests,Kernel.php}'
 
     gedmo.listener.sluggable:
         class: Gedmo\Sluggable\SluggableListener
@@ -22,3 +22,8 @@ services:
             - name: data_collector
               template: '@PiCRUD/data_collector/seo_collector.html.twig'
               id: PiWeb\PiCRUD\DataCollector\SeoCollector
+
+    PiWeb\PiCRUD\Config\PiCrudEntityConfig:
+        class: PiWeb\PiCRUD\Config\PiCrudEntityConfig
+        arguments:
+            $componentFactory: '@PiWeb\PiCRUD\Factory\ComponentFactory'

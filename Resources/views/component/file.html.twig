@@ -1,0 +1,21 @@
+{% if field is defined %}
+    <div class="form-group form-embed">
+        <label for="{{ field.vars.id }}" class="font-weight-bold required">{{ 'pi_crud.admin.form.%s'|format(name) }}</label>
+        <div class="form-inline">
+            <div class="form-group pr-4">
+                {{ form_label(field.label) }}
+                {{ form_widget(field.label, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+            </div>
+            <div class="form-group pr-4">
+                {{ form_label(field.documentFile) }}
+                {{ form_widget(field.documentFile, {'attr': {'class': field.vars.errors|length > 0 ? 'is-invalid' : ''}}) }}
+            </div>
+        </div>
+
+        <div class="invalid-feedback">
+            {{ form_errors(field) }}
+        </div>
+    </div>
+{% else %}
+    {{ value }}
+{% endif %}

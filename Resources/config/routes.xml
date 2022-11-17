@@ -17,8 +17,22 @@
         <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::list</default>
     </route>
 
-    <route id="pi_crud_admin" path="/{type}/admin">
-        <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::admin</default>
+    <route id="pi_crud_admin_list" path="/admin/{type}">
+        <default key="_controller">PiWeb\PiCRUD\Controller\PiCrudAdminController::list</default>
+    </route>
+
+    <route id="pi_crud_admin_add" path="/admin/{type}/add">
+        <default key="_controller">PiWeb\PiCRUD\Controller\PiCrudAdminController::add</default>
+    </route>
+
+    <route id="pi_crud_admin_edit" path="/admin/{type}/{id}/edit">
+        <default key="_controller">PiWeb\PiCRUD\Controller\PiCrudAdminController::edit</default>
+        <requirement key="id">\d+</requirement>
+    </route>
+
+    <route id="pi_crud_admin_delete" path="/admin/{type}/{id}/delete">
+        <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::delete</default>
+        <requirement key="id">\d+</requirement>
     </route>
 
     <route id="pi_crud_add" path="/{type}/add">

@@ -1,0 +1,5 @@
+{% if editable is defined and editable %}
+
+{% else %}
+    {{ value|format_datetime('short', 'short', locale='fr') }}
+{% endif %}

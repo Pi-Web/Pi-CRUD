@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PiWeb\PiCRUD\Tools;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PiWeb\PiCRUD\Config\EntityConfigInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -27,7 +28,7 @@ class EntityManager
     /**
      * @throws NotFoundHttpException|InvalidArgumentException
      */
-    public function getEntity($name): array
+    public function getEntity($name): array|EntityConfigInterface
     {
         $entities = $this->entityDiscovery->getEntities();
         if (isset($entities[$name])) {
@@ -38,19 +39,14 @@ class EntityManager
     }
 
     /**
-     * @throws NotFoundHttpException|InvalidArgumentException
+     * @throws NotFoundHttpException
      */
-    public function create($name): mixed
+    public function create(EntityConfigInterface $entityConfig): mixed
     {
-        $entities = $this->entityDiscovery->getEntities();
-        if (array_key_exists($name, $entities)) {
-            $class = $entities[$name]['class'];
-            if (!class_exists($class)) {
-                throw new NotFoundHttpException('Entity class does not exist.');
-            }
-            return new $class($this->entityManager);
+        $class = $entityConfig->getEntityClass();
+        if (!class_exists($class)) {
+            throw new NotFoundHttpException('Entity class does not exist.');
         }
-
-        throw new NotFoundHttpException('Entity does not exist.');
+        return new $class($this->entityManager);
     }
 }

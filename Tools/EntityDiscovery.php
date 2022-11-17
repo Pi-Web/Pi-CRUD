@@ -6,7 +6,7 @@ namespace PiWeb\PiCRUD\Tools;
 
 use Exception;
 use PiWeb\PiCRUD\Annotation\Entity;
-use PiWeb\PiCRUD\Annotation\Property;
+use PiWeb\PiCRUD\Factory\EntityConfigFactory;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
 use ReflectionClass;
@@ -24,6 +24,7 @@ class EntityDiscovery
     public function __construct(
         private readonly string $rootDir,
         private readonly CacheItemPoolInterface $cacheItemPool,
+        private readonly EntityConfigFactory $entityConfigFactory,
     ) {
         $this->directory = 'Entity';
     }
@@ -44,6 +45,7 @@ class EntityDiscovery
             } catch (Exception $e) {
                 dump($e); die;
             }
+
             $cacheItem->set($this->entities);
             $cacheItem->expiresAfter(604800);
             $this->cacheItemPool->save($cacheItem);
@@ -77,28 +79,29 @@ class EntityDiscovery
                 continue;
             }
 
-            $propertiesAnnotation = [];
+            $propertiesReflectionAttributes = [];
             foreach ($reflectionClass->getProperties() as $property) {
-                $propertyAnnotation = $property->getAttributes(Property::class);
-                if (empty($propertyAnnotation)) {
+                $reflectionAttributes = $property->getAttributes();
+                if (empty($reflectionAttributes)) {
                     continue;
                 }
 
-                $propertyAnnotationArgument = current($propertyAnnotation)->getArguments();
-                if (empty($propertyAnnotationArgument['type'])) {
-                    $propertyAnnotationArgument['type'] = 'default';
+                foreach ($reflectionAttributes as $reflectionAttribute) {
+                    $propertiesReflectionAttributes[$property->name][$reflectionAttribute->getName()] = $reflectionAttribute->getArguments();
                 }
-
-                $propertiesAnnotation[$property->name] = $propertyAnnotationArgument;
             }
 
             $classAnnotationArgument = current($annotation)->getArguments();
+            $classAnnotationArgument['class'] = $class;
+            if (empty($classAnnotationArgument['name'])) {
+                $namespaceExploded = explode('\\', $reflectionClass->getName());
+                $classAnnotationArgument['name'] = strtolower(end($namespaceExploded));
+            }
 
-            $this->entities[$classAnnotationArgument['name']] = [
-                'class' => $class,
-                'annotation' => $classAnnotationArgument,
-                'properties' => $propertiesAnnotation,
-            ];
+            $this->entities[$classAnnotationArgument['name']] = $this->entityConfigFactory->getConfig(
+                $classAnnotationArgument,
+                $propertiesReflectionAttributes
+            );
         }
     }
 }

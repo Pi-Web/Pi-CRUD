@@ -43,6 +43,13 @@
                 <span>{{ collector.description['value']|nl2br|raw }}</span>
             </div>
         {% endif %}
+
+        <div class="sf-toolbar-info-piece">
+            <b>Structured data</b>
+            <span class="sf-toolbar-status sf-toolbar-status-green">
+                {{ collector.structuredDatas }}
+            </span>
+        </div>
     {% endset %}
 
     {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: false }) }}
