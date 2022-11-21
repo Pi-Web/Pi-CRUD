@@ -26,7 +26,7 @@ final class SearchFormType extends AbstractType
      * @throws Exception
      * @throws InvalidArgumentException
      */
-    public function buildForm(FormBuilderInterface $formBuilder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $properties = $this->entityManager->getEntity($options['type'])['properties'];
         foreach ($properties as $name => $property) {
@@ -34,15 +34,15 @@ final class SearchFormType extends AbstractType
                 continue;
             }
 
-            $formBuilder->add($name);
+            $builder->add($name);
 
-            $this->eventDispatcher->dispatch(new FormEvent($name, $property, $formBuilder, $options), PiCrudEvents::POST_SEARCH_BUILDER_ADD);
+            $this->eventDispatcher->dispatch(new FormEvent($name, $property, $builder, $options), PiCrudEvents::POST_SEARCH_BUILDER_ADD);
         }
     }
 
-    public function configureOptions(OptionsResolver $optionsResolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $optionsResolver->setDefaults([
+        $resolver->setDefaults([
             'type' => null,
         ]);
     }

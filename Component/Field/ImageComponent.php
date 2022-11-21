@@ -11,7 +11,7 @@ final class ImageComponent extends FieldComponent
 {
     private const DEFAULT_TEMPLATE = '@PiCRUD/component/image.html.twig';
 
-    protected array $defaultOptions = [
+    protected array $defaultFormOptions = [
         'label' => 'Image',
         'required' => false,
         'allow_delete' => true,

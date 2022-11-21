@@ -12,7 +12,7 @@ final class FilesComponent extends FieldComponent
 {
     private const DEFAULT_TEMPLATE = '@PiCRUD/component/files.html.twig';
 
-    protected array $defaultOptions = [
+    protected array $defaultFormOptions = [
         'entry_type' => FileType::class,
         'entry_options' => ['label' => false],
         'allow_add' => true,

@@ -33,5 +33,5 @@ interface EntityConfigInterface
     /**
      * @return ActionComponent[]
      */
-    public function getActions(CrudPageEnum $crudPageEnum): array;
+    public function getActions(CrudPageEnum $crudPage): array;
 }

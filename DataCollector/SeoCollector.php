@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 
+use Throwable;
 use function Symfony\Component\String\u;
 
 final class SeoCollector extends DataCollector
@@ -19,7 +20,7 @@ final class SeoCollector extends DataCollector
     private const CLASS_WARNING = 'yellow';
     private const CLASS_OK = 'green';
 
-    public function collect(Request $request, Response $response, \Throwable $exception = null): void
+    public function collect(Request $request, Response $response, Throwable $exception = null): void
     {
         $crawler = new Crawler((string) $response->getContent());
 

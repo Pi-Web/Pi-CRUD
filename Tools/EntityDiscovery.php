@@ -9,6 +9,8 @@ use PiWeb\PiCRUD\Annotation\Entity;
 use PiWeb\PiCRUD\Factory\EntityConfigFactory;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Cache\InvalidArgumentException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Finder\Finder;
@@ -30,7 +32,9 @@ class EntityDiscovery
     }
 
     /**
+     * @throws ContainerExceptionInterface
      * @throws InvalidArgumentException
+     * @throws NotFoundExceptionInterface
      */
     public function getEntities(): array
     {
@@ -56,6 +60,8 @@ class EntityDiscovery
 
     /**
      * @throws ReflectionException
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     private function discoverEntities(): void
     {
@@ -93,10 +99,7 @@ class EntityDiscovery
 
             $classAnnotationArgument = current($annotation)->getArguments();
             $classAnnotationArgument['class'] = $class;
-            if (empty($classAnnotationArgument['name'])) {
-                $namespaceExploded = explode('\\', $reflectionClass->getName());
-                $classAnnotationArgument['name'] = strtolower(end($namespaceExploded));
-            }
+            $classAnnotationArgument['name'] = strtolower($file->getBasename('.php'));
 
             $this->entities[$classAnnotationArgument['name']] = $this->entityConfigFactory->getConfig(
                 $classAnnotationArgument,

@@ -1,12 +1,12 @@
 {% if is_granted('edit', entity) %}
     {% if admin is defined and admin %}
         <a class="btn btn-outline-info admin-link stretched-link" href="{{ path('pi_crud_admin_edit', {'type': type, 'id': entity.id}) }}" title="{{ 'pi_crud.admin.%s.action.edit'|format(type)|trans|upper }}">
-            <i class="fa fa-edit" aria-hidden="true"></i>
+            <i class="bi bi-pen" aria-hidden="true"></i>
             <span class="d-none">{{ 'pi_crud.admin.%s.action.edit'|format(type)|trans }}</span>
         </a>
     {% else %}
         <a class="btn btn-outline-info admin-link stretched-link" href="{{ path('pi_crud_default_edit', {'type': type, 'id': entity.id}) }}" title="{{ 'pi_crud.default.%s.action.edit'|format(type)|trans|upper }}">
-            <i class="fa fa-edit" aria-hidden="true"></i>
+            <i class="bi bi-pen" aria-hidden="true"></i>
             <span class="d-none">{{ 'pi_crud.default.%s.action.edit'|format(type)|trans }}</span>
         </a>
     {% endif %}

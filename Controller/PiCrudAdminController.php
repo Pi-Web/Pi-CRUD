@@ -47,10 +47,14 @@ final class PiCrudAdminController extends AbstractController
             ->createQueryBuilder('entity');
 
         if (0 < $pagination = $configuration->getOption(EntityOptionEnum::PAGINATION)) {
-            $entityCount = (clone $queryBuilder)
-                ->select('count(entity)')
-                ->getQuery()
-                ->getSingleScalarResult();
+            $paginationData = [
+                'page' => $request->query->get('_page', 1),
+                'total' => (clone $queryBuilder)
+                    ->select('count(entity)')
+                    ->getQuery()
+                    ->getSingleScalarResult(),
+                'byPage' => $pagination,
+            ];
 
             $queryBuilder
                 ->setFirstResult($pagination * ($request->query->get('_page', 1) - 1))
@@ -65,11 +69,7 @@ final class PiCrudAdminController extends AbstractController
                 'entities' => $queryBuilder
                     ->getQuery()
                     ->execute(),
-                'pagination' => [
-                    'page' => $request->query->get('_page', 1),
-                    'total' => $entityCount,
-                    'byPage' => $pagination,
-                ],
+                'pagination' => $paginationData ?? [],
             ]
         );
     }

@@ -26,12 +26,13 @@ final class EntityConfigFactory
     public function getConfig(array $classAnnotationArgument, array $propertyAnnotationArgument = []): EntityConfigInterface
     {
         $configClass = $classAnnotationArgument['config'] ?? PiCrudEntityConfig::class;
+        $configName = $classAnnotationArgument['name'];
 
-        if (!isset($this->managedConfig[$configClass])) {
-            $this->managedConfig[$configClass] = $this->container->get($configClass);
-            $this->managedConfig[$configClass]->initConfig($classAnnotationArgument, $propertyAnnotationArgument);
+        if (!isset($this->managedConfig[$configName])) {
+            $this->managedConfig[$configName] = clone $this->container->get($configClass);
+            $this->managedConfig[$configName]->initConfig($classAnnotationArgument, $propertyAnnotationArgument);
         }
 
-        return $this->managedConfig[$configClass];
+        return $this->managedConfig[$configName];
     }
 }

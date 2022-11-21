@@ -5,7 +5,7 @@
 
 {% block extra_meta_balise %}
     {{ parent() }}
-    {% if configuration.annotation is not empty and configuration.annotation.options is defined and constant('PiWeb\\PiCRUD\\Utils\\EntityOptions::NOINDEX') in configuration.annotation.options %}
+    {% if constant('PiWeb\\PiCRUD\\Utils\\EntityOptions::NOINDEX') in configuration.options %}
         <meta name="robots" content="noindex">
     {% endif %}
 {% endblock %}

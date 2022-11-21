@@ -1,5 +1,39 @@
-{% if editable is defined and editable %}
-
+{% if field is defined %}
+    <div class="form-group">
+        <label for="{{ field.vars.id }}" class="font-weight-bold required">{{ '%s.%s'|format(page.value, name)|trans }}</label>
+        <div class="form-inline">
+            {% if field.date is defined and field.date is not empty %}
+                <div class="form-group pr-1">
+                    {{ form_widget(field.date.day, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+                </div>
+                <div class="form-group pr-1">
+                    {{ form_widget(field.date.month, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+                </div>
+                <div class="form-group pr-4">
+                    {{ form_widget(field.date.year, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+                </div>
+                <div class="form-group pr-1">
+                    {{ form_widget(field.time.hour, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_widget(field.time.minute, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+                </div>
+                <div class="invalid-feedback">
+                    {{ form_errors(field) }}
+                </div>
+            {% else %}
+                <div class="form-group pr-1">
+                    {{ form_widget(field.day, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+                </div>
+                <div class="form-group pr-1">
+                    {{ form_widget(field.month, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+                </div>
+                <div class="form-group">
+                    {{ form_widget(field.year, {'attr': {'class': field.vars.errors|length > 0 ? 'form-control is-invalid' : 'form-control'}}) }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
 {% else %}
     {{ value|format_datetime('short', 'short', locale='fr') }}
 {% endif %}

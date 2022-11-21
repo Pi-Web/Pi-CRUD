@@ -1,23 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PiWeb\PiCRUD\Config;
 
-use Doctrine\ORM\Mapping as ORM;
 use PiWeb\PiCRUD\Component\ActionComponent;
 use PiWeb\PiCRUD\Component\FieldComponent;
 use PiWeb\PiCRUD\Enum\Crud\CrudPageEnum;
 use PiWeb\PiCRUD\Enum\Crud\EntityOptionEnum;
+use PiWeb\PiCRUD\Exception\ComponentException;
 use PiWeb\PiCRUD\Factory\ComponentFactory;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class PiCrudEntityConfig implements EntityConfigInterface
 {
     protected string $entityName;
-
     protected string $entityClass;
 
     protected array $classMetadata;
-
     protected array $propertiesReflectionAttributes;
 
     protected array $options;
@@ -58,16 +57,10 @@ class PiCrudEntityConfig implements EntityConfigInterface
 
     public function configure(): void
     {
-        foreach ($this->propertiesReflectionAttributes as $propertyName => $propertiesReflectionAttribute) {
-            if (isset($propertiesReflectionAttribute[ORM\Column::class])) {
-                $propertiesReflectionAttribute[ORM\Column::class]['name'] = $propertyName;
-                $fieldComponent = $this->componentFactory->get(ORM\Column::class, $propertiesReflectionAttribute[ORM\Column::class]);
-            }
-
-            if ($fieldComponent instanceof FieldComponent) {
-                $this->addProperty(CrudPageEnum::ALL, $fieldComponent);
-                $fieldComponent = null;
-            }
+        foreach ($this->propertiesReflectionAttributes as $propertyName => $propertyReflectionAttributes) {
+            try {
+                $this->configureProperty(CrudPageEnum::ALL, $propertyName);
+            } catch (ComponentException) {}
         }
 
         $this
@@ -80,11 +73,20 @@ class PiCrudEntityConfig implements EntityConfigInterface
         ;
     }
 
-    private function configurePiCrudProperty(): void
+    /**
+     * @throws ComponentException
+     */
+    protected function configureProperty(CrudPageEnum $crudPage, string $propertyName, ?FieldComponent $fieldComponent = null): self
     {
-        $fieldComponent = null;
+        /** @var FieldComponent $fieldComponent */
+        $fieldComponent = $this->componentFactory->configure(
+            $propertyName,
+            $fieldComponent,
+            $this->propertiesReflectionAttributes[$propertyName] ?? []
+        );
+        $this->addProperty($crudPage, $fieldComponent);
 
-        $this->addProperty(CrudPageEnum::ALL, $fieldComponent);
+        return $this;
     }
 
     public function getEntityName(): string
@@ -186,7 +188,7 @@ class PiCrudEntityConfig implements EntityConfigInterface
         return $this->properties[$crudPage->value] ?? [];
     }
 
-    protected function addProperty(CrudPageEnum $crudPage, FieldComponent $property): self
+    private function addProperty(CrudPageEnum $crudPage, FieldComponent $property): self
     {
         if (CrudPageEnum::ALL === $crudPage) {
             $this->addProperty(CrudPageEnum::ADMIN, $property);
@@ -197,31 +199,10 @@ class PiCrudEntityConfig implements EntityConfigInterface
             $this->addProperty(CrudPageEnum::ADMIN_EDIT, $property);
             $this->addProperty(CrudPageEnum::ADMIN_ADD, $property);
         } else {
-            $property->setFormOptions($this->getPropertyOptionsFormAttributes($property->name));
-
             $this->properties[$crudPage->value][] = $property;
         }
 
         return $this;
-    }
-
-    private function getPropertyOptionsFormAttributes(string $propertyName): array
-    {
-        $options = [
-            'required' => false,
-        ];
-
-        foreach ($this->propertiesReflectionAttributes[$propertyName] ?? [] as $reflectionAttributeName => $reflectionAttributeArguments) {
-            if (NotBlank::class === $reflectionAttributeName) {
-                $options['required'] = true;
-            } elseif (ORM\Column::class === $reflectionAttributeName) {
-                $options['required'] = empty($reflectionAttributeArguments['nullable']);
-            } elseif (ORM\ManyToOne::class === $reflectionAttributeName) {
-                $options['class'] = $reflectionAttributeArguments['targetEntity'];
-            }
-        }
-
-        return $options;
     }
 
     public function getActions(CrudPageEnum $crudPage): array

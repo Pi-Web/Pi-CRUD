@@ -14,9 +14,9 @@ use Vich\UploaderBundle\Form\Type\VichFileType;
 
 final class FileType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $formBuilder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $formBuilder
+        $builder
             ->add('label', TextType::class, [
                 'required' => true,
                 'label' => 'Libellé',
@@ -42,9 +42,9 @@ final class FileType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $optionsResolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $optionsResolver->setDefaults([
+        $resolver->setDefaults([
             'data_class' => Document::class,
             'class' => null,
         ]);

@@ -11,7 +11,7 @@ final class CkEditorComponent extends FieldComponent
 {
     private const DEFAULT_TEMPLATE = '@PiCRUD/component/ckeditor.html.twig';
 
-    protected array $defaultOptions = [
+    protected array $defaultFormOptions = [
         'config_name' => 'default'
     ];
 

@@ -7,6 +7,7 @@ namespace PiWeb\PiCRUD\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use PiWeb\PiCRUD\Service\TemplateService;
 use PiWeb\PiCRUD\Tools\EntityManager;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -25,6 +26,9 @@ final class AdminController extends AbstractController
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function index(Request $request): Response
     {
         $this->saveTargetPath($this->requestStack->getSession(), 'main', $request->getUri());
