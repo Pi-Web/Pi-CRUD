@@ -19,4 +19,9 @@ abstract class AbstractPiCrudEntity
     use ContentTrait;
     use AuthorTrait;
     use SluggableTrait;
+
+    public function __clone(): void
+    {
+        $this->id = null;
+    }
 }

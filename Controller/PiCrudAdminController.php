@@ -118,4 +118,24 @@ final class PiCrudAdminController extends AbstractController
             ) :
             $this->redirect($this->getTargetPath($request->getSession(), 'main'));
     }
+
+    public function clone(Request $request, string $type): Response
+    {
+        $entity = clone $request->attributes->get('entity');
+        $configuration = $request->attributes->get('configuration');
+
+        $form = $this->formService->getAdminForm($request, $configuration, $entity);
+
+        return $form instanceof FormInterface ?
+            $this->render(
+                $this->templateService->getTemplatePath(TemplateService::FORMAT_ADD, [$type]),
+                [
+                    'type' => $type,
+                    'configuration' => $configuration,
+                    'entity' => $entity,
+                    'form' => $form->createView(),
+                ]
+            ) :
+            $this->redirect($this->getTargetPath($request->getSession(), 'main'));
+    }
 }
