@@ -110,6 +110,10 @@
                 <source>pi_crud.admin_actions.edit</source>
                 <target>Modifier</target>
             </trans-unit>
+            <trans-unit id="pi_crud.admin_actions.clone">
+                <source>pi_crud.admin_actions.clone</source>
+                <target>Duppliquer</target>
+            </trans-unit>
             <trans-unit id="pi_crud.admin_actions.delete">
                 <source>pi_crud.admin_actions.delete</source>
                 <target>Supprimer</target>

@@ -30,6 +30,11 @@
         <requirement key="id">\d+</requirement>
     </route>
 
+    <route id="pi_crud_clone" path="/{type}/{id}/clone">
+        <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::clone</default>
+        <requirement key="id">\d+</requirement>
+    </route>
+
     <route id="pi_crud_delete" path="/{type}/{id}/delete">
         <default key="_controller">PiWeb\PiCRUD\Controller\CRUDController::delete</default>
         <requirement key="id">\d+</requirement>

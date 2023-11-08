@@ -161,6 +161,26 @@ final class CRUDController extends AbstractController
             $this->redirect($this->getTargetPath($request->getSession(), 'main'));
     }
 
+    public function clone(Request $request, string $type): Response
+    {
+        $entity = clone $request->attributes->get('entity');
+
+        $form = $this->formService->getAdminForm($request, $type, $entity);
+
+        return $form instanceof FormInterface ?
+            $this->render(
+                $this->templateService->getTemplatePath(TemplateService::FORMAT_ADD, [$type]),
+                [
+                    'type' => $type,
+                    'configuration' => $request->attributes->get('configuration'),
+                    'templates' => $this->configuration['templates'],
+                    'entity' => $form->getData(),
+                    'form' => $form->createView(),
+                ]
+            ) :
+            $this->redirect($this->getTargetPath($request->getSession(), 'main'));
+    }
+
     public function delete(Request $request): RedirectResponse
     {
         $this->entityManager->remove($request->attributes->get('entity'));
