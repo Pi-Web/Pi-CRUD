@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace PiWeb\PiCRUD\Tools;
 
-use Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
-use ReflectionException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class EntityManager

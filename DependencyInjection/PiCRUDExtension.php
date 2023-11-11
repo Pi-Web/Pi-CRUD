@@ -56,13 +56,10 @@ class PiCRUDExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
 
-        $definition = $container->getDefinition('PiWeb\PiCRUD\Controller\CRUDController');
+        $definition = $container->getDefinition(\PiWeb\PiCRUD\Controller\CRUDController::class);
         $definition->setArgument('$configuration', $config);
     }
 
-    /**
-     * @param array $config
-     */
     private function setDefaults(array &$config)
     {
         $config['templates'] = array_merge($this->defaultsTemplates, $config['templates']);

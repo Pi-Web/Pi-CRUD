@@ -12,9 +12,9 @@ Trait SluggableTrait
 {
     /**
      * @Gedmo\Slug(fields={"title"}, unique=false)
-     * @ORM\Column(length=256)
-     * @Groups("default")
      */
+    #[ORM\Column(length: 256)]
+    #[Groups('default')]
     protected string $slug;
 
     public function getSlug(): string

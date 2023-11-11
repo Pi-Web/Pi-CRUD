@@ -10,10 +10,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 final class FormEvent extends Event
 {
     public function __construct(
-        private string $field,
-        private $properties,
-        private FormBuilderInterface $builder,
-        private array $options
+        private readonly string               $field,
+        private readonly mixed                $properties,
+        private readonly FormBuilderInterface $builder,
+        private readonly array                $options
     ) {
     }
 

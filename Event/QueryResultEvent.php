@@ -9,7 +9,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 final class QueryResultEvent extends Event
 {
     public function __construct(
-        private string $type,
+        private readonly string $type,
         private array|object $results,
     ) {
     }

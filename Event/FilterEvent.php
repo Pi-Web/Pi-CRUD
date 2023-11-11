@@ -12,11 +12,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class FilterEvent extends Event
 {
     public function __construct(
-        private ?UserInterface $user,
-        private string $type,
-        private QueryBuilder $queryBuilder,
-        private Composite $composite,
-        private string $name
+        private readonly ?UserInterface $user,
+        private readonly string         $type,
+        private QueryBuilder            $queryBuilder,
+        private Composite               $composite,
+        private string                  $name
     ) {
     }
 
@@ -35,7 +35,7 @@ final class FilterEvent extends Event
         return $this->queryBuilder;
     }
 
-    public function setQueryBuilder(QueryBuilder $queryBuilder)
+    public function setQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $this->queryBuilder = $queryBuilder;
     }
@@ -45,7 +45,7 @@ final class FilterEvent extends Event
         return $this->composite;
     }
 
-    public function setComposite(Composite $composite)
+    public function setComposite(Composite $composite): void
     {
         $this->composite = $composite;
     }
@@ -55,7 +55,7 @@ final class FilterEvent extends Event
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }

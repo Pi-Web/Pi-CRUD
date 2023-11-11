@@ -19,7 +19,7 @@ class EntityDiscovery
 {
     private const ENTITIES_CACHE_KEY = 'cache.pi_crud.entity_discovery.entities';
 
-    private string $directory;
+    private readonly string $directory;
     private array $entities = [];
 
     public function __construct(

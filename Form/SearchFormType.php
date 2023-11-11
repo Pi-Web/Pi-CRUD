@@ -24,7 +24,7 @@ final class SearchFormType extends AbstractType
     /**
      * @throws Exception
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $properties = $this->entityManager->getEntity($options['type'])['properties'];
         foreach ($properties as $name => $property) {
@@ -38,7 +38,7 @@ final class SearchFormType extends AbstractType
         }
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'type' => null,

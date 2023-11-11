@@ -10,13 +10,13 @@ use PiWeb\PiCRUD\Annotation as PiCRUD;
 Trait ContentTrait
 {
     /**
-     * @ORM\Column(type="text", nullable=true)
      * @PiCRUD\Property(
      *      label="Contenu",
      *      type="ckeditor",
      *      form={"class": "order-1"}
      * )
      */
+    #[ORM\Column(type: 'text', nullable: true)]
     protected ?string $content = null;
 
     public function getContent(): ?string

@@ -11,9 +11,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 final class QueryEvent extends Event
 {
     public function __construct(
-        private ?UserInterface $user,
-        private string $type,
-        private QueryBuilder $queryBuilder
+        private readonly ?UserInterface $user,
+        private readonly string         $type,
+        private QueryBuilder            $queryBuilder
     ) {
     }
 
@@ -32,7 +32,7 @@ final class QueryEvent extends Event
         return $this->queryBuilder;
     }
 
-    public function setQueryBuilder(QueryBuilder $queryBuilder)
+    public function setQueryBuilder(QueryBuilder $queryBuilder): void
     {
         $this->queryBuilder = $queryBuilder;
     }

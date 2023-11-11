@@ -7,5 +7,5 @@ namespace PiWeb\PiCRUD\Utils;
 class EntityOptions
 {
     // Disable indexation of pages.
-    public const NOINDEX = 'noindex';
+    final public const NOINDEX = 'noindex';
 }

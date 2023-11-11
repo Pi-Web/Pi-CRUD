@@ -4,60 +4,60 @@ declare(strict_types=1);
 
 namespace PiWeb\PiCRUD\Model;
 
-use App\Entity\User;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use PiWeb\PiCRUD\Annotation as PiCRUD;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 Trait AuthorTrait
 {
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(nullable=true)
      * @PiCRUD\Property(
      *      label="Créé par",
      *      admin={"class": "d-none d-lg-table-cell"}
      * )
      */
-    protected ?User $createBy = null;
+    #[ORM\ManyToOne(targetEntity: 'App\Entity\User')]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?UserInterface $createBy = null;
 
     /**
-    * @ORM\Column(type="datetime", nullable=true)
-    * @PiCRUD\Property(
-    *      label="Créé le",
-    *      type="datetime",
-    *      admin={"class": "d-none d-lg-table-cell", "options": {"date": "short", "time": "short"}}
-    * )
-    */
+     * @PiCRUD\Property(
+     *      label="Créé le",
+     *      type="datetime",
+     *      admin={"class": "d-none d-lg-table-cell", "options": {"date": "short", "time": "short"}}
+     * )
+     */
+    #[ORM\Column(type: 'datetime', nullable: true)]
     protected ?DateTimeInterface $createAt = null;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(nullable=true)
      * @PiCRUD\Property(
      *      label="Modifié par",
      *      admin={"class": "d-none d-lg-table-cell"}
      * )
      */
-    protected ?User $updateBy = null;
+    #[ORM\ManyToOne(targetEntity: 'App\Entity\User')]
+    #[ORM\JoinColumn(nullable: true)]
+    protected ?UserInterface $updateBy = null;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
      * @PiCRUD\Property(
      *      label="Modifié le",
      *      type="datetime",
      *      admin={"class": "d-none d-lg-table-cell", "options": {"date": "short", "time": "short"}}
      * )
      */
+    #[ORM\Column(type: 'datetime', nullable: true)]
     protected ?DateTimeInterface $updateAt = null;
 
-    public function getCreateBy(): ?User
+    public function getCreateBy(): ?UserInterface
     {
         return $this->createBy;
     }
 
-    public function setCreateBy(?User $user): self
+    public function setCreateBy(?UserInterface $user): self
     {
         $this->createBy = $user;
 
@@ -81,10 +81,8 @@ Trait AuthorTrait
         return $this->updateAt;
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function setUpdateAt(): self
     {
         $this->updateAt = new DateTime();
@@ -92,12 +90,12 @@ Trait AuthorTrait
         return $this;
     }
 
-    public function getUpdateBy(): ?User
+    public function getUpdateBy(): ?UserInterface
     {
         return $this->updateBy;
     }
 
-    public function setUpdateBy(?User $user): self
+    public function setUpdateBy(?UserInterface $user): self
     {
         $this->updateBy = $user;
 

@@ -10,12 +10,12 @@ use PiWeb\PiCRUD\Annotation as PiCRUD;
 Trait MetaDescriptionTrait
 {
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
      * @PiCRUD\Property(
      *      label="Résumé",
      *      form={"class": "order-2"}
      * )
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     protected ?string $metaDescription = null;
 
     public function getMetaDescription(): ?string

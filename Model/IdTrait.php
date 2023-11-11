@@ -9,12 +9,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 Trait IdTrait
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     * @Groups("default")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    #[Groups('default')]
     protected ?int $id = null;
 
     public function getId(): ?int
