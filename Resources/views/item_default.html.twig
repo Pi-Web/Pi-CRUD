@@ -4,27 +4,22 @@
 
     {% block item %}
         <div class="{% if attr is not empty and attr.class is defined %}{{ attr.class }}{% endif%} mb-4">
-            <div class="card bg-dark border-{{ class_primary }} h-100">
-                <img src="{{ asset(entity.image.name is not null ? 'images/' ~ entity.image.name : 'images/default.webp') | imagine_filter('thumbnail') }}" class="card-img-top position-absolute opacity-20 h-100" alt="...">
-                <div class="card-body text-white z-index-10">
-                    {% block item_title %}<span class="h3 card-title">{{ entity.title }}</span>{% endblock item_title %}
-                    {% block item_content %}
-                        <div class="mb-2">
-                            {% if entity.createAt != entity.updateAt and entity.updateAt > date()|date_modify('-1 day') %}
-                                <div class="badge badge-secondary">{{ 'pi_crud.item.recently_updated'|trans({'entity_label': type}) }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="mb-2">
-                            {{ 'pi_crud.item.updated_at'|trans({'entity_label': type}) }} <time>{{ entity.updateAt|format_datetime('full', 'medium', locale='fr') }}</time>
-                        </div>
-                    {% endblock item_content %}
-                    <div class="item-links">
-                        {% block item_link %}<a href="{{ path('pi_crud_show', {'type': type, 'id': entity.id, 'slug': entity.slug}) }}" class="btn btn-{{ class_primary }} stretched-link">{{ 'pi_crud.item.more_informations'|trans({'entity_label': type}) }}</a>{% endblock item_link %}
-                    </div>
-                    <div class="item-links mt-2">
-                        {% block item_admin %}{% include '@PiCRUD/includes/admin_actions.html.twig' ignore missing with {'label_attr': 'd-none'} %}{% endblock item_admin %}
-                    </div>
+            {% block item_title %}<span class="h3 card-title pb-2 border-bottom border-{{ class_primary }}">{{ entity.title }}</span>{% endblock item_title %}
+            {% block item_content %}
+                <div class="mb-2">
+                    {% if entity.createAt != entity.updateAt and entity.updateAt > date()|date_modify('-1 day') %}
+                        <div class="badge badge-secondary">{{ 'pi_crud.item.recently_updated'|trans({'entity_label': type}) }}</div>
+                    {% endif %}
                 </div>
+                <div class="mb-2">
+                    {{ 'pi_crud.item.updated_at'|trans({'entity_label': type}) }} <time>{{ entity.updateAt|format_datetime('medium', 'medium', locale='fr') }}</time>
+                </div>
+            {% endblock item_content %}
+            <div class="item-links">
+                {% block item_link %}<a href="{{ path('pi_crud_show', {'type': type, 'id': entity.id, 'slug': entity.slug}) }}" class="btn btn-{{ class_primary }} stretched-link">{{ 'pi_crud.item.more_informations'|trans({'entity_label': type}) }}</a>{% endblock item_link %}
+            </div>
+            <div class="item-links mt-2">
+                {% block item_admin %}{% include '@PiCRUD/includes/admin_actions.html.twig' ignore missing with {'label_attr': 'd-none'} %}{% endblock item_admin %}
             </div>
         </div>
     {% endblock %}
