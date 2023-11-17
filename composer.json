@@ -19,7 +19,7 @@
     },
     "require": {
         "php": "^8.1",
-        "doctrine/annotations": "^1.13.2",
+        "doctrine/annotations": "^2.0.1",
         "symfony/serializer": "^6.3",
         "pi-web/pi-breadcrumb": ">=1.0|dev-master",
         "symfony/security-bundle": "^6.3",
