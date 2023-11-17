@@ -20,11 +20,11 @@
     "require": {
         "php": "^8.1",
         "doctrine/annotations": "^1.13.2",
-        "symfony/serializer": "^5.0",
+        "symfony/serializer": "^6.3",
         "pi-web/pi-breadcrumb": ">=1.0|dev-master",
-        "symfony/security-bundle": "^5.4",
+        "symfony/security-bundle": "^6.3",
         "doctrine/orm": "^2.12.1",
-        "symfony/form": "^5.4"
+        "symfony/form": "^6.3"
     },
     "require-dev": {
         "rector/rector": "^0.18.6"
