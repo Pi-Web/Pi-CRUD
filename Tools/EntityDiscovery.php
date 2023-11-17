@@ -11,9 +11,9 @@ use PiWeb\PiCRUD\Annotation\Property;
 use Psr\Cache\InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
-use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Psr\Cache\CacheItemPoolInterface;
 
 class EntityDiscovery
 {
@@ -25,7 +25,7 @@ class EntityDiscovery
     public function __construct(
         private readonly string $rootDir,
         private readonly Reader $annotationReader,
-        private readonly AdapterInterface $cache,
+        private readonly CacheItemPoolInterface $cache,
     ) {
         $this->directory = 'Entity';
     }
