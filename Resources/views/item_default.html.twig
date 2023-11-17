@@ -3,7 +3,7 @@
     {% set class_secondary = 'secondary' %}
 
     {% block item %}
-        <div class="{% if attr is not empty and attr.class is defined %}{{ attr.class }}{% endif%} mb-4">
+        <div class="{% if class is not empty and class is defined %}{{ class }}{% endif%} mb-4">
             {% block item_title %}<span class="h3 card-title pb-2 border-bottom border-{{ class_primary }}">{{ entity.title }}</span>{% endblock item_title %}
             {% block item_content %}
                 <div class="mb-2">

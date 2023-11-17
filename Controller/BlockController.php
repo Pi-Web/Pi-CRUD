@@ -31,7 +31,7 @@ final class BlockController extends AbstractController
             [
                 'entity' => $request->attributes->get('entity'),
                 'type' => $type,
-                'attr' => $request->query->get('attr'),
+                'class' => $request->query->get('class'),
                 'structuredData' => $this->structuredDataService->getStructuredData($request->attributes->get('entity')),
             ]
         );
